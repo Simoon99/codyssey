@@ -19,6 +19,9 @@ export default async function DashboardPage() {
   const projectData = {
     id: "demo-1",
     name: "My First Project",
+    description: "My First Project - Building something amazing with Codyssey",
+    goal: "Launch in 30 days",
+    location: "Massachusetts, United States",
     links: {},
   };
 
@@ -629,3 +632,4 @@ export default async function DashboardPage() {
 
   return <DashboardLayout user={userData} project={projectData} levels={levels} tasks={tasks} />;
 }
+

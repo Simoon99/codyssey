@@ -45,6 +45,9 @@ interface DashboardLayoutProps {
   project?: {
     id: string;
     name: string;
+    description?: string;
+    goal?: string;
+    location?: string;
     links: {
       cursor?: string;
       lovable?: string;
@@ -221,4 +224,5 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
     </div>
   );
 }
+
 

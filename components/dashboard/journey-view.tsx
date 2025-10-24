@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getAllOrbs, getOrbById, getHelperGradient } from "@/lib/journey-mapper";
+import { ProjectCard } from "./project-card";
 
 interface Level {
   id: number;
@@ -43,13 +44,28 @@ interface JourneyViewProps {
     };
   };
   project?: {
+    id: string;
     name: string;
+    description: string;
+    goal?: string;
+    location?: string;
     links?: any;
   };
 }
 
 export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, user, project }: JourneyViewProps) {
   const [selectedOrbId, setSelectedOrbId] = React.useState<string | null>(null);
+  const [projectData, setProjectData] = React.useState(project);
+
+  // Handle project updates
+  const handleProjectUpdate = (updatedProject: any) => {
+    setProjectData({ ...projectData, ...updatedProject });
+    // Save to localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("codyssey_project", JSON.stringify({ ...projectData, ...updatedProject }));
+    }
+  };
+
 
   // Load all orbs from journey config
   const allOrbs = getAllOrbs();
@@ -286,3 +302,6 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
     </div>
   );
 }
+
+
+
