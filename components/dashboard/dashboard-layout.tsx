@@ -45,22 +45,12 @@ interface DashboardLayoutProps {
   project?: {
     id: string;
     name: string;
-    description?: string;
-    goal?: string;
-    location?: string;
-    type?: string;
-    stage?: string;
-    techStack?: string[];
-    targetAudience?: string;
-    keyFeatures?: string[];
-    links?: {
+    links: {
       cursor?: string;
       lovable?: string;
       bolt?: string;
       github?: string;
       demo?: string;
-      figma?: string;
-      notion?: string;
     };
   };
   levels: Array<{
@@ -225,12 +215,10 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
             onBackToJourney={() => setViewMode("journey")} 
             tasks={showTasksInChat ? filteredTasks : []}
             stepContext={stepContext ?? undefined}
-            projectContext={project}
           />
         )}
       </main>
     </div>
   );
 }
-
 

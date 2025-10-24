@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getAllOrbs, getOrbById, getHelperGradient } from "@/lib/journey-mapper";
-import { ProjectCard } from "./project-card";
 
 interface Level {
   id: number;
@@ -44,28 +43,13 @@ interface JourneyViewProps {
     };
   };
   project?: {
-    id: string;
     name: string;
-    description: string;
-    goal?: string;
-    location?: string;
     links?: any;
   };
 }
 
 export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, user, project }: JourneyViewProps) {
   const [selectedOrbId, setSelectedOrbId] = React.useState<string | null>(null);
-  const [projectData, setProjectData] = React.useState(project);
-
-  // Handle project updates
-  const handleProjectUpdate = (updatedProject: any) => {
-    setProjectData({ ...projectData, ...updatedProject });
-    // Save to localStorage
-    if (typeof window !== "undefined") {
-      localStorage.setItem("codyssey_project", JSON.stringify({ ...projectData, ...updatedProject }));
-    }
-  };
-
 
   // Load all orbs from journey config
   const allOrbs = getAllOrbs();
@@ -220,22 +204,66 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
           })}
         </div>
 
-        {/* Project Info Card - Editable */}
+        {/* Project Info Card - Far Right with Static Shadow */}
         <div className="mt-2 ml-auto flex w-96 flex-shrink-0 flex-col gap-6 pr-8">
-          {projectData && user && (
-            <ProjectCard
-              project={{
-                id: projectData.id || "demo-1",
-                name: projectData.name || "My Project",
-                description: projectData.description || "Building something amazing",
-                goal: projectData.goal,
-                location: projectData.location,
-              }}
-              user={user}
-              onUpdate={handleProjectUpdate}
-            />
-          )}
+          {/* User/Project Card - Force White Background */}
+          <Card className="border border-zinc-200 bg-white shadow-2xl" style={{ backgroundColor: "#ffffff" }}>
+            <CardContent className="p-6">
+              <div className="mb-4 flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-14 w-14 border-2 border-amber-400">
+                    <AvatarFallback className="bg-gradient-to-br from-amber-400 to-orange-500 text-xl font-bold text-white">
+                      {project?.name?.charAt(0)?.toUpperCase() || "P"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="text-lg font-bold text-zinc-800">{project?.name || "My Project"}</h3>
+                    <p className="text-xs text-zinc-500">@{user?.displayName || "user"}</p>
+                    <div className="mt-1 flex items-center gap-1 text-xs text-zinc-500">
+                      <span>🌎</span>
+                      <span>Massachusetts, United States</span>
+                    </div>
+                  </div>
+                </div>
+                <button className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-100">
+                  <Edit2 size={16} />
+                </button>
+              </div>
 
+              <div className="mb-4">
+                <h4 className="mb-1 text-sm font-bold text-zinc-800">About Project</h4>
+                <p className="text-sm text-zinc-600">
+                  {project?.name || "My First Project"} - Building something amazing with Codyssey
+                </p>
+              </div>
+
+              <div className="mb-4 grid grid-cols-4 gap-4 text-center">
+                <div>
+                  <div className="text-2xl font-bold text-zinc-800">{user?.stats.level || 1}</div>
+                  <div className="text-xs text-zinc-500">Level</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-zinc-800">{user?.stats.xp || 0}</div>
+                  <div className="text-xs text-zinc-500">XP</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-zinc-800">{user?.stats.tasksCompleted || 0}</div>
+                  <div className="text-xs text-zinc-500">Tasks Done</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-zinc-800">{user?.stats.totalTasks || 5}</div>
+                  <div className="text-xs text-zinc-500">Total</div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="mb-2 text-sm font-bold text-zinc-800">Project Goal</h4>
+                <button className="w-full rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 px-4 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:shadow-lg">
+                  🚀 Launch in 30 days
+                </button>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Community Card with Static Shadow - Force White Background */}
           <Card className="border border-zinc-200 bg-white shadow-2xl" style={{ backgroundColor: "#ffffff" }}>
@@ -258,6 +286,3 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
     </div>
   );
 }
-
-
-

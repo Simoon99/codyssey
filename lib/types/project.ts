@@ -1,76 +1,99 @@
+/**
+ * Project context types for AI awareness
+ */
+
 export interface ProjectContext {
   id: string;
   name: string;
   description: string;
   goal?: string;
   location?: string;
-  type?: string;
-  stage?: string;
-  techStack?: string[];
+  // Extended context for AI
+  problemStatement?: string;
   targetAudience?: string;
-  keyFeatures?: string[];
+  valueProposition?: string;
+  techStack?: string;
+  currentStage?: string;
   links?: {
-    github?: string;
-    demo?: string;
-    figma?: string;
-    notion?: string;
     cursor?: string;
     lovable?: string;
     bolt?: string;
+    github?: string;
+    demo?: string;
   };
 }
 
-// Helper function to format project context for AI
+export interface ProjectUpdateData {
+  name: string;
+  description: string;
+  goal?: string;
+  location?: string;
+  problemStatement?: string;
+  targetAudience?: string;
+  valueProposition?: string;
+  techStack?: string;
+  currentStage?: string;
+}
+
+/**
+ * Convert project to context for AI
+ */
+export function projectToContext(project: ProjectContext): {
+  projectName: string;
+  projectDescription: string;
+  projectGoal?: string;
+  projectLocation?: string;
+  problemStatement?: string;
+  targetAudience?: string;
+  valueProposition?: string;
+  techStack?: string;
+  currentStage?: string;
+} {
+  return {
+    projectName: project.name,
+    projectDescription: project.description,
+    projectGoal: project.goal,
+    projectLocation: project.location,
+    problemStatement: project.problemStatement,
+    targetAudience: project.targetAudience,
+    valueProposition: project.valueProposition,
+    techStack: project.techStack,
+    currentStage: project.currentStage,
+  };
+}
+
+/**
+ * Format project context as a comprehensive string for AI system prompts
+ */
 export function formatProjectContextForAI(project: ProjectContext): string {
   const sections: string[] = [];
 
-  sections.push("**Project Details:**");
-  sections.push(`- **Name:** ${project.name}`);
-  sections.push(`- **Description:** ${project.description}`);
+  sections.push(`**Project:** ${project.name}`);
+  sections.push(`**Description:** ${project.description}`);
 
   if (project.goal) {
-    sections.push(`- **Goal:** ${project.goal}`);
+    sections.push(`**Goal:** ${project.goal}`);
   }
 
-  if (project.type) {
-    sections.push(`- **Type:** ${project.type}`);
-  }
-
-  if (project.stage) {
-    sections.push(`- **Current Stage:** ${project.stage}`);
-  }
-
-  if (project.location) {
-    sections.push(`- **Location:** ${project.location}`);
+  if (project.problemStatement) {
+    sections.push(`\n**Problem Statement:**\n${project.problemStatement}`);
   }
 
   if (project.targetAudience) {
-    sections.push(`\n**Target Audience:**`);
-    sections.push(project.targetAudience);
+    sections.push(`\n**Target Audience:**\n${project.targetAudience}`);
   }
 
-  if (project.techStack && project.techStack.length > 0) {
-    sections.push(`\n**Tech Stack:**`);
-    sections.push(project.techStack.map(tech => `- ${tech}`).join('\n'));
+  if (project.valueProposition) {
+    sections.push(`\n**Value Proposition:**\n${project.valueProposition}`);
   }
 
-  if (project.keyFeatures && project.keyFeatures.length > 0) {
-    sections.push(`\n**Key Features:**`);
-    sections.push(project.keyFeatures.map(feature => `- ${feature}`).join('\n'));
+  if (project.techStack) {
+    sections.push(`\n**Tech Stack:** ${project.techStack}`);
   }
 
-  if (project.links) {
-    const links: string[] = [];
-    if (project.links.github) links.push(`- **GitHub:** ${project.links.github}`);
-    if (project.links.demo) links.push(`- **Live Demo:** ${project.links.demo}`);
-    if (project.links.figma) links.push(`- **Design:** ${project.links.figma}`);
-    if (project.links.notion) links.push(`- **Documentation:** ${project.links.notion}`);
-    
-    if (links.length > 0) {
-      sections.push(`\n**Project Links:**`);
-      sections.push(links.join('\n'));
-    }
+  if (project.currentStage) {
+    sections.push(`**Current Stage:** ${project.currentStage}`);
   }
 
-  return sections.join('\n');
+  return sections.join("\n");
 }

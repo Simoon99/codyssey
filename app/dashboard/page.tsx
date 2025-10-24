@@ -15,24 +15,11 @@ export default async function DashboardPage() {
     },
   };
 
-  // Demo project with comprehensive context
+  // Demo project
   const projectData = {
     id: "demo-1",
     name: "My First Project",
-    description: "My First Project - Building something amazing with Codyssey",
-    goal: "Launch in 30 days",
-    location: "Massachusetts, United States",
-    type: "Web App",
-    stage: "Ideation",
-    techStack: ["Next.js", "TypeScript", "Tailwind CSS"],
-    targetAudience: "Indie makers and developers looking to ship faster",
-    keyFeatures: [] as string[],
-    links: {
-      github: "",
-      demo: "",
-      figma: "",
-      notion: "",
-    },
+    links: {},
   };
 
   // Demo levels
@@ -642,4 +629,3 @@ export default async function DashboardPage() {
 
   return <DashboardLayout user={userData} project={projectData} levels={levels} tasks={tasks} />;
 }
-

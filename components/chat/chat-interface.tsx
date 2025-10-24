@@ -36,27 +36,6 @@ interface ChatInterfaceProps {
     firstMessage: string;
     cta: string;
   };
-  projectContext?: {
-    id: string;
-    name: string;
-    description?: string;
-    goal?: string;
-    location?: string;
-    type?: string;
-    stage?: string;
-    techStack?: string[];
-    targetAudience?: string;
-    keyFeatures?: string[];
-    links?: {
-      cursor?: string;
-      lovable?: string;
-      bolt?: string;
-      github?: string;
-      demo?: string;
-      figma?: string;
-      notion?: string;
-    };
-  };
 }
 
 // Sample recommendations based on helper
@@ -194,8 +173,6 @@ export function ChatInterface({
   onSendMessage,
   onBackToJourney,
   tasks = [],
-  stepContext,
-  projectContext,
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
@@ -273,6 +250,18 @@ export function ChatInterface({
       if (onSendMessage) {
         await onSendMessage(currentInput);
       } else {
+        // Get the response text
+        const responses: Record<HelperType, string> = {
+          muse: `Hey! I love your energy! Let's brainstorm something amazing. ${currentInput.includes("idea") ? "Here are 3 validated concepts I think could work:\n\n1. **AI Study Buddy** - Help students learn better with personalized AI tutoring\n2. **Quick Launch Kit** - Pre-built templates for common SaaS products\n3. **Community Finder** - Connect people with shared interests locally\n\nWhich resonates with you?" : "Tell me about your interests and I'll help spark some ideas!"}`,
+          architect: `Great question! Let me help you architect this. ${currentInput.toLowerCase().includes("stack") ? "For a modern web app, I'd recommend:\n\n**Frontend:** Next.js + React + Tailwind\n**Backend:** Next.js API Routes\n**Database:** Supabase (PostgreSQL)\n**Auth:** Supabase Auth\n**Hosting:** Vercel\n\nThis stack is fast, scalable, and perfect for indie builders. Want me to break down the architecture?" : "What are you trying to build? I'll help you choose the right tech stack and architecture."}`,
+          crafter: `Love it! Let's make this beautiful. ${currentInput.toLowerCase().includes("design") || currentInput.toLowerCase().includes("ui") ? "For a modern, engaging UI:\n\n🎨 **Colors:** Warm gradients (amber → orange)\n💎 **Style:** Rounded corners, subtle shadows\n✨ **Typography:** Clean sans-serif, hierarchy\n🎯 **UX:** Clear CTAs, intuitive flow\n\nWant me to dive into specific components?" : "Tell me about your product and I'll help craft an amazing user experience!"}`,
+          hacker: `Let's debug this! ${currentInput.toLowerCase().includes("error") || currentInput.toLowerCase().includes("bug") ? "I see you're hitting an issue. Here's my debugging approach:\n\n1️⃣ Check the console logs\n2️⃣ Verify your API keys\n3️⃣ Test with simple data first\n4️⃣ Check network requests\n\nShare the specific error and I'll help you fix it fast!" : "What's blocking you? Share the issue and I'll help you power through it!"}`,
+          hypebeast: `Time to create some HYPE! ${currentInput.toLowerCase().includes("launch") ? "For a killer launch:\n\n🚀 **Pre-launch:** Build in public, tease features\n📱 **Launch day:** Product Hunt, Twitter, Reddit\n📢 **Content:** Behind-the-scenes story, demo video\n🎯 **Follow-up:** Engage with every comment\n\nWant me to draft your launch tweet?" : "Tell me about your product and I'll help you craft a viral launch strategy!"}`,
+          sensei: `Wise choice, young builder. ${currentInput.toLowerCase().includes("grow") || currentInput.toLowerCase().includes("users") ? "To reach your first 100 users:\n\n🎯 **Week 1-2:** Manual outreach (10 users)\n📢 **Week 3-4:** Social proof + content (30 users)\n🚀 **Week 5-6:** Community + SEO (60 users)\n📈 **Week 7-8:** Referrals + optimization (100 users)\n\nFocus on one channel at a time. Quality > quantity." : "Share your current stage and I'll guide you on the path to sustainable growth."}`,
+        };
+
+        const responseText = responses[helper] || `I'm ${helperData.name}, your ${helperData.title}. ${helperData.description} How can I help you today?`;
+
         // Create assistant message with empty content
         const assistantMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
@@ -283,74 +272,24 @@ export function ChatInterface({
         setMessages((prev) => [...prev, assistantMessage]);
         setIsStreaming(true);
 
-        // Make API call with context
-        const response = await fetch("/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            helper,
-            message: currentInput,
-            chatId: chatId || "default",
-            projectId: projectContext?.id || "demo-1",
-            stepContext,
-            projectContext,
-            tasks: tasks.map(t => ({
-              id: t.id,
-              title: t.title,
-              description: t.description,
-              required: t.required,
-              status: t.status,
-            })),
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to get response");
-        }
-
-        const reader = response.body?.getReader();
-        const decoder = new TextDecoder();
-
-        if (!reader) {
-          throw new Error("No response stream");
-        }
-
-        let fullContent = "";
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunk = decoder.decode(value);
-          const lines = chunk.split("\n");
-
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = JSON.parse(line.slice(6));
-              
-              if (data.done) {
-                continue;
-              }
-
-              if (data.content) {
-                // Stop showing thinking card once first character appears
-                if (fullContent === "") {
-                  setIsStreaming(false);
-                }
-
-                fullContent += data.content;
-                setMessages((prev) => {
-                  const updatedMessages = [...prev];
-                  updatedMessages[updatedMessages.length - 1] = {
-                    ...updatedMessages[updatedMessages.length - 1],
-                    content: fullContent,
-                  };
-                  return updatedMessages;
-                });
-              }
-            }
+        // Stream the response character by character
+        const charsPerMs = 50; // Speed of typing
+        for (let i = 1; i <= responseText.length; i++) {
+          // Stop showing thinking card once first character appears
+          if (i === 1) {
+            setIsStreaming(false);
           }
+
+          await new Promise((resolve) => setTimeout(resolve, 1000 / charsPerMs));
+          const streamedContent = responseText.substring(0, i);
+          setMessages((prev) => {
+            const updatedMessages = [...prev];
+            updatedMessages[updatedMessages.length - 1] = {
+              ...updatedMessages[updatedMessages.length - 1],
+              content: streamedContent,
+            };
+            return updatedMessages;
+          });
         }
       }
     } catch (error) {

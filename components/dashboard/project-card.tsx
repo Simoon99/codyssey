@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit2, MapPin, Rocket } from "lucide-react";
-import { ProjectEditModal } from "./project-edit-modal";
+import { ProjectContextPanel } from "./project-context-panel";
 
 interface ProjectCardProps {
   project: {
@@ -13,17 +13,6 @@ interface ProjectCardProps {
     description: string;
     goal?: string;
     location?: string;
-    type?: string;
-    stage?: string;
-    techStack?: string[];
-    targetAudience?: string;
-    keyFeatures?: string[];
-    links?: {
-      github?: string;
-      demo?: string;
-      figma?: string;
-      notion?: string;
-    };
   };
   user: {
     displayName: string;
@@ -38,29 +27,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, user, onUpdate }: ProjectCardProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentProject, setCurrentProject] = useState(project);
-
-  // Load from localStorage on mount
-  useEffect(() => {
-    const savedProject = localStorage.getItem("codyssey_project");
-    if (savedProject) {
-      try {
-        const parsed = JSON.parse(savedProject);
-        setCurrentProject(parsed);
-      } catch (e) {
-        console.error("Failed to parse saved project:", e);
-      }
-    }
-  }, []);
-
-  const handleProjectUpdate = (updatedProject: any) => {
-    setCurrentProject(updatedProject);
-    localStorage.setItem("codyssey_project", JSON.stringify(updatedProject));
-    if (onUpdate) {
-      onUpdate(updatedProject);
-    }
-  };
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
 
   const getInitials = (name: string) => {
     const words = name.split(" ");
@@ -70,50 +37,40 @@ export function ProjectCard({ project, user, onUpdate }: ProjectCardProps) {
     return name.slice(0, 2).toUpperCase();
   };
 
+  const handleSave = (updatedProject: any) => {
+    if (onUpdate) {
+      onUpdate(updatedProject);
+    }
+  };
+
   return (
     <>
-      <Card className="overflow-hidden border-2 border-amber-100 bg-gradient-to-br from-white to-amber-50">
-        <CardContent className="p-4">
+      <Card className="overflow-hidden">
+        <CardContent className="p-6">
           {/* Header with Avatar and Edit Button */}
-          <div className="mb-3 flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3 min-w-0 flex-1">
-              {/* Project Avatar - Compact */}
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-xl font-bold text-white shadow-md">
-                {getInitials(currentProject.name)}
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex items-start gap-4">
+              {/* Project Avatar */}
+              <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-3xl font-bold text-white shadow-lg">
+                {getInitials(project.name)}
               </div>
 
-              <div className="min-w-0 flex-1">
-                {/* Project Name & Meta */}
-                <h2 className="text-base font-bold text-zinc-900 truncate">
-                  {currentProject.name}
+              <div className="flex-1 min-w-0">
+                {/* Project Name */}
+                <h2 className="mb-1 text-2xl font-bold text-zinc-900">
+                  {project.name}
                 </h2>
-                
-                <div className="flex items-center gap-1.5 text-xs text-zinc-500 mt-0.5">
-                  <span>@{user.displayName.toLowerCase().replace(" ", "")}</span>
-                  {currentProject.location && (
-                    <>
-                      <span>•</span>
-                      <MapPin size={10} className="inline" />
-                      <span className="truncate">{currentProject.location}</span>
-                    </>
-                  )}
-                </div>
 
-                {/* Type & Stage - Compact */}
-                {(currentProject.type || currentProject.stage) && (
-                  <div className="mt-1.5 flex gap-1.5">
-                    {currentProject.type && (
-                      <span className="inline-flex rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
-                        {currentProject.type}
-                      </span>
-                    )}
-                    {currentProject.stage && (
-                      <span className="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                        {currentProject.stage}
-                      </span>
-                    )}
-                  </div>
-                )}
+                {/* Username */}
+                <p className="mb-2 text-sm text-zinc-500">
+                  @{user.displayName.toLowerCase().replace(" ", "")}
+                </p>
+
+                {/* Location */}
+                <div className="flex items-center gap-2 text-sm text-zinc-600">
+                  <MapPin size={14} className="text-blue-500" />
+                  <span>{project.location || "Not set"}</span>
+                </div>
               </div>
             </div>
 
@@ -121,56 +78,69 @@ export function ProjectCard({ project, user, onUpdate }: ProjectCardProps) {
             <Button
               size="icon"
               variant="ghost"
-              onClick={() => setIsModalOpen(true)}
-              className="h-7 w-7 flex-shrink-0 text-amber-600 hover:text-amber-700 hover:bg-amber-100"
+              onClick={() => setIsPanelOpen(true)}
+              className="h-8 w-8 text-zinc-400 hover:text-zinc-600"
               title="Edit project context"
             >
-              <Edit2 size={14} />
+              <Edit2 size={18} />
             </Button>
           </div>
 
-          {/* Description - Compact */}
-          <p className="text-xs leading-relaxed text-zinc-600 mb-3 line-clamp-2">
-            {currentProject.description}
-          </p>
+          {/* About Project */}
+          <div className="mb-6">
+            <h3 className="mb-2 text-sm font-semibold text-zinc-700">
+              About Project
+            </h3>
+            <p className="text-sm leading-relaxed text-zinc-600">
+              {project.description}
+            </p>
+          </div>
 
-          {/* Stats Grid - Compact */}
-          <div className="mb-3 grid grid-cols-4 gap-2">
+          {/* Stats Grid */}
+          <div className="mb-6 grid grid-cols-4 gap-3">
             <div className="text-center">
-              <p className="text-xl font-bold text-amber-600">{user.stats.level}</p>
-              <p className="text-[10px] text-zinc-500">Lvl</p>
+              <p className="text-3xl font-bold text-zinc-900">{user.stats.level}</p>
+              <p className="text-xs text-zinc-500">Level</p>
             </div>
             <div className="text-center">
-              <p className="text-xl font-bold text-orange-500">{user.stats.xp}</p>
-              <p className="text-[10px] text-zinc-500">XP</p>
+              <p className="text-3xl font-bold text-zinc-900">{user.stats.xp}</p>
+              <p className="text-xs text-zinc-500">XP</p>
             </div>
             <div className="text-center">
-              <p className="text-xl font-bold text-green-600">{user.stats.tasksCompleted}</p>
-              <p className="text-[10px] text-zinc-500">Done</p>
+              <p className="text-3xl font-bold text-zinc-900">
+                {user.stats.tasksCompleted}
+              </p>
+              <p className="text-xs text-zinc-500">Tasks Done</p>
             </div>
             <div className="text-center">
-              <p className="text-xl font-bold text-zinc-600">{user.stats.totalTasks}</p>
-              <p className="text-[10px] text-zinc-500">Total</p>
+              <p className="text-3xl font-bold text-zinc-900">
+                {user.stats.totalTasks}
+              </p>
+              <p className="text-xs text-zinc-500">Total</p>
             </div>
           </div>
 
-          {/* Project Goal Button - Compact */}
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-2 text-xs font-semibold text-white shadow-md transition-all hover:shadow-lg active:scale-95"
-          >
-            <Rocket size={14} />
-            <span className="truncate">{currentProject.goal || "Set your goal"}</span>
-          </button>
+          {/* Project Goal */}
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-zinc-700">
+              Project Goal
+            </h3>
+            <div className="flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-6 py-4 shadow-md">
+              <Rocket size={20} className="text-white" />
+              <span className="text-lg font-semibold text-white">
+                {project.goal || "Set your goal"}
+              </span>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Edit Modal */}
-      <ProjectEditModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        project={currentProject}
-        onSave={handleProjectUpdate}
+      {/* Context Edit Panel */}
+      <ProjectContextPanel
+        isOpen={isPanelOpen}
+        onClose={() => setIsPanelOpen(false)}
+        project={project}
+        onSave={handleSave}
       />
     </>
   );
