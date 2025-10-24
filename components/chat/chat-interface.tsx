@@ -492,6 +492,9 @@ export function ChatInterface({
                 <p className="text-xs text-white/80">{helperData.title}</p>
               </div>
             </div>
+            <p className="text-xs leading-relaxed text-white/90">
+              {helperData.description}
+            </p>
           </div>
         )}
 

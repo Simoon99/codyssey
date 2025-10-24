@@ -224,7 +224,7 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                     </button>
 
                     {/* Step Title */}
-                    <div className="mb-2 flex items-start gap-2 pr-6 md:mb-3">
+                    <div className="mb-3 flex items-start gap-2 pr-6 md:mb-4">
                       <div className="text-base md:text-lg">🎯</div>
                       <div className="flex-1 min-w-0">
                         <div className="text-xs font-semibold text-white opacity-90 truncate">
@@ -234,13 +234,6 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                           {orb.title}
                         </div>
                       </div>
-                    </div>
-
-                    {/* CTA and Description */}
-                    <div className="mb-3 md:mb-4">
-                      <p className="text-xs leading-relaxed text-white opacity-95 line-clamp-3">
-                        {orb.cta}
-                      </p>
                     </div>
 
                     {/* Task Count Badge */}

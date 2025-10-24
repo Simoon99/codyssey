@@ -57,15 +57,15 @@ export function Sidebar({
         </div>
       </div>
 
-      {/* AI Helpers Section - Compact layout without scrolling */}
-      <div className="flex flex-1 flex-col items-center justify-start space-y-1 py-2 px-1">
+      {/* AI Helpers Section - All Available, No Scrolling Needed */}
+      <div className="flex flex-1 flex-col items-center justify-center space-y-1 py-2 px-1">
         {allHelpers.map((helper) => (
           <button
             key={helper.id}
             onClick={() => onHelperSelect(helper.id)}
             title={helper.name}
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-lg text-lg transition-all duration-200 active:scale-95 flex-shrink-0",
+              "flex h-11 w-11 items-center justify-center rounded-xl text-xl transition-all duration-200 active:scale-95 flex-shrink-0",
               currentHelper === helper.id
                 ? `bg-gradient-to-br ${helperGradients[helper.id]} text-white shadow-lg scale-100`
                 : "hover:scale-105 active:scale-95"
@@ -77,7 +77,7 @@ export function Sidebar({
       </div>
 
       {/* Bottom Navigation - Icon Only */}
-      <div className="space-y-2 pt-2">
+      <div className="space-y-2 pt-4">
         <button
           onClick={() => onNavigate('settings')}
           title="Settings"
