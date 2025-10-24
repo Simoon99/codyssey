@@ -47,6 +47,9 @@ interface DashboardLayoutProps {
   project?: {
     id: string;
     name: string;
+    description: string;
+    goal?: string;
+    location?: string;
     links: {
       cursor?: string;
       lovable?: string;
