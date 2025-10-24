@@ -10,13 +10,13 @@ interface ProjectContextPanelProps {
   project: {
     id: string;
     name: string;
-    description?: string;
+    description: string;
     goal?: string;
     location?: string;
   };
   onSave: (updatedProject: {
     name: string;
-    description?: string;
+    description: string;
     goal?: string;
     location?: string;
     problemStatement?: string;
@@ -35,7 +35,7 @@ export function ProjectContextPanel({
 }: ProjectContextPanelProps) {
   const [formData, setFormData] = useState({
     name: project.name,
-    description: project.description || "",
+    description: project.description,
     goal: project.goal || "",
     location: project.location || "",
     problemStatement: "",
