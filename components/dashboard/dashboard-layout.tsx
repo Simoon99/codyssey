@@ -198,24 +198,22 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
 
   return (
     <div className="flex h-screen w-full flex-col overflow-hidden md:flex-row">
-      {/* Mobile Header with Hamburger Menu Only */}
-      <div className="flex items-center bg-gradient-to-b from-amber-50 to-pink-50 px-3 py-2.5 md:hidden">
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-lg p-2 hover:bg-amber-100"
-          aria-label="Toggle sidebar"
-          title={sidebarOpen ? "Close menu" : "Open menu"}
-        >
-          {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
+      {/* Floating Hamburger Button - Mobile Only */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed top-3 left-3 z-50 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-amber-50 to-pink-50 p-2 hover:bg-amber-100 md:hidden shadow-lg transition-all"
+        aria-label="Toggle sidebar"
+        title={sidebarOpen ? "Close menu" : "Open menu"}
+      >
+        {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
 
       {/* Sidebar - Hidden on mobile unless opened */}
       <div
         className={`fixed inset-y-0 left-0 z-40 w-20 transform bg-gradient-to-b from-amber-50 to-pink-50 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
-        style={{ top: "2.75rem" }}
+        style={{ top: 0 }}
       >
         <Sidebar
           currentHelper={viewMode === "chat" ? selectedHelper : undefined}
@@ -226,17 +224,8 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
         />
       </div>
 
-      {/* Mobile overlay when sidebar is open - semi-transparent to show content */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm md:hidden"
-          onClick={() => setSidebarOpen(false)}
-          style={{ top: "2.75rem" }}
-        />
-      )}
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-hidden">
+      {/* Main Content - Full Screen on Mobile */}
+      <main className="flex-1 overflow-hidden w-full">
         {viewMode === "journey" ? (
           <JourneyView
             levels={levels}

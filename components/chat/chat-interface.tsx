@@ -484,7 +484,7 @@ export function ChatInterface({
 
         {/* Mobile Helper Info Card - Slide down when info button clicked */}
         {showHelperInfoMobile && (
-          <div className={`md:hidden border-b border-white/20 bg-gradient-to-br ${currentTheme.dark} p-4 animate-in slide-in-from-top-2`}>
+          <div className={`md:hidden border-b border-white/20 bg-gradient-to-br ${currentTheme.dark} p-4 animate-in slide-in-from-top-2 rounded-b-3xl`}>
             <div className="mb-3 flex items-center gap-2">
               <div className="text-3xl">{helperData.emoji}</div>
               <div>

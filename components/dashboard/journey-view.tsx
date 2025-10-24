@@ -134,19 +134,19 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
           {allOrbs.map((orb, index) => {
             const isFirstOrb = index === 0; // First orb is current/active
 
-            // Smooth wave pattern with natural jitter
+            // Wave pattern with natural jitter - SAME FOR BOTH MOBILE AND DESKTOP
             const baseWave = Math.sin(index * 0.5) * 80;
             const jitterOffsets = [5, -3, 7, -5, 4, -6, 3, -4, 6, -2, 5, -7, 4, -3, 6];
             const jitter = jitterOffsets[index % jitterOffsets.length];
             const extraOffset = index === 3 ? 35 : 0;
             const waveOffset = Math.round((baseWave + jitter + extraOffset) * 100) / 100;
 
-            // Mobile zigzag pattern
-            const mobileZigzag = (index % 2 === 0 ? 'mr-12' : 'ml-12');
+            // Mobile uses smaller offset (40px instead of 80px for wave)
+            const mobileWaveOffset = Math.round((Math.sin(index * 0.5) * 40 + jitter) * 100) / 100;
 
             return (
               <div key={orb.id} className="relative">
-                {/* Orb with Wave positioning - First orb is distinctive */}
+                {/* Orb with Wave positioning - Desktop version */}
                 <div 
                   className="relative hidden md:block" 
                   style={{ marginLeft: `${waveOffset}px` }}
@@ -176,8 +176,11 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                   })()}
                 </div>
 
-                {/* Mobile Orb - Zigzag pattern on mobile */}
-                <div className={`relative md:hidden ${mobileZigzag}`}>
+                {/* Mobile Orb - Wave pattern same as desktop but with smaller offset */}
+                <div 
+                  className="relative md:hidden" 
+                  style={{ marginLeft: `${mobileWaveOffset}px` }}
+                >
                   {(() => {
                     const orbCompleted = isOrbCompleted(orb);
                     const isOrbActive = activeOrbId === orb.id;
