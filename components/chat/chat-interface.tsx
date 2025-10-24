@@ -418,13 +418,6 @@ export function ChatInterface({
           </div>
         </div>
 
-        {/* Helper Description */}
-        <div className="mb-6">
-          <p className="text-center text-sm leading-relaxed text-white/90">
-            {helperData.description}
-          </p>
-        </div>
-
         {/* Chat History - Modern Scrollbar */}
         <div className="flex-1 space-y-2 overflow-y-auto pr-1" style={{
           scrollbarWidth: 'thin',
@@ -485,16 +478,13 @@ export function ChatInterface({
         {/* Mobile Helper Info Card - Slide down when info button clicked */}
         {showHelperInfoMobile && (
           <div className={`md:hidden border-b border-white/20 bg-gradient-to-br ${currentTheme.dark} p-4 animate-in slide-in-from-top-2 rounded-b-3xl`}>
-            <div className="mb-3 flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <div className="text-3xl">{helperData.emoji}</div>
               <div>
                 <h3 className="font-bold text-white">{helperData.name}</h3>
                 <p className="text-xs text-white/80">{helperData.title}</p>
               </div>
             </div>
-            <p className="text-xs leading-relaxed text-white/90">
-              {helperData.description}
-            </p>
           </div>
         )}
 
