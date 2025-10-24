@@ -177,7 +177,7 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
         // Show celebration if leveled up
         if (data.leveledUp) {
           setToast({ message: `Congratulations! You leveled up! You earned ${data.xpAwarded} XP!`, type: "success" });
-          window.location.reload(); // Refresh to show new level
+          setViewMode("journey"); // Navigate to journey to see new level
         } else {
           setToast({ message: `Task completed! You earned ${data.xpAwarded} XP!`, type: "success" });
         }

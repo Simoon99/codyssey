@@ -195,6 +195,29 @@ export function ChatInterface({
   const [showHelperInfoMobile, setShowHelperInfoMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Load chat history from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(`chat:${helper}`);
+      if (saved) {
+        try {
+          const parsed: ChatMessage[] = JSON.parse(saved);
+          setChatHistories(prev => ({ ...prev, [helper]: parsed }));
+        } catch (error) {
+          console.error("Failed to load chat history:", error);
+        }
+      }
+    }
+  }, [helper]);
+
+  // Save chat history to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== "undefined" && chatHistories[helper].length > 0) {
+      const data = JSON.stringify(chatHistories[helper]);
+      localStorage.setItem(`chat:${helper}`, data);
+    }
+  }, [chatHistories, helper]);
+
   // Get messages for current helper
   const messages = chatHistories[helper];
 
