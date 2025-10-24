@@ -44,7 +44,7 @@ interface JourneyViewProps {
   project?: {
     id: string;
     name: string;
-    description: string;
+    description?: string;
     goal?: string;
     location?: string;
     links?: any;
