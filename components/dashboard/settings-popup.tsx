@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X, Settings, User, Package, Zap } from "lucide-react";
+import { X, Settings, User, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-type SettingsTab = "profile" | "agent" | "subscription";
+type SettingsTab = "profile" | "subscription";
 
 interface SettingsPopupProps {
   isOpen: boolean;
@@ -29,12 +29,6 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
       description: "Manage your account information",
     },
     {
-      id: "agent",
-      label: "Agent (LLM)",
-      icon: <Zap size={20} />,
-      description: "Configure AI model settings",
-    },
-    {
       id: "subscription",
       label: "Subscription",
       icon: <Package size={20} />,
@@ -46,7 +40,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 z-40 bg-black/30"
         onClick={onClose}
       />
 
@@ -149,7 +143,6 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
             {/* Content Tabs */}
             <div className="flex-1 overflow-y-auto p-6">
               {activeTab === "profile" && <ProfileTab />}
-              {activeTab === "agent" && <AgentTab />}
               {activeTab === "subscription" && <SubscriptionTab />}
             </div>
           </div>
@@ -227,81 +220,6 @@ function ProfileTab() {
             Save Changes
           </Button>
           <Button variant="outline">Cancel</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Agent Tab Content
-function AgentTab() {
-  return (
-    <div className="max-w-2xl">
-      <h3 className="mb-6 text-2xl font-bold text-zinc-900">Agent Configuration</h3>
-
-      <div className="space-y-6">
-        {/* LLM Provider */}
-        <div>
-          <label className="block text-sm font-medium text-zinc-700 mb-2">
-            LLM Provider
-          </label>
-          <select className="w-full rounded-lg border border-zinc-300 px-4 py-2 focus:border-purple-500 focus:outline-none">
-            <option>OpenAI (GPT-4)</option>
-            <option>OpenAI (GPT-3.5)</option>
-            <option>Anthropic (Claude)</option>
-          </select>
-        </div>
-
-        {/* Temperature */}
-        <div>
-          <label className="block text-sm font-medium text-zinc-700 mb-2">
-            Temperature: <span className="text-purple-600">0.7</span>
-          </label>
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            defaultValue="0.7"
-            className="w-full"
-          />
-          <p className="mt-1 text-xs text-zinc-600">
-            Lower = more focused, Higher = more creative
-          </p>
-        </div>
-
-        {/* Max Tokens */}
-        <div>
-          <label className="block text-sm font-medium text-zinc-700 mb-2">
-            Max Tokens
-          </label>
-          <input
-            type="number"
-            placeholder="2000"
-            className="w-full rounded-lg border border-zinc-300 px-4 py-2 focus:border-purple-500 focus:outline-none"
-            defaultValue="2000"
-          />
-        </div>
-
-        {/* System Prompt */}
-        <div>
-          <label className="block text-sm font-medium text-zinc-700 mb-2">
-            System Prompt
-          </label>
-          <textarea
-            placeholder="Custom system prompt..."
-            className="w-full rounded-lg border border-zinc-300 px-4 py-2 focus:border-purple-500 focus:outline-none font-mono text-sm"
-            rows={4}
-            defaultValue="You are a helpful AI assistant specialized in helping developers and builders with their projects."
-          />
-        </div>
-
-        {/* Save Button */}
-        <div className="flex gap-3 pt-4">
-          <Button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg">
-            Save Configuration
-          </Button>
-          <Button variant="outline">Reset to Default</Button>
         </div>
       </div>
     </div>
