@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Save, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -33,6 +33,12 @@ export function ProjectContextPanel({
   project,
   onSave,
 }: ProjectContextPanelProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const [formData, setFormData] = useState({
     name: project.name,
     description: project.description,
@@ -57,18 +63,25 @@ export function ProjectContextPanel({
     setFormData({ ...formData, [field]: value });
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
   return (
     <>
       {/* Light backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black/5"
+        className="fixed inset-0 z-40 bg-black/5 transition-opacity duration-200"
         onClick={onClose}
+        style={{ opacity: isOpen ? 1 : 0 }}
       />
 
       {/* Slide-in panel */}
-      <div className="fixed right-0 top-0 z-50 h-full w-[500px] animate-in slide-in-from-right bg-white shadow-2xl">
+      <div 
+        className="fixed right-0 top-0 z-50 h-full w-[500px] bg-white shadow-2xl transition-transform duration-300 ease-out overflow-hidden"
+        style={{ 
+          transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
+          maxWidth: '100vw'
+        }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
           <div className="flex items-center gap-3">
