@@ -107,7 +107,7 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
             const jitterOffsets = [5, -3, 7, -5, 4, -6, 3, -4, 6, -2, 5, -7, 4, -3, 6];
             const jitter = jitterOffsets[index % jitterOffsets.length];
             const extraOffset = index === 3 ? 35 : 0;
-            const waveOffset = baseWave + jitter + extraOffset;
+            const waveOffset = Math.round((baseWave + jitter + extraOffset) * 100) / 100;
 
             return (
               <div key={orb.id} className="relative">
