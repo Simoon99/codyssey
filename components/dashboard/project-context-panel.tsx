@@ -45,6 +45,8 @@ export function ProjectContextPanel({
     currentStage: "",
   });
 
+  console.log("ProjectContextPanel render - isOpen:", isOpen, "project:", project);
+
   const handleSave = () => {
     onSave(formData);
     onClose();

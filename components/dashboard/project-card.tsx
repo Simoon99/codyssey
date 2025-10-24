@@ -37,7 +37,13 @@ export function ProjectCard({ project, user, onUpdate }: ProjectCardProps) {
     return name.slice(0, 2).toUpperCase();
   };
 
+  const handleEditClick = () => {
+    console.log("Edit clicked! Opening panel...");
+    setIsPanelOpen(true);
+  };
+
   const handleSave = (updatedProject: any) => {
+    console.log("Saving project:", updatedProject);
     if (onUpdate) {
       onUpdate(updatedProject);
     }
@@ -78,7 +84,7 @@ export function ProjectCard({ project, user, onUpdate }: ProjectCardProps) {
             <Button
               size="icon"
               variant="ghost"
-              onClick={() => setIsPanelOpen(true)}
+              onClick={handleEditClick}
               className="h-8 w-8 text-zinc-400 hover:text-zinc-600"
               title="Edit project context"
             >
