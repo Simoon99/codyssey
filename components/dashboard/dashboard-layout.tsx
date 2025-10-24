@@ -7,6 +7,7 @@ import { JourneyView } from "./journey-view";
 import { ChatInterface } from "@/components/chat/chat-interface";
 import { TasksSection } from "./tasks-section";
 import { ToastNotification } from "@/components/ui/toast-notification";
+import { SettingsPopup } from "./settings-popup";
 import { type HelperType } from "@/lib/types/helpers";
 import { Menu, X } from "lucide-react";
 
@@ -79,6 +80,7 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
   const [showTasksInChat, setShowTasksInChat] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleHelperSelect = (helper: HelperType | string, orbContextOrData?: StepContext | { levelIndex: number; taskRange: [number, number] }) => {
     const helperType = helper as HelperType;
@@ -135,6 +137,8 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
   const handleNavigate = (route: 'home' | 'settings') => {
     if (route === 'home') {
       setViewMode("journey");
+    } else if (route === 'settings') {
+      setShowSettings(true);
     }
     setSidebarOpen(false); // Close sidebar after navigation
   };
@@ -270,6 +274,10 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
           onClose={() => setToast(null)}
         />
       )}
+      <SettingsPopup 
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
     </div>
   );
 }
