@@ -413,7 +413,10 @@ export function ChatInterface({
                           {task.status === 'done' ? '✓' : task.status === 'in_progress' ? '⟳' : '○'}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-zinc-800 truncate">{task.title}</p>
+                          <p className="font-semibold text-zinc-800 truncate">
+                            {task.title}
+                            {!task.required && <span className="text-[9px] font-normal text-zinc-500 ml-1">(optional)</span>}
+                          </p>
                         </div>
                         <span className="text-[9px] font-medium text-zinc-500 whitespace-nowrap ml-2">{task.xp_reward}xp</span>
                       </div>
