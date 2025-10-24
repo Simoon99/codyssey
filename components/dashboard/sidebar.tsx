@@ -58,17 +58,17 @@ export function Sidebar({
       </div>
 
       {/* AI Helpers Section - All Available, No Scrolling Needed */}
-      <div className="flex flex-1 flex-col items-center justify-center space-y-2 py-2">
+      <div className="flex flex-1 flex-col items-center justify-center space-y-2 overflow-y-auto py-2">
         {allHelpers.map((helper) => (
           <button
             key={helper.id}
             onClick={() => onHelperSelect(helper.id)}
             title={helper.name}
             className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-xl text-2xl transition-all",
+              "flex h-12 w-12 items-center justify-center rounded-xl text-2xl transition-all duration-200 active:scale-95",
               currentHelper === helper.id
                 ? `bg-gradient-to-br ${helperGradients[helper.id]} text-white shadow-lg scale-110`
-                : "hover:scale-105"
+                : "hover:scale-105 active:scale-95"
             )}
           >
             {helper.emoji}
@@ -81,7 +81,7 @@ export function Sidebar({
         <button
           onClick={() => onNavigate('settings')}
           title="Settings"
-          className="flex h-12 w-12 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100"
+          className="flex h-12 w-12 items-center justify-center rounded-lg text-zinc-600 transition-colors duration-200 active:bg-zinc-200 hover:bg-zinc-100"
         >
           <Settings size={20} />
         </button>
@@ -89,7 +89,7 @@ export function Sidebar({
           onClick={handleLogout}
           disabled={isLoggingOut}
           title={isLoggingOut ? "Logging out..." : "Logout"}
-          className="flex h-12 w-12 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 disabled:opacity-50"
+          className="flex h-12 w-12 items-center justify-center rounded-lg text-zinc-600 transition-colors duration-200 active:bg-zinc-200 hover:bg-zinc-100 disabled:opacity-50"
         >
           <LogOut size={20} />
         </button>

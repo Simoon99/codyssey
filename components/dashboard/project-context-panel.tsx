@@ -69,9 +69,9 @@ export function ProjectContextPanel({
         onClick={onClose}
       />
 
-      {/* Slide-in panel */}
+      {/* Slide-in panel with rounded corners */}
       <div 
-        className="fixed right-0 top-0 z-50 h-full w-[500px] bg-white shadow-2xl transition-transform duration-300 ease-out"
+        className="fixed right-0 top-0 z-50 h-full w-[500px] bg-white shadow-2xl transition-transform duration-300 ease-out rounded-l-2xl overflow-hidden"
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
         }}
@@ -95,7 +95,8 @@ export function ProjectContextPanel({
             size="icon"
             variant="ghost"
             onClick={onClose}
-            className="h-8 w-8 text-zinc-400 hover:text-zinc-600"
+            className="h-8 w-8 bg-transparent text-zinc-400 hover:bg-transparent hover:text-zinc-600 focus:bg-transparent active:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
+            title="Close panel"
           >
             <X size={20} />
           </Button>
@@ -119,7 +120,7 @@ export function ProjectContextPanel({
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleChange("name", e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="My Awesome Project"
                   />
                 </div>
@@ -134,7 +135,7 @@ export function ProjectContextPanel({
                       handleChange("description", e.target.value)
                     }
                     rows={2}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="A one-sentence elevator pitch..."
                   />
                 </div>
@@ -147,7 +148,7 @@ export function ProjectContextPanel({
                     type="text"
                     value={formData.goal}
                     onChange={(e) => handleChange("goal", e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="Launch in 30 days"
                   />
                 </div>
@@ -160,7 +161,7 @@ export function ProjectContextPanel({
                     type="text"
                     value={formData.location}
                     onChange={(e) => handleChange("location", e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="San Francisco, CA"
                   />
                 </div>
@@ -187,7 +188,7 @@ export function ProjectContextPanel({
                       handleChange("problemStatement", e.target.value)
                     }
                     rows={3}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="What problem are you solving? Who has this problem?"
                   />
                 </div>
@@ -202,7 +203,7 @@ export function ProjectContextPanel({
                       handleChange("targetAudience", e.target.value)
                     }
                     rows={2}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="Who are your ideal users? (e.g., indie developers, small business owners)"
                   />
                 </div>
@@ -217,7 +218,7 @@ export function ProjectContextPanel({
                       handleChange("valueProposition", e.target.value)
                     }
                     rows={2}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="What unique value do you provide?"
                   />
                 </div>
@@ -232,7 +233,7 @@ export function ProjectContextPanel({
                       handleChange("techStack", e.target.value)
                     }
                     rows={2}
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="e.g., Next.js, React, Tailwind, Supabase, Vercel"
                   />
                 </div>
@@ -247,7 +248,7 @@ export function ProjectContextPanel({
                     onChange={(e) =>
                       handleChange("currentStage", e.target.value)
                     }
-                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+                    className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
                     placeholder="e.g., Ideation, MVP Build, Launching, Growth"
                   />
                 </div>
@@ -278,7 +279,7 @@ export function ProjectContextPanel({
           <Button
             variant="ghost"
             onClick={onClose}
-            className="text-zinc-600 hover:text-zinc-900"
+            className="bg-transparent text-zinc-600 hover:bg-transparent hover:text-zinc-900 focus:bg-transparent active:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
           >
             Cancel
           </Button>

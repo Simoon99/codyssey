@@ -6,7 +6,9 @@ import { ProfileCard } from "./profile-card";
 import { JourneyView } from "./journey-view";
 import { ChatInterface } from "@/components/chat/chat-interface";
 import { TasksSection } from "./tasks-section";
+import { ToastNotification } from "@/components/ui/toast-notification";
 import { type HelperType } from "@/lib/types/helpers";
+import { Menu, X } from "lucide-react";
 
 type ViewMode = "journey" | "chat" | "tasks";
 
@@ -72,6 +74,8 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [stepContext, setStepContext] = useState<StepContext | null>(null);
   const [showTasksInChat, setShowTasksInChat] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleHelperSelect = (helper: HelperType | string, orbContextOrData?: StepContext | { levelIndex: number; taskRange: [number, number] }) => {
     const helperType = helper as HelperType;
@@ -113,6 +117,7 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
     }
 
     setViewMode("chat");
+    setSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const handleNewChat = () => {
@@ -121,16 +126,19 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
     setFilteredTasks([]);
     setStepContext(null);
     setViewMode("chat");
+    setSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const handleNavigate = (route: 'home' | 'settings') => {
     if (route === 'home') {
       setViewMode("journey");
     }
+    setSidebarOpen(false); // Close sidebar after navigation
   };
 
   const handleStartLevel = (levelId: number) => {
     setViewMode("tasks");
+    setSidebarOpen(false); // Close sidebar on mobile
   };
 
   const handleCompleteTask = async (taskId: string) => {
@@ -161,28 +169,68 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
         
         // Show celebration if leveled up
         if (data.leveledUp) {
-          alert(`🎉 Congratulations! You leveled up! You earned ${data.xpAwarded} XP!`);
+          setToast({ message: `Congratulations! You leveled up! You earned ${data.xpAwarded} XP!`, type: "success" });
           window.location.reload(); // Refresh to show new level
         } else {
-          alert(`✅ Task completed! You earned ${data.xpAwarded} XP!`);
+          setToast({ message: `Task completed! You earned ${data.xpAwarded} XP!`, type: "success" });
         }
       }
     } catch (error) {
       console.error("Failed to complete task:", error);
-      alert("Failed to complete task. Please try again.");
+      setToast({ message: "Failed to complete task. Please try again.", type: "error" });
     }
   };
 
+  const handleSendTaskToHelper = (taskId: string, taskTitle: string, taskDescription: string) => {
+    // Switch to chat view
+    setViewMode("chat");
+    
+    // Create a task-specific prompt
+    const prompt = `I need help with this task: "${taskTitle}"\n\nDescription: ${taskDescription}\n\nCan you guide me through completing this?`;
+    
+    // Send the message to the currently selected helper
+    // This will be handled by the ChatInterface component receiving the initial message
+    console.log("Sending task to helper:", { taskId, taskTitle, prompt });
+  };
+
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Left Sidebar - Collapsed */}
-      <Sidebar
-        currentHelper={viewMode === "chat" ? selectedHelper : undefined}
-        currentLevel={user.stats.level}
-        onHelperSelect={handleHelperSelect}
-        onNavigate={handleNavigate}
-        onNewChat={handleNewChat}
-      />
+    <div className="flex h-screen w-full flex-col overflow-hidden md:flex-row">
+      {/* Mobile Header with Hamburger Menu */}
+      <div className="flex items-center justify-between bg-gradient-to-b from-amber-50 to-pink-50 px-4 py-2 md:hidden">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="rounded-lg p-2 hover:bg-amber-100"
+          aria-label="Toggle sidebar"
+        >
+          {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+        <h1 className="text-lg font-bold text-amber-900">Codyssey</h1>
+        <div className="w-10" /> {/* Spacer for alignment */}
+      </div>
+
+      {/* Sidebar - Hidden on mobile unless opened */}
+      <div
+        className={`fixed inset-y-0 left-0 z-40 w-20 transform bg-gradient-to-b from-amber-50 to-pink-50 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+        style={{ top: "calc(var(--header-height, 56px))" }}
+      >
+        <Sidebar
+          currentHelper={viewMode === "chat" ? selectedHelper : undefined}
+          currentLevel={user.stats.level}
+          onHelperSelect={handleHelperSelect}
+          onNavigate={handleNavigate}
+          onNewChat={handleNewChat}
+        />
+      </div>
+
+      {/* Mobile overlay when sidebar is open */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black bg-opacity-50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* Main Content */}
       <main className="flex-1 overflow-hidden">
@@ -193,20 +241,22 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
             onStartLevel={handleStartLevel}
             user={user}
             project={project}
+            tasks={localTasks}
+            activeOrbId={stepContext?.orbId}
             onHelperSelect={handleHelperSelect}
           />
         ) : viewMode === "tasks" ? (
-          <div className="h-full overflow-y-auto bg-gradient-to-b from-amber-50 to-pink-50 p-8">
+          <div className="h-full overflow-y-auto bg-gradient-to-b from-amber-50 to-pink-50 p-4 md:p-8">
             <div className="mx-auto max-w-3xl">
               <div className="mb-6">
-                <h2 className="mb-2 text-2xl font-bold text-zinc-800">
+                <h2 className="mb-2 text-xl font-bold text-zinc-800 md:text-2xl">
                   Level {user.stats.level} Tasks
                 </h2>
-                <p className="text-zinc-600">
+                <p className="text-sm text-zinc-600 md:text-base">
                   Complete these tasks to earn XP and progress to the next level
                 </p>
               </div>
-              <TasksSection tasks={localTasks} onCompleteTask={handleCompleteTask} />
+              <TasksSection tasks={localTasks} onCompleteTask={handleCompleteTask} onSendToHelper={handleSendTaskToHelper} />
             </div>
           </div>
         ) : (
@@ -214,10 +264,18 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
             helper={selectedHelper} 
             onBackToJourney={() => setViewMode("journey")} 
             tasks={showTasksInChat ? filteredTasks : []}
+            onCompleteTask={handleCompleteTask}
             stepContext={stepContext ?? undefined}
           />
         )}
       </main>
+      {toast && (
+        <ToastNotification 
+          message={toast.message} 
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }
