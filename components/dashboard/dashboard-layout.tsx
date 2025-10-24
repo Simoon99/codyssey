@@ -214,7 +214,7 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
             helper={selectedHelper} 
             onBackToJourney={() => setViewMode("journey")} 
             tasks={showTasksInChat ? filteredTasks : []}
-            stepContext={stepContext}
+            stepContext={stepContext ?? undefined}
           />
         )}
       </main>
