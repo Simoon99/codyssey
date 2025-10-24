@@ -69,24 +69,24 @@ export function ProjectContextPanel({
         onClick={onClose}
       />
 
-      {/* Slide-in panel with rounded corners */}
+      {/* Slide-in panel with rounded corners - Mobile responsive */}
       <div 
-        className="fixed right-0 top-0 z-50 h-full w-[500px] bg-white shadow-2xl transition-transform duration-300 ease-out rounded-l-2xl overflow-hidden"
+        className="fixed right-0 top-0 z-50 h-full w-full md:w-[500px] bg-white shadow-2xl transition-transform duration-300 ease-out md:rounded-l-2xl overflow-hidden"
         style={{
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
-              <Sparkles size={20} className="text-white" />
+        <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 md:px-6 md:py-4">
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
+              <Sparkles size={16} className="text-white md:size-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-zinc-900">
+              <h2 className="text-base md:text-lg font-bold text-zinc-900">
                 Project Context
               </h2>
-              <p className="text-xs text-zinc-500">
+              <p className="text-[10px] md:text-xs text-zinc-500">
                 Help AI understand your project better
               </p>
             </div>

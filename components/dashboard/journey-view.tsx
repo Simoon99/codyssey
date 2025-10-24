@@ -141,6 +141,9 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
             const extraOffset = index === 3 ? 35 : 0;
             const waveOffset = Math.round((baseWave + jitter + extraOffset) * 100) / 100;
 
+            // Mobile zigzag pattern
+            const mobileZigzag = (index % 2 === 0 ? 'mr-12' : 'ml-12');
+
             return (
               <div key={orb.id} className="relative">
                 {/* Orb with Wave positioning - First orb is distinctive */}
@@ -173,8 +176,8 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                   })()}
                 </div>
 
-                {/* Mobile Orb - Smaller and centered */}
-                <div className="relative md:hidden">
+                {/* Mobile Orb - Zigzag pattern on mobile */}
+                <div className={`relative md:hidden ${mobileZigzag}`}>
                   {(() => {
                     const orbCompleted = isOrbCompleted(orb);
                     const isOrbActive = activeOrbId === orb.id;
@@ -203,7 +206,7 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                 {/* Floating Current Level Card - For ANY selected orb (Mobile optimized) */}
                 {selectedOrbId === orb.id && (
                   <div
-                    className={`absolute left-0 top-16 z-50 w-72 rounded-2xl bg-gradient-to-br ${orb.helperGradient} p-4 shadow-2xl animate-in fade-in slide-in-from-bottom-4 md:left-24 md:top-0 md:w-80 md:rounded-3xl md:p-6`}
+                    className={`fixed md:absolute left-1/2 top-1/2 md:top-0 md:left-24 z-50 w-[calc(100%-2rem)] max-w-sm md:w-80 -translate-x-1/2 md:-translate-x-1/2 -translate-y-1/2 md:translate-y-0 md:translate-x-0 rounded-2xl bg-gradient-to-br ${orb.helperGradient} p-4 shadow-2xl animate-in fade-in slide-in-from-bottom-4 md:rounded-3xl md:p-6 md:w-80`}
                     onClick={(e) => e.stopPropagation()}
                   >
                     {/* Close button */}

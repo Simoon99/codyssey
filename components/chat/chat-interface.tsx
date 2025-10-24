@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Message } from "./message";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Send, Loader2, Paperclip, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Send, Loader2, Paperclip, ArrowLeft, CheckCircle2, Info } from "lucide-react";
 import { type HelperType, getHelperById } from "@/lib/types/helpers";
 
 interface ChatMessage {
@@ -192,6 +192,7 @@ export function ChatInterface({
   const [isStreaming, setIsStreaming] = useState(false);
   const [tasksExpanded, setTasksExpanded] = useState(false);
   const [completingTaskId, setCompletingTaskId] = useState<string | null>(null);
+  const [showHelperInfoMobile, setShowHelperInfoMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Get messages for current helper
@@ -458,21 +459,44 @@ export function ChatInterface({
 
         {/* Right Column - Chat Area with Light Gradient (Mobile optimized) */}
         <div className={`flex flex-1 flex-col bg-gradient-to-b ${currentTheme.light}`}>
-        {/* Mobile Header with Back Button */}
+        {/* Mobile Header with Back Button and Info Icon */}
         <div className="flex items-center justify-between border-b border-white/20 px-3 py-2.5 md:hidden md:border-b-0 md:p-0">
-          <div className="flex-1">
-            <h3 className="truncate text-sm font-bold text-zinc-800">
+          <button
+            onClick={() => setShowHelperInfoMobile(!showHelperInfoMobile)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200"
+            title="View helper info"
+          >
+            <Info size={18} />
+          </button>
+          <div className="flex-1 px-2">
+            <h3 className="truncate text-center text-sm font-bold text-zinc-800">
               {helperData.name}
             </h3>
           </div>
           <button
             onClick={onBackToJourney}
-            className="ml-2 flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200"
             title="Back to journey"
           >
             <ArrowLeft size={18} />
           </button>
         </div>
+
+        {/* Mobile Helper Info Card - Slide down when info button clicked */}
+        {showHelperInfoMobile && (
+          <div className={`md:hidden border-b border-white/20 bg-gradient-to-br ${currentTheme.dark} p-4 animate-in slide-in-from-top-2`}>
+            <div className="mb-3 flex items-center gap-2">
+              <div className="text-3xl">{helperData.emoji}</div>
+              <div>
+                <h3 className="font-bold text-white">{helperData.name}</h3>
+                <p className="text-xs text-white/80">{helperData.title}</p>
+              </div>
+            </div>
+            <p className="text-xs leading-relaxed text-white/90">
+              {helperData.description}
+            </p>
+          </div>
+        )}
 
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto px-3 py-3 relative md:px-6 md:py-6">
