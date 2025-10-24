@@ -120,7 +120,7 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
   return (
     <div className="flex h-full overflow-hidden bg-gradient-to-b from-amber-50 to-pink-50">
       {/* Main Journey Content - Responsive Layout */}
-      <div className="relative flex w-full flex-col items-center justify-start gap-4 overflow-y-auto px-4 py-6 md:flex-row md:items-start md:justify-between md:gap-16 md:px-8 md:py-12">
+      <div className="relative flex w-full flex-col items-center justify-start gap-4 overflow-y-auto py-6 md:flex-row md:items-start md:justify-between md:gap-16 md:px-8 md:py-12">
         {/* Header Badge */}
         <div className="absolute left-1/2 top-2 z-20 -translate-x-1/2 md:top-6">
           <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-lg md:px-4 md:py-2">

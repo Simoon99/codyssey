@@ -45,7 +45,7 @@ export function Sidebar({
   };
 
   return (
-    <div className="flex h-full w-20 flex-col items-center bg-gradient-to-b from-amber-50 to-pink-50 py-4">
+    <div className="flex h-full w-20 flex-col items-center bg-gradient-to-b from-amber-50 to-pink-50 py-4 overflow-hidden">
       {/* Character Header - Compact */}
       <div className="mb-4">
         <div className="flex flex-col items-center text-center">
@@ -58,16 +58,16 @@ export function Sidebar({
       </div>
 
       {/* AI Helpers Section - All Available, No Scrolling Needed */}
-      <div className="flex flex-1 flex-col items-center justify-center space-y-2 overflow-y-auto py-2">
+      <div className="flex flex-1 flex-col items-center justify-center space-y-2 overflow-y-auto py-2 px-1">
         {allHelpers.map((helper) => (
           <button
             key={helper.id}
             onClick={() => onHelperSelect(helper.id)}
             title={helper.name}
             className={cn(
-              "flex h-12 w-12 items-center justify-center rounded-xl text-2xl transition-all duration-200 active:scale-95",
+              "flex h-12 w-12 items-center justify-center rounded-xl text-2xl transition-all duration-200 active:scale-95 flex-shrink-0",
               currentHelper === helper.id
-                ? `bg-gradient-to-br ${helperGradients[helper.id]} text-white shadow-lg scale-110`
+                ? `bg-gradient-to-br ${helperGradients[helper.id]} text-white shadow-lg scale-100`
                 : "hover:scale-105 active:scale-95"
             )}
           >

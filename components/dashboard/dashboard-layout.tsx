@@ -201,7 +201,7 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
       {/* Floating Hamburger Button - Mobile Only */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-3 left-3 z-50 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-b from-amber-50 to-pink-50 p-2 hover:bg-amber-100 md:hidden shadow-lg transition-all"
+        className="fixed top-3 left-3 z-50 flex h-10 w-10 items-center justify-center rounded-lg p-2 hover:bg-white/20 md:hidden shadow-lg transition-all"
         aria-label="Toggle sidebar"
         title={sidebarOpen ? "Close menu" : "Open menu"}
       >
@@ -238,9 +238,9 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
             onHelperSelect={handleHelperSelect}
           />
         ) : viewMode === "tasks" ? (
-          <div className="h-full overflow-y-auto bg-gradient-to-b from-amber-50 to-pink-50 p-4 md:p-8">
-            <div className="mx-auto max-w-3xl">
-              <div className="mb-6">
+          <div className="h-full overflow-y-auto bg-gradient-to-b from-amber-50 to-pink-50 md:p-8">
+            <div className="mx-auto max-w-3xl md:p-0">
+              <div className="mb-6 px-4 md:px-0">
                 <h2 className="mb-2 text-xl font-bold text-zinc-800 md:text-2xl">
                   Level {user.stats.level} Tasks
                 </h2>
@@ -248,7 +248,9 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
                   Complete these tasks to earn XP and progress to the next level
                 </p>
               </div>
-              <TasksSection tasks={localTasks} onCompleteTask={handleCompleteTask} onSendToHelper={handleSendTaskToHelper} />
+              <div className="px-4 md:px-0">
+                <TasksSection tasks={localTasks} onCompleteTask={handleCompleteTask} onSendToHelper={handleSendTaskToHelper} />
+              </div>
             </div>
           </div>
         ) : (
