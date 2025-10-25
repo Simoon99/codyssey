@@ -264,6 +264,12 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
             tasks={showTasksInChat ? filteredTasks : []}
             onCompleteTask={handleCompleteTask}
             stepContext={stepContext ?? undefined}
+            project={project ? {
+              name: project.name,
+              description: project.description,
+              techStack: undefined, // Can be added to project type later
+              stage: undefined, // Can be added to project type later
+            } : undefined}
           />
         )}
       </main>

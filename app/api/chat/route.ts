@@ -9,10 +9,13 @@ interface ChatRequestBody {
   message: string;
   chatId?: string;
   projectId: string;
+  startJourney?: boolean; // Flag to generate opening message
   // Context for AI awareness
   context?: {
     projectName?: string;
     projectDescription?: string;
+    projectTechStack?: string;
+    projectStage?: string;
     currentStep?: {
       levelTitle: string;
       stepTitle: string;
@@ -36,9 +39,9 @@ interface ChatRequestBody {
 export async function POST(request: NextRequest) {
   try {
     const body: ChatRequestBody = await request.json();
-    const { helper, message, context } = body;
+    const { helper, message, context, startJourney } = body;
 
-    if (!helper || !message) {
+    if (!helper) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -51,10 +54,17 @@ export async function POST(request: NextRequest) {
     // Build context for AI
     const helperContext: HelperContext = context || {};
 
+    // If startJourney is true, generate opening message
+    let userMessage = message;
+    if (startJourney) {
+      // Create a prompt that asks the helper to introduce themselves
+      userMessage = `Generate your opening message to greet the user and start the conversation. Introduce yourself with your personality, acknowledge the project and current step, list the tasks we'll work on, and ask the user to share their current situation (where they are, what they want to focus on, constraints).`;
+    }
+
     // Stream response with context
     const stream = await createStreamingChatCompletion(
       helper,
-      [{ role: "user", content: message }],
+      [{ role: "user", content: userMessage }],
       helperContext
     );
 

@@ -180,7 +180,7 @@ export function ProjectForm({ project, onSave, onCancel }: ProjectFormProps) {
           <div className="flex gap-2">
             <Button
               type="submit"
-              variant="primary"
+              variant="default"
               disabled={loading || !formData.name}
               className="flex-1"
             >

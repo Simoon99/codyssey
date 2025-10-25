@@ -9,7 +9,7 @@
 
 ## 📋 Executive Summary
 
-**Codyssey** is a gamified web application that transforms the overwhelming journey of building a product into a structured, engaging adventure guided by AI helper personas. Think of it as "Duolingo meets product development" — users progress through 5 levels from Spark to Grow, earning XP, unlocking AI mentors, and building real projects.
+**Codyssey** is a gamified web application that transforms the overwhelming journey of building a product into a structured, engaging adventure guided by AI helper personas. Think of it as "Duolingo meets product development" — users progress through 5 levels from Spark to Grow, earning XP, collaborating with AI mentors, and building real projects.
 
 ### Core Value Proposition
 - **Structured Journey**: Clear 5-level progression from idea to 100+ users

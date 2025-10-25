@@ -37,6 +37,12 @@ interface ChatInterfaceProps {
     firstMessage: string;
     cta: string;
   };
+  project?: {
+    name: string;
+    description: string;
+    techStack?: string;
+    stage?: string;
+  };
 }
 
 // Sample recommendations based on helper
@@ -176,6 +182,7 @@ export function ChatInterface({
   tasks = [],
   onCompleteTask,
   stepContext,
+  project,
 }: ChatInterfaceProps) {
   // Store chat histories for each helper separately
   const [chatHistories, setChatHistories] = useState<Record<HelperType, ChatMessage[]>>({
@@ -271,14 +278,129 @@ export function ChatInterface({
     scrollToBottom();
   }, [messages]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const handleStartJourney = async () => {
+    setIsLoading(true);
+    setIsStreaming(true);
 
+    try {
+      // Create empty assistant message that will be filled by streaming
+      const assistantMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: "assistant",
+        content: "",
+      };
+
+      // Add empty assistant message to chat history
+      setChatHistories((prev) => ({
+        ...prev,
+        [helper]: [...prev[helper], assistantMessage],
+      }));
+
+      // Call API with startJourney flag to generate opening message
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          helper,
+          message: "", // Empty message signals we want opening message
+          projectId: "demo-1",
+          startJourney: true, // Special flag for opening message
+          context: {
+            projectName: project?.name || "Untitled Project",
+            projectDescription: project?.description || "A new project",
+            projectTechStack: project?.techStack,
+            projectStage: project?.stage,
+            currentStep: stepContext ? {
+              levelTitle: `Level ${stepContext.levelIndex + 1}`,
+              stepTitle: stepContext.orbId,
+              cta: stepContext.cta,
+            } : undefined,
+            tasks: tasks.length > 0 ? tasks : undefined,
+            requiredTasks: stepContext?.requiredTasks,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get response from API");
+      }
+
+      // Handle streaming response
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error("No response body");
+      }
+
+      let buffer = "";
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop() || "";
+        
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = JSON.parse(line.slice(6));
+            
+            if (data.done) {
+              setIsStreaming(false);
+              break;
+            }
+            
+            if (data.content) {
+              // First character - stop showing thinking indicator
+              if (assistantMessage.content === "") {
+                setIsStreaming(false);
+              }
+              
+              // Update assistant message with streamed content
+              setChatHistories((prev) => {
+                const helperMessages = [...prev[helper]];
+                helperMessages[helperMessages.length - 1] = {
+                  ...helperMessages[helperMessages.length - 1],
+                  content: helperMessages[helperMessages.length - 1].content + data.content,
+                };
+                return {
+                  ...prev,
+                  [helper]: helperMessages,
+                };
+              });
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to start journey:", error);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I encountered an error starting our conversation. Please try again!",
+      };
+      
+      // Add error message to current helper's history
+      setChatHistories((prev) => ({
+        ...prev,
+        [helper]: [...prev[helper], errorMessage],
+      }));
+    } finally {
+      setIsLoading(false);
+      setIsStreaming(false);
+    }
+  };
+
+  const handleSubmitMessage = async (messageContent: string) => {
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: "user",
-      content: input.trim(),
+      content: messageContent,
     };
 
     // Add user message to current helper's history
@@ -287,13 +409,11 @@ export function ChatInterface({
       [helper]: [...prev[helper], userMessage],
     }));
     
-    const currentInput = input.trim();
-    setInput("");
     setIsLoading(true);
 
     try {
       if (onSendMessage) {
-        await onSendMessage(currentInput);
+        await onSendMessage(messageContent);
       } else {
         // Call the OpenAI API via our backend
         const assistantMessage: ChatMessage = {
@@ -317,11 +437,13 @@ export function ChatInterface({
           },
           body: JSON.stringify({
             helper,
-            message: currentInput,
+            message: messageContent,
             projectId: "demo-1",
             context: {
-              projectName: "My First Project",
-              projectDescription: "Building something amazing with Codyssey",
+              projectName: project?.name || "My First Project",
+              projectDescription: project?.description || "Building something amazing with Codyssey",
+              projectTechStack: project?.techStack,
+              projectStage: project?.stage,
               currentStep: stepContext ? {
                 levelTitle: `Level ${stepContext.levelIndex + 1}`,
                 stepTitle: stepContext.orbId,
@@ -404,6 +526,16 @@ export function ChatInterface({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const currentInput = input.trim();
+    setInput("");
+    
+    await handleSubmitMessage(currentInput);
   };
 
   return (
@@ -606,13 +738,76 @@ export function ChatInterface({
           
           {messages.length === 0 ? (
             <div className="flex h-full items-center justify-center">
-              <div className="text-center">
-                <div className="mb-2 text-3xl md:mb-4 md:text-5xl">{helperData.emoji}</div>
-                <h3 className="mb-1 text-sm font-semibold text-zinc-700 md:mb-2 md:text-lg">
-                  Start a conversation with {helperData.name}
+              <div className="max-w-2xl text-center px-4">
+                <div className="mb-3 text-5xl md:mb-6 md:text-7xl">{helperData.emoji}</div>
+                <h3 className="mb-2 text-base font-bold text-zinc-800 md:mb-3 md:text-2xl">
+                  Welcome! I'm {helperData.name}, your {helperData.title}
                 </h3>
-                <p className="text-xs text-zinc-500 md:text-sm">
-                  Ask me anything about {helperData.description.toLowerCase()}
+                <p className="mb-4 text-xs text-zinc-600 md:mb-6 md:text-base">
+                  {helperData.description}. {stepContext?.firstMessage ? "I'm here to guide you through this journey step by step." : "I'm here to help you succeed."}
+                </p>
+                
+                {/* Start Button */}
+                <button
+                  onClick={handleStartJourney}
+                  disabled={isLoading}
+                  className={`group relative inline-flex items-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full bg-gradient-to-r ${currentTheme.dark} text-white font-semibold text-sm md:text-base shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin md:h-5 md:w-5" />
+                      <span>Preparing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-2xl">🚀</span>
+                      <span>Start Your Journey with {helperData.name}</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Task Overview */}
+                {tasks && tasks.length > 0 && (
+                  <div className="mt-6 md:mt-8 text-left">
+                    <p className="text-xs md:text-sm text-zinc-500 mb-3 text-center font-medium">
+                      What we'll accomplish together:
+                    </p>
+                    <div className="grid gap-2 md:gap-3 max-w-lg mx-auto">
+                      {tasks.slice(0, 3).map((task) => (
+                        <div 
+                          key={task.id} 
+                          className="flex items-start gap-2 md:gap-3 p-2.5 md:p-3 bg-white/60 backdrop-blur-sm rounded-lg border border-white/40"
+                        >
+                          <div className={`flex h-5 w-5 md:h-6 md:w-6 items-center justify-center rounded-full flex-shrink-0 ${
+                            task.required 
+                              ? 'bg-gradient-to-br from-blue-400 to-indigo-500' 
+                              : 'bg-gradient-to-br from-zinc-300 to-zinc-400'
+                          }`}>
+                            <span className="text-white text-xs md:text-sm font-bold">
+                              {task.required ? '★' : '○'}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs md:text-sm font-semibold text-zinc-800 mb-0.5">
+                              {task.title}
+                            </p>
+                            <p className="text-xs text-zinc-600 line-clamp-2">
+                              {task.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                      {tasks.length > 3 && (
+                        <p className="text-xs text-zinc-500 text-center mt-1">
+                          + {tasks.length - 3} more tasks to explore
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <p className="mt-6 text-xs text-zinc-400 md:text-sm">
+                  Or type your own question below to get started
                 </p>
               </div>
             </div>

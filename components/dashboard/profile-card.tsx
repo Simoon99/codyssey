@@ -154,7 +154,7 @@ export function ProfileCard({ user, project }: ProfileCardProps) {
             Join our discord to get help from our community
           </p>
           <div className="flex gap-2">
-            <Button variant="primary" className="flex-1" size="sm">
+            <Button variant="default" className="flex-1" size="sm">
               Get Help
             </Button>
             <Button variant="outline" className="flex-1" size="sm">

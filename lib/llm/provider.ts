@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { type HelperType, getHelperById } from "@/lib/types/helpers";
+import { buildTaskAwarePrompt } from "./task-prompts";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -11,6 +12,8 @@ const openai = new OpenAI({
 export interface HelperContext {
   projectName?: string;
   projectDescription?: string;
+  projectTechStack?: string;
+  projectStage?: string;
   currentStep?: {
     levelTitle: string;
     stepTitle: string;
@@ -145,6 +148,12 @@ function buildContextualSystemPrompt(
       if (context.projectDescription) {
         prompt += ` — ${context.projectDescription}`;
       }
+      if (context.projectTechStack) {
+        prompt += `\n**Tech Stack:** ${context.projectTechStack}`;
+      }
+      if (context.projectStage) {
+        prompt += `\n**Current Stage:** ${context.projectStage}`;
+      }
     }
 
     if (context.currentStep) {
@@ -175,6 +184,13 @@ function buildContextualSystemPrompt(
       }
 
       prompt += `\n\n**Your Role:** Help the user complete these tasks by providing guidance, examples, and actionable steps. Reference specific tasks when relevant. Celebrate completed tasks!`;
+      
+      // Add task-specific guidance if available
+      const taskIds = context.tasks.map(t => t.id);
+      const taskGuidance = buildTaskAwarePrompt(taskIds);
+      if (taskGuidance) {
+        prompt += taskGuidance;
+      }
     }
   }
 
