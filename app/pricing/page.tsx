@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { 
     Brain, Zap, Globe, Shield, Check, Clock, X, Star, Users, Lightbulb, Rocket, ChevronLeft, ChevronRight, ChevronDown
 } from "lucide-react";
-import Container from "@/components/global/container";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
