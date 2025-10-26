@@ -544,10 +544,10 @@ export default function PricingPage() {
                 </div>
             </div>
 
-            {/* Sticky Fog Overlay at Bottom - Always visible above modal */}
+            {/* Sticky Fog Overlay at Bottom - Always visible */}
             <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-[70] bg-gradient-to-t from-background via-background/80 to-transparent"></div>
 
-            {/* Fixed Floating Button - Sticky at bottom, always visible */}
+            {/* Fixed Floating Button - Sticky at bottom, Always visible */}
             <div className="fixed bottom-0 left-0 right-0 z-[80] bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
                 <div className="flex justify-center px-4">
                     <Button
@@ -570,7 +570,7 @@ export default function PricingPage() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2, ease: "easeInOut" }}
                             onClick={closePricingModal}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55]"
                             style={{ willChange: 'opacity' }}
                         />
 
@@ -581,7 +581,7 @@ export default function PricingPage() {
                             exit={{ opacity: 0, scale: 0.8 }}
                             transition={{ duration: 0.2, ease: "easeOut" }}
                             onClick={closePricingModal}
-                            className="fixed top-4 right-4 z-[110] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
+                            className="fixed top-4 right-4 z-[65] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
                             style={{ willChange: 'transform, opacity' }}
                         >
                             <X className="w-5 h-5" />
@@ -598,7 +598,7 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-x-0 bottom-0 z-[105] max-h-[90vh] overflow-hidden"
+                            className="fixed inset-x-0 bottom-0 z-[60] max-h-[90vh] overflow-hidden"
                             style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
