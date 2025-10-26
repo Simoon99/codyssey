@@ -544,20 +544,24 @@ export default function PricingPage() {
                 </div>
             </div>
 
-            {/* Sticky Fog Overlay at Bottom - Always visible */}
-            <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-[70] bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+            {/* Sticky Fog Overlay at Bottom - Visible only when modal is closed */}
+            {!showPricingModal && (
+                <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-[70] bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+            )}
 
-            {/* Fixed Floating Button - Sticky at bottom, Always visible */}
-            <div className="fixed bottom-0 left-0 right-0 z-[80] bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
-                <div className="flex justify-center px-4">
-                    <Button
-                        onClick={handleRedeemClick}
-                        className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300 pointer-events-auto"
-                    >
-                        Redeem 65% OFF
-                    </Button>
+            {/* Fixed Floating Button - Sticky at bottom, Visible only when modal is closed */}
+            {!showPricingModal && (
+                <div className="fixed bottom-0 left-0 right-0 z-[80] bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
+                    <div className="flex justify-center px-4">
+                        <Button
+                            onClick={handleRedeemClick}
+                            className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300 pointer-events-auto"
+                        >
+                            Redeem 65% OFF
+                        </Button>
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Pricing Modal - Slides up from bottom */}
             <AnimatePresence mode="wait">
