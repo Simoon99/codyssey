@@ -499,10 +499,15 @@ export default function PricingPage() {
                                             {HELPERS[helperIndex] && (
                                                 <motion.div
                                                     key={helperIndex}
-                                                    initial={{ x: direction > 0 ? 100 : -100 }}
-                                                    animate={{ x: 0 }}
-                                                    exit={{ x: direction > 0 ? -100 : 100 }}
-                                                    transition={{ type: "tween", duration: 0.25, ease: "easeOut" }}
+                                                    initial={{ x: direction > 0 ? 50 : -50, opacity: 0.5 }}
+                                                    animate={{ x: 0, opacity: 1 }}
+                                                    exit={{ x: direction > 0 ? -50 : 50, opacity: 0.5 }}
+                                                    transition={{ 
+                                                        type: "spring", 
+                                                        stiffness: 300, 
+                                                        damping: 30,
+                                                        mass: 0.8
+                                                    }}
                                                     className={cn(
                                                         "relative overflow-hidden rounded-3xl aspect-square",
                                                         "bg-gradient-to-br",
