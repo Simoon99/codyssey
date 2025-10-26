@@ -192,9 +192,10 @@ export default function PricingPage() {
     const [selectedPricingTier, setSelectedPricingTier] = useState<string>('monthly');
     const [openFAQ, setOpenFAQ] = useState<number | null>(null);
     const [helperIndex, setHelperIndex] = useState(0);
-    const [touchStart, setTouchStart] = useState(0);
-    const [touchEnd, setTouchEnd] = useState(0);
-    const [isInteracting, setIsInteracting] = useState(false);
+    const [touchStart, setTouchStart] = useState<number | null>(null);
+    const [touchEnd, setTouchEnd] = useState<number | null>(null);
+    const [isPaused, setIsPaused] = useState(false);
+    const [direction, setDirection] = useState(1);
 
     // Remove body padding for full-width banner
     useEffect(() => {
@@ -206,15 +207,16 @@ export default function PricingPage() {
         };
     }, []);
 
-    // Auto-rotate helpers on mobile
+    // Auto-rotate helpers on mobile - pause when user interacts
     useEffect(() => {
-        if (isInteracting) return;
+        if (isPaused) return;
         
         const interval = setInterval(() => {
+            setDirection(1);
             setHelperIndex((prev) => (prev + 1) % HELPERS.length);
         }, 4000);
         return () => clearInterval(interval);
-    }, [isInteracting]);
+    }, [isPaused]);
 
     const handleRedeemClick = () => {
         setShowPricingModal(true);
@@ -229,36 +231,52 @@ export default function PricingPage() {
     };
 
     const nextHelper = () => {
+        setDirection(1);
         setHelperIndex((prev) => (prev + 1) % HELPERS.length);
+        setIsPaused(true);
+        setTimeout(() => setIsPaused(false), 8000);
     };
 
     const prevHelper = () => {
+        setDirection(-1);
         setHelperIndex((prev) => (prev - 1 + HELPERS.length) % HELPERS.length);
+        setIsPaused(true);
+        setTimeout(() => setIsPaused(false), 8000);
     };
 
     const handleTouchStart = (e: React.TouchEvent) => {
         setTouchStart(e.targetTouches[0].clientX);
-        setIsInteracting(true);
+        setIsPaused(true);
     };
 
-    const handleTouchEnd = (e: React.TouchEvent) => {
-        setTouchEnd(e.changedTouches[0].clientX);
-        handleSwipe();
-        setTimeout(() => setIsInteracting(false), 1000);
+    const handleTouchMove = (e: React.TouchEvent) => {
+        setTouchEnd(e.targetTouches[0].clientX);
     };
 
-    const handleSwipe = () => {
-        if (!touchStart || !touchEnd) return;
+    const handleTouchEnd = () => {
+        if (!touchStart || !touchEnd) {
+            setIsPaused(false);
+            return;
+        }
+        
         const distance = touchStart - touchEnd;
-        const minSwipeDistance = 30;
+        const minSwipeDistance = 50;
 
         if (Math.abs(distance) > minSwipeDistance) {
             if (distance > 0) {
-                nextHelper();
+                setDirection(1);
+                setHelperIndex((prev) => (prev + 1) % HELPERS.length);
             } else {
-                prevHelper();
+                setDirection(-1);
+                setHelperIndex((prev) => (prev - 1 + HELPERS.length) % HELPERS.length);
             }
+            setTimeout(() => setIsPaused(false), 8000);
+        } else {
+            setIsPaused(false);
         }
+        
+        setTouchStart(null);
+        setTouchEnd(null);
     };
 
     const faqs = [
@@ -321,49 +339,49 @@ export default function PricingPage() {
 
                         {/* Hero Card - Bundle */}
                         <div className="max-w-4xl mx-auto mb-12">
-                            <div className="relative overflow-hidden rounded-3xl p-4 md:p-10 shadow-xl border border-border bg-card">
-                                <div className="flex flex-col md:flex-row items-start justify-between gap-6 md:gap-8">
+                            <div className="relative overflow-hidden rounded-3xl p-10 shadow-xl border border-border bg-card">
+                                <div className="flex items-start justify-between gap-8">
                                     {/* Left Side - Content */}
-                                    <div className="flex-1 w-full">
-                                        <p className="text-xs md:text-sm text-muted-foreground mb-2">Pricing</p>
-                                        <h2 className="text-3xl md:text-5xl font-bold mb-6 md:mb-8 bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
+                                    <div className="flex-1">
+                                        <p className="text-sm text-muted-foreground mb-2">Pricing</p>
+                                        <h2 className="text-5xl font-bold mb-8 bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
                                             Codyssey Pro
                                         </h2>
                                         
                                         {/* Benefits List */}
-                                        <div className="space-y-2 md:space-y-3">
-                                            <div className="flex items-start gap-2 md:gap-3">
-                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                                <span className="text-sm md:text-base text-foreground">All 6 AI Helpers for your journey</span>
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-3">
+                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                                                <span className="text-base text-foreground">All 6 AI Helpers for your journey</span>
                                             </div>
-                                            <div className="flex items-start gap-2 md:gap-3">
-                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                                <span className="text-sm md:text-base text-foreground">Gamified progress tracking</span>
+                                            <div className="flex items-center gap-3">
+                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                                                <span className="text-base text-foreground">Gamified progress tracking</span>
                                             </div>
-                                            <div className="flex items-start gap-2 md:gap-3">
-                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                                <span className="text-sm md:text-base text-foreground">From idea to launched product</span>
+                                            <div className="flex items-center gap-3">
+                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                                                <span className="text-base text-foreground">From idea to launched product</span>
                                             </div>
-                                            <div className="flex items-start gap-2 md:gap-3">
-                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                                <span className="text-sm md:text-base text-foreground">Built for Cursor, Lovable & Bolt</span>
+                                            <div className="flex items-center gap-3">
+                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                                                <span className="text-base text-foreground">Built for Cursor, Lovable & Bolt</span>
                                             </div>
-                                            <div className="flex items-start gap-2 md:gap-3">
-                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
-                                                <span className="text-sm md:text-base text-foreground">30-day money back guarantee</span>
+                                            <div className="flex items-center gap-3">
+                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                                                <span className="text-base text-foreground">30-day money back guarantee</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Right Side - Pricing & Avatars */}
-                                    <div className="flex flex-col items-center md:items-end gap-4 w-full md:w-auto">
+                                    <div className="flex flex-col items-end gap-6">
                                         {/* Pricing */}
-                                        <div className="text-center md:text-right">
-                                            <p className="text-lg md:text-xl text-red-500 line-through mb-1">€52</p>
+                                        <div className="text-right">
+                                            <p className="text-xl text-red-500 line-through mb-1">€52</p>
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-3xl md:text-5xl font-bold text-foreground">€18</span>
+                                                <span className="text-5xl font-bold text-foreground">€18</span>
                                             </div>
-                                            <p className="text-xs md:text-sm text-muted-foreground mt-1">per month</p>
+                                            <p className="text-sm text-muted-foreground mt-1">per month</p>
                                         </div>
 
                                         {/* Helper Avatars */}
@@ -372,7 +390,7 @@ export default function PricingPage() {
                                                 <div
                                                     key={helper.id}
                                                     className={cn(
-                                                        "w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center text-lg md:text-lg",
+                                                        "w-12 h-12 rounded-full flex items-center justify-center text-lg",
                                                         "bg-gradient-to-br shadow-lg transition-all hover:scale-110",
                                                         helper.color
                                                     )}
@@ -467,29 +485,48 @@ export default function PricingPage() {
                             </div>
 
                             {/* Mobile Carousel */}
-                            <div className="md:hidden">
+                            <div className="md:hidden relative">
+                                {/* Arrow Navigation - Top Right */}
+                                <div className="absolute top-0 right-4 flex gap-1 z-10">
+                                    <button
+                                        onClick={prevHelper}
+                                        className="p-1.5 rounded-full bg-white/90 shadow-sm hover:bg-white transition-colors"
+                                        aria-label="Previous helper"
+                                    >
+                                        <ChevronLeft className="w-3.5 h-3.5 text-gray-700" />
+                                    </button>
+                                    <button
+                                        onClick={nextHelper}
+                                        className="p-1.5 rounded-full bg-white/90 shadow-sm hover:bg-white transition-colors"
+                                        aria-label="Next helper"
+                                    >
+                                        <ChevronRight className="w-3.5 h-3.5 text-gray-700" />
+                                    </button>
+                                </div>
+
                                 <div className="flex justify-center mb-2">
                                     <div 
-                                        className="w-full max-w-xs"
+                                        className="w-full max-w-xs overflow-hidden"
                                         onTouchStart={handleTouchStart}
+                                        onTouchMove={handleTouchMove}
                                         onTouchEnd={handleTouchEnd}
+                                        onMouseDown={() => setIsPaused(true)}
+                                        onMouseUp={() => setTimeout(() => setIsPaused(false), 8000)}
                                     >
-                                        <AnimatePresence>
+                                        <AnimatePresence mode="wait" initial={false}>
                                             {HELPERS[helperIndex] && (
                                                 <motion.div
                                                     key={helperIndex}
-                                                    initial={{ opacity: 0, scale: 0.9, rotateZ: -5 }}
-                                                    animate={{ opacity: 1, scale: 1, rotateZ: 0 }}
-                                                    exit={{ opacity: 0, scale: 0.8, rotateZ: 5 }}
-                                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                                    initial={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
+                                                    animate={{ x: 0, opacity: 1 }}
+                                                    exit={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
+                                                    transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
                                                     className={cn(
                                                         "relative overflow-hidden rounded-3xl aspect-square",
                                                         "bg-gradient-to-br",
                                                         HELPERS[helperIndex].color,
-                                                        "cursor-grab active:cursor-grabbing transition-all hover:shadow-lg"
+                                                        "cursor-pointer transition-all hover:shadow-lg"
                                                     )}
-                                                    onMouseDown={() => setIsInteracting(true)}
-                                                    onMouseUp={() => setTimeout(() => setIsInteracting(false), 1000)}
                                                 >
                                                     {/* Background placeholder - simulates character image */}
                                                     <div className="absolute inset-0 flex items-center justify-center">
@@ -523,52 +560,17 @@ export default function PricingPage() {
                                     </div>
                                 </div>
 
-                                {/* Navigation: Arrows + Tiny Indicators */}
-                                <div className="flex items-center justify-center gap-3">
-                                    {/* Left Arrow */}
-                                    <button
-                                        onClick={() => {
-                                            setIsInteracting(true);
-                                            prevHelper();
-                                            setTimeout(() => setIsInteracting(false), 1000);
-                                        }}
-                                        className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                                        aria-label="Previous helper"
-                                    >
-                                        <ChevronLeft className="w-4 h-4 text-muted-foreground hover:text-foreground" />
-                                    </button>
-
-                                    {/* Tiny Indicators */}
-                                    <div className="flex gap-0.5">
-                                        {HELPERS.map((_, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() => {
-                                                    setIsInteracting(true);
-                                                    setHelperIndex(index);
-                                                    setTimeout(() => setIsInteracting(false), 1000);
-                                                }}
-                                                className={cn(
-                                                    "rounded-full transition-all duration-300",
-                                                    index === helperIndex ? "bg-foreground w-1 h-1" : "bg-gray-400/30 w-0.5 h-0.5"
-                                                )}
-                                                aria-label={`Show helper ${index + 1}`}
-                                            />
-                                        ))}
-                                    </div>
-
-                                    {/* Right Arrow */}
-                                    <button
-                                        onClick={() => {
-                                            setIsInteracting(true);
-                                            nextHelper();
-                                            setTimeout(() => setIsInteracting(false), 1000);
-                                        }}
-                                        className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                                        aria-label="Next helper"
-                                    >
-                                        <ChevronRight className="w-4 h-4 text-muted-foreground hover:text-foreground" />
-                                    </button>
+                                {/* Tiny Dot Indicators */}
+                                <div className="flex justify-center gap-0.5 py-1">
+                                    {HELPERS.map((_, index) => (
+                                        <div
+                                            key={index}
+                                            className={cn(
+                                                "rounded-full transition-all duration-300",
+                                                index === helperIndex ? "bg-gray-600 w-1 h-1" : "bg-gray-400/30 w-0.5 h-0.5"
+                                            )}
+                                        />
+                                    ))}
                                 </div>
                             </div>
                         </div>
