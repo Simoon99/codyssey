@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib";
 import { Button } from "@/components/ui/button";
 import { 
@@ -191,6 +192,11 @@ export default function PricingPage() {
     const [showPricingModal, setShowPricingModal] = useState(false);
     const [selectedPricingTier, setSelectedPricingTier] = useState<string>('monthly');
     const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+    const [portalRoot, setPortalRoot] = useState<Element | null>(null);
+
+    useEffect(() => {
+        setPortalRoot(document.body);
+    }, []);
 
     // Remove body padding for full-width banner and optimize scrolling
     useEffect(() => {
@@ -544,25 +550,6 @@ export default function PricingPage() {
                 </div>
             </div>
 
-            {/* Sticky Fog Overlay at Bottom - Visible only when modal is closed */}
-            {!showPricingModal && (
-                <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-[70] bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-            )}
-
-            {/* Fixed Floating Button - Sticky at bottom, Visible only when modal is closed */}
-            {!showPricingModal && (
-                <div className="fixed bottom-0 left-0 right-0 z-[80] bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
-                    <div className="flex justify-center px-4">
-                        <Button
-                            onClick={handleRedeemClick}
-                            className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300 pointer-events-auto"
-                        >
-                            Redeem 65% OFF
-                        </Button>
-                    </div>
-                </div>
-            )}
-
             {/* Pricing Modal - Slides up from bottom */}
             <AnimatePresence mode="wait">
                 {showPricingModal && (
@@ -722,6 +709,24 @@ export default function PricingPage() {
                     </>
                 )}
             </AnimatePresence>
+
+            {/* Fog & CTA Button rendered via portal when modal is closed */}
+            {portalRoot && !showPricingModal && createPortal(
+                <>
+                    <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-[70] bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+                    <div className="fixed bottom-0 left-0 right-0 z-[80] bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
+                        <div className="flex justify-center px-4">
+                            <Button
+                                onClick={handleRedeemClick}
+                                className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300 pointer-events-auto"
+                            >
+                                Redeem 65% OFF
+                            </Button>
+                        </div>
+                    </div>
+                </>,
+                portalRoot
+            )}
         </div>
     );
 }
