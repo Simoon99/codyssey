@@ -59,21 +59,32 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
     return (
         <AnimatePresence mode="wait">
             {isOpen && (
-                <motion.div
-                    initial={{ y: "100vh" }}
-                    animate={{ y: 0 }}
-                    exit={{ y: "100vh" }}
-                    transition={{ 
-                        type: "spring", 
-                        damping: 35, 
-                        stiffness: 400,
-                        mass: 0.8
-                    }}
-                    className="fixed inset-x-0 bottom-0 z-[110] bg-background max-h-screen overflow-y-auto"
-                    style={{ 
-                        willChange: 'transform'
-                    }}
-                >
+                <>
+                    {/* Backdrop */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
+                    />
+
+                    {/* Modal */}
+                    <motion.div
+                        initial={{ y: "100vh" }}
+                        animate={{ y: 0 }}
+                        exit={{ y: "100vh" }}
+                        transition={{ 
+                            type: "spring", 
+                            damping: 35, 
+                            stiffness: 400,
+                            mass: 0.8
+                        }}
+                        className="fixed inset-x-0 bottom-0 z-[110] bg-background max-h-[90vh] overflow-y-auto rounded-t-3xl shadow-2xl"
+                        style={{ 
+                            willChange: 'transform'
+                        }}
+                    >
                     {/* Floating Close Button */}
                     <motion.button
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -200,7 +211,8 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                             </div>
                         </div>
                     </div>
-                </motion.div>
+                    </motion.div>
+                </>
             )}
         </AnimatePresence>
     );
