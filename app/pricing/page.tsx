@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib";
 import { Button } from "@/components/ui/button";
 import { 
@@ -191,7 +191,6 @@ export default function PricingPage() {
     const [showPricingModal, setShowPricingModal] = useState(false);
     const [selectedPricingTier, setSelectedPricingTier] = useState<string>('monthly');
     const [openFAQ, setOpenFAQ] = useState<number | null>(null);
-    const modalRef = React.useRef<HTMLDivElement>(null);
 
     // Remove body padding for full-width banner and optimize scrolling
     useEffect(() => {
@@ -214,14 +213,12 @@ export default function PricingPage() {
         };
     }, []);
 
-    // Prevent body scroll when modal is open and scroll modal to top
+    // Prevent body scroll when modal is open and reset scroll position
     useEffect(() => {
         if (showPricingModal) {
             document.body.style.overflow = 'hidden';
-            // Scroll modal to top when it opens
-            if (modalRef.current) {
-                modalRef.current.scrollTop = 0;
-            }
+            // Reset scroll to top
+            window.scrollTo({ top: 0, behavior: 'instant' });
         } else {
             document.body.style.overflow = '';
         }
@@ -579,7 +576,6 @@ export default function PricingPage() {
             <AnimatePresence mode="wait">
                 {showPricingModal && (
                     <motion.div
-                        ref={modalRef}
                         initial={{ y: "100%", opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: "100%", opacity: 0 }}
@@ -589,7 +585,7 @@ export default function PricingPage() {
                             stiffness: 400,
                             mass: 0.8
                         }}
-                        className="pricing-modal-content fixed inset-0 z-[110] overflow-y-auto"
+                        className="fixed inset-0 z-[110] overflow-y-auto"
                         style={{ willChange: 'transform, opacity' }}
                     >
                         {/* Floating Close Button */}
