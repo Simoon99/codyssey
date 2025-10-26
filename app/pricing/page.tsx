@@ -276,7 +276,7 @@ export default function PricingPage() {
 
             {/* Main Content - Scrollable */}
             <div className="pb-32 w-full">
-                <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-2">
+                <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-3">
                         {/* Header */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -302,7 +302,7 @@ export default function PricingPage() {
                                     priority
                                     className="h-4 w-auto"
                                 />
-                                <span className="text-xs font-medium text-foreground">4.8/5.0</span>
+                                <span className="text-xs font-medium text-foreground">4.8/5.0 Rating</span>
                             </div>
                             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                                 From ideation to launch<br />— every step done right
@@ -544,11 +544,11 @@ export default function PricingPage() {
                 </div>
             </div>
 
-            {/* Sticky Fog Overlay at Bottom */}
-            <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-80 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+            {/* Sticky Fog Overlay at Bottom - Always visible above modal */}
+            <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-[70] bg-gradient-to-t from-background via-background/80 to-transparent"></div>
 
-            {/* Fixed Floating Button - Sticky at bottom */}
-            <div className="fixed bottom-0 left-0 right-0 z-90 bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
+            {/* Fixed Floating Button - Sticky at bottom, always visible */}
+            <div className="fixed bottom-0 left-0 right-0 z-[80] bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
                 <div className="flex justify-center px-4">
                     <Button
                         onClick={handleRedeemClick}
@@ -570,7 +570,7 @@ export default function PricingPage() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2, ease: "easeInOut" }}
                             onClick={closePricingModal}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-60"
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
                             style={{ willChange: 'opacity' }}
                         />
 
@@ -581,7 +581,7 @@ export default function PricingPage() {
                             exit={{ opacity: 0, scale: 0.8 }}
                             transition={{ duration: 0.2, ease: "easeOut" }}
                             onClick={closePricingModal}
-                            className="fixed top-4 right-4 z-[95] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
+                            className="fixed top-4 right-4 z-[110] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
                             style={{ willChange: 'transform, opacity' }}
                         >
                             <X className="w-5 h-5" />
@@ -598,7 +598,7 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-x-0 bottom-0 z-70 max-h-[90vh] overflow-hidden"
+                            className="fixed inset-x-0 bottom-0 z-[105] max-h-[90vh] overflow-hidden"
                             style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
