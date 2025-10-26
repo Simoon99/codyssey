@@ -590,14 +590,14 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-x-0 bottom-0 z-[60] max-h-[90vh] overflow-y-auto"
+                            className="fixed inset-x-0 bottom-0 z-[60] max-h-[75vh] md:max-h-[80vh] overflow-hidden"
                             style={{ willChange: 'transform, opacity' }}
                         >
-                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
+                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative h-full">
                                 {/* Content */}
-                                <div className="px-6 pt-8 pb-6 max-w-xl mx-auto">
+                                <div className="px-4 md:px-6 pt-5 pb-5 md:pt-8 md:pb-6 max-w-xl mx-auto h-full overflow-y-auto">
                                     {/* Pricing Tiers */}
-                                    <div className="space-y-3">
+                                    <div className="space-y-2 md:space-y-3">
                                         {PRICING_TIERS.map((tier, index) => (
                                             <div key={tier.id} className="relative">
                                                 {/* Most Popular Badge - Only for recommended tier */}
@@ -612,11 +612,11 @@ export default function PricingPage() {
                                                 <button
                                                     onClick={() => setSelectedPricingTier(tier.id)}
                                                     className={cn(
-                                                        "w-full p-5 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
+                                                        "w-full p-4 md:p-5 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
                                                         selectedPricingTier === tier.id
                                                             ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
-                                                            : "border-border hover:border-blue-400 hover:shadow-md hover:bg-muted/30 hover:scale-105",
-                                                        tier.isRecommended && selectedPricingTier === tier.id && "pt-8"
+                                                            : "border-border hover:border-blue-400 hover:shadow-md hover:bg-muted/30 hover:scale-[1.02]",
+                                                        tier.isRecommended && selectedPricingTier === tier.id && "pt-7"
                                                     )}
                                                     style={{
                                                         transformOrigin: 'center'
