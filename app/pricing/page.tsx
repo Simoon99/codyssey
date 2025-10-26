@@ -281,7 +281,7 @@ export default function PricingPage() {
             </div>
 
             {/* Main Content - Scrollable */}
-            <div className="pb-32 w-full">
+            <div className="pb-8 w-full">
                 <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-3">
                         {/* Header */}
                         <motion.div
@@ -614,9 +614,12 @@ export default function PricingPage() {
                                                         "w-full p-5 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
                                                         selectedPricingTier === tier.id
                                                             ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
-                                                            : "border-border hover:border-blue-300 hover:shadow-sm",
+                                                            : "border-border hover:border-blue-400 hover:shadow-md hover:bg-muted/30 hover:scale-105",
                                                         tier.isRecommended && selectedPricingTier === tier.id && "pt-8"
                                                     )}
+                                                    style={{
+                                                        transformOrigin: 'center'
+                                                    }}
                                                 >
                                                     {/* Selection glow effect */}
                                                     {selectedPricingTier === tier.id && (
@@ -695,7 +698,7 @@ export default function PricingPage() {
                                     {/* CTA Button */}
                                     <Button
                                         size="lg"
-                                        className="w-full mt-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-base py-5 rounded-full font-bold shadow-lg transition-all"
+                                        className="w-full mt-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-base py-5 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all active:scale-95"
                                     >
                                         Buy now for €{Math.round(PRICING_TIERS.find(t => t.id === selectedPricingTier)?.discountedPrice || 0)}/month
                                     </Button>
@@ -710,22 +713,21 @@ export default function PricingPage() {
                 )}
             </AnimatePresence>
 
-            {/* Fog & CTA Button rendered via portal when modal is closed */}
-            {portalRoot && !showPricingModal && createPortal(
-                <>
-                    <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-[70] bg-gradient-to-t from-background via-background/80 to-transparent"></div>
-                    <div className="fixed bottom-0 left-0 right-0 z-[80] bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
-                        <div className="flex justify-center px-4">
-                            <Button
-                                onClick={handleRedeemClick}
-                                className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300 pointer-events-auto"
-                            >
-                                Redeem 65% OFF
-                            </Button>
-                        </div>
-                    </div>
-                </>,
-                portalRoot
+            {/* Fog & CTA Button - Sticky at bottom of viewport */}
+            {!showPricingModal && (
+                <div 
+                    className="sticky bottom-0 left-0 right-0 z-[40] w-full h-32 flex items-center justify-center"
+                    style={{
+                        background: 'linear-gradient(to top, rgba(245, 245, 245, 1) 0%, rgba(245, 245, 245, 0.95) 25%, rgba(245, 245, 245, 0.7) 50%, rgba(245, 245, 245, 0) 100%)'
+                    }}
+                >
+                    <Button
+                        onClick={handleRedeemClick}
+                        className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_20px_50px_rgba(71,99,255,0.6)] transition-all duration-300 hover:scale-110 active:scale-95"
+                    >
+                        Redeem 65% OFF
+                    </Button>
+                </div>
             )}
         </div>
     );
