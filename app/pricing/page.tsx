@@ -244,9 +244,9 @@ export default function PricingPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
             {/* Countdown Timer Banner - Always visible at top */}
-            <div className="sticky top-0 z-40 bg-gradient-to-r from-blue-600 to-blue-500 text-white py-2.5 w-full">
+            <div className="sticky top-0 z-40 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white py-2.5 w-full">
                 <div className="flex items-center justify-center gap-3">
-                    <span className="font-semibold text-base">Limited Time: Up to 65% OFF</span>
+                    <span className="font-semibold text-base">Autumn Sale! Up to 65% OFF</span>
                     <CountdownTimer />
                 </div>
             </div>
@@ -265,7 +265,7 @@ export default function PricingPage() {
                                     priority
                                     className="h-4 w-auto"
                                 />
-                                <span className="text-xs font-medium text-foreground">4.8/5.0</span>
+                                <span className="text-xs font-medium text-foreground">4.8/5.0 Rating</span>
                             </div>
                             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                                 From ideation to launch<br />— every step done right
@@ -499,7 +499,7 @@ export default function PricingPage() {
             <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
                 <Button
                     onClick={handleRedeemClick}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-lg px-12 py-6 rounded-full shadow-2xl"
+                    className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white font-bold text-lg px-12 py-6 rounded-full shadow-2xl"
                 >
                     Redeem 65% OFF
                 </Button>
@@ -527,7 +527,7 @@ export default function PricingPage() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                             onClick={closePricingModal}
-                            className="fixed top-4 right-4 z-[60] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
+                            className="fixed top-4 right-4 z-[60] p-3 rounded-full bg-background border border-border shadow-xl"
                         >
                             <X className="w-5 h-5" />
                         </motion.button>
@@ -550,7 +550,7 @@ export default function PricingPage() {
                                                 {/* Most Popular Badge - Only for recommended tier */}
                                                 {tier.isRecommended && (
                                                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                                                        <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg">
+                                                        <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg">
                                                             Most Popular - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
                                                         </div>
                                                     </div>
@@ -559,10 +559,10 @@ export default function PricingPage() {
                                                 <button
                                                     onClick={() => setSelectedPricingTier(tier.id)}
                                                     className={cn(
-                                                        "w-full p-5 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
+                                                        "w-full p-5 rounded-xl border-2 text-left relative overflow-hidden",
                                                         selectedPricingTier === tier.id
                                                             ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
-                                                            : "border-border hover:border-blue-300 hover:shadow-sm",
+                                                            : "border-border",
                                                         tier.isRecommended && selectedPricingTier === tier.id && "pt-8"
                                                     )}
                                                 >
@@ -570,7 +570,7 @@ export default function PricingPage() {
                                                     {selectedPricingTier === tier.id && (
                                                         <motion.div
                                                             layoutId="selectedPricing"
-                                                            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10"
+                                                            className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-blue-600/15"
                                                             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                                         />
                                                     )}
@@ -623,7 +623,7 @@ export default function PricingPage() {
                                     {/* CTA Button */}
                                     <Button
                                         size="lg"
-                                        className="w-full mt-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-base py-5 rounded-full font-bold shadow-lg transition-all"
+                                        className="w-full mt-6 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white text-base py-5 rounded-full font-bold shadow-lg"
                                     >
                                         Buy now for €{Math.round(PRICING_TIERS.find(t => t.id === selectedPricingTier)?.discountedPrice || 0)}/month
                                     </Button>
