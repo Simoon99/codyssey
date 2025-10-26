@@ -78,16 +78,6 @@ body {
 /* Smooth scrolling for better mobile experience */
 html {
   scroll-behavior: smooth;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Hardware acceleration for smooth animations */
-* {
-  -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden;
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
 }
 
 /* Improve form inputs on mobile */
@@ -125,6 +115,31 @@ input, textarea, select {
 * {
   scrollbar-width: thin;
   scrollbar-color: #4b5563 #1f2937;
+}
+
+/* Prevent flickering and improve performance */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize animations and transitions */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    will-change: auto;
+  }
+}
+
+/* Prevent layout shifts */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Optimize rendering for fixed/sticky elements */
+.sticky, .fixed {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* Custom utilities for landing page */

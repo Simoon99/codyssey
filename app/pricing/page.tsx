@@ -4,11 +4,10 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib";
 import { Button } from "@/components/ui/button";
 import { 
-    Brain, Zap, Globe, Shield, Check, Clock, Star, Users, Lightbulb, Rocket, ChevronLeft, ChevronRight, ChevronDown
+    Brain, Zap, Globe, Shield, Check, Clock, X, Star, Users, Lightbulb, Rocket, ChevronLeft, ChevronRight, ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { PricingModal } from "@/components/pricing/pricing-modal";
 
 type Helper = {
     id: string;
@@ -101,6 +100,48 @@ const BUNDLE_BENEFITS = [
     'Community access with other indie makers',
 ];
 
+type PricingTier = {
+    id: string;
+    name: string;
+    originalPrice: number;
+    discountedPrice: number;
+    discountPercentage: number;
+    billingPeriod: string;
+    description: string;
+    isRecommended?: boolean;
+};
+
+const PRICING_TIERS: PricingTier[] = [
+    {
+        id: 'yearly',
+        name: 'Pay Yearly',
+        originalPrice: 52,
+        discountedPrice: 18.2,
+        discountPercentage: 65,
+        billingPeriod: '/month',
+        description: 'Pay yearly',
+        isRecommended: true,
+    },
+    {
+        id: 'quarterly',
+        name: 'Pay Every 3 Months',
+        originalPrice: 52,
+        discountedPrice: 28.6,
+        discountPercentage: 45,
+        billingPeriod: '/month',
+        description: 'Pay quarterly',
+    },
+    {
+        id: 'monthly',
+        name: 'Pay Monthly',
+        originalPrice: 52,
+        discountedPrice: 39,
+        discountPercentage: 25,
+        billingPeriod: '/month',
+        description: 'Pay monthly',
+    },
+];
+
 // Countdown Timer Component
 function CountdownTimer() {
     const [timeLeft, setTimeLeft] = useState({
@@ -148,40 +189,18 @@ function CountdownTimer() {
 
 export default function PricingPage() {
     const [showPricingModal, setShowPricingModal] = useState(false);
+    const [selectedPricingTier, setSelectedPricingTier] = useState<string>('monthly');
     const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
-    // Remove body padding for full-width banner and optimize scrolling
+    // Remove body padding for full-width banner
     useEffect(() => {
         document.body.style.paddingLeft = '0';
         document.body.style.paddingRight = '0';
-        
-        // Enable smooth scrolling with hardware acceleration
-        document.documentElement.style.scrollBehavior = 'smooth';
-        document.body.style.scrollBehavior = 'smooth';
-        
-        // Prevent layout shifts
-        document.body.style.overflowX = 'hidden';
-        
         return () => {
             document.body.style.paddingLeft = '';
             document.body.style.paddingRight = '';
-            document.documentElement.style.scrollBehavior = '';
-            document.body.style.scrollBehavior = '';
-            document.body.style.overflowX = '';
         };
     }, []);
-
-    // Prevent body scroll when modal is open
-    useEffect(() => {
-        if (showPricingModal) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [showPricingModal]);
 
     const handleRedeemClick = () => {
         setShowPricingModal(true);
@@ -225,7 +244,7 @@ export default function PricingPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
             {/* Countdown Timer Banner - Always visible at top */}
-            <div className="sticky top-0 z-40 bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white py-2.5 w-full shadow-lg">
+            <div className="sticky top-0 z-40 bg-gradient-to-r from-blue-600 to-blue-500 text-white py-2.5 w-full">
                 <div className="flex items-center justify-center gap-3">
                     <span className="font-semibold text-base">Limited Time: Up to 65% OFF</span>
                     <CountdownTimer />
@@ -235,22 +254,8 @@ export default function PricingPage() {
             {/* Main Content - Scrollable */}
             <div className="pb-32 w-full">
                 <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-6">
-                        {/* Header */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="text-center mb-12"
-                        >
-                        </motion.div>
-
                         {/* TrustPilot-style Rating Section */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="text-center mb-12"
-                            style={{ willChange: 'transform, opacity' }}
-                        >
+                        <div className="text-center mb-12">
                             <div className="inline-flex items-center gap-2 bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 mb-6 border border-border/40">
                                 <Image
                                     src="/assets/trustpilot-rating.avif"
@@ -260,21 +265,15 @@ export default function PricingPage() {
                                     priority
                                     className="h-4 w-auto"
                                 />
-                                <span className="text-xs font-medium text-foreground">4.8/5.0 Rating</span>
+                                <span className="text-xs font-medium text-foreground">4.8/5.0</span>
                             </div>
                             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                                 From ideation to launch<br />— every step done right
                             </h2>
-                        </motion.div>
+                        </div>
 
                         {/* Hero Card - Bundle */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-                            className="max-w-4xl mx-auto mb-12"
-                            style={{ willChange: 'transform, opacity' }}
-                        >
+                        <div className="max-w-4xl mx-auto mb-12">
                             <div className="relative overflow-hidden rounded-3xl p-10 shadow-xl border border-border bg-card">
                                 <div className="flex items-start justify-between gap-8">
                                     {/* Left Side - Content */}
@@ -338,16 +337,10 @@ export default function PricingPage() {
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
 
                         {/* Everything Section */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
-                            className="mb-12"
-                            style={{ willChange: 'transform, opacity' }}
-                        >
+                        <div className="mb-12">
                             <h2 className="text-2xl font-bold mb-8">Everything You're Getting</h2>
                             <div className="max-w-4xl mx-auto bg-card rounded-2xl border border-border p-6">
                                 <div className="space-y-6">
@@ -365,7 +358,7 @@ export default function PricingPage() {
                                     })}
                                 </div>
                             </div>
-                        </motion.div>
+                        </div>
 
                         {/* Included Helpers */}
                         <div className="mb-12">
@@ -386,23 +379,14 @@ export default function PricingPage() {
 
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                                 {HELPERS.map((helper) => (
-                                    <motion.div
+                                    <div
                                         key={helper.id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true, margin: "-50px" }}
-                                        transition={{ 
-                                            duration: 0.4, 
-                                            ease: "easeOut",
-                                            delay: 0.05 * HELPERS.indexOf(helper)
-                                        }}
                                         className={cn(
                                             "relative overflow-hidden rounded-3xl aspect-square",
                                             "bg-gradient-to-br",
                                             helper.color,
                                             "group cursor-pointer transition-all hover:shadow-lg"
                                         )}
-                                        style={{ willChange: 'transform, opacity' }}
                                     >
                                         {/* Background placeholder - simulates character image */}
                                         <div className="absolute inset-0 flex items-center justify-center">
@@ -430,7 +414,7 @@ export default function PricingPage() {
                                                 </p>
                                             </div>
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 ))}
                             </div>
                         </div>
@@ -511,25 +495,148 @@ export default function PricingPage() {
                 </div>
             </div>
 
-            {/* Sticky CTA Button - Always at bottom */}
-            {!showPricingModal && (
-                <>
-                    <div className="sticky bottom-6 left-0 right-0 z-50 flex justify-center px-4 mt-auto">
-                        <Button
-                            onClick={handleRedeemClick}
-                            className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300"
+            {/* Fixed Floating Button - Always visible at bottom */}
+            <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
+                <Button
+                    onClick={handleRedeemClick}
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-lg px-12 py-6 rounded-full shadow-2xl"
+                >
+                    Redeem 65% OFF
+                </Button>
+            </div>
+
+            {/* Sticky Fog Overlay at Bottom */}
+            <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+
+            {/* Pricing Modal - Slides up from bottom */}
+            <AnimatePresence>
+                {showPricingModal && (
+                    <>
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={closePricingModal}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                        />
+
+                        {/* Floating Close Button */}
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            onClick={closePricingModal}
+                            className="fixed top-4 right-4 z-[60] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
                         >
-                            Redeem 65% OFF
-                        </Button>
-                    </div>
+                            <X className="w-5 h-5" />
+                        </motion.button>
 
-                    {/* Sticky Fog Overlay at Bottom */}
-                    <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
-                </>
-            )}
+                        {/* Modal */}
+                        <motion.div
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            exit={{ y: "100%" }}
+                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                            className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-hidden"
+                        >
+                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
+                                {/* Content */}
+                                <div className="px-6 pt-8 pb-6 max-w-xl mx-auto">
+                                    {/* Pricing Tiers */}
+                                    <div className="space-y-3">
+                                        {PRICING_TIERS.map((tier, index) => (
+                                            <div key={tier.id} className="relative">
+                                                {/* Most Popular Badge - Only for recommended tier */}
+                                                {tier.isRecommended && (
+                                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                                                        <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg">
+                                                            Most Popular - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                
+                                                <button
+                                                    onClick={() => setSelectedPricingTier(tier.id)}
+                                                    className={cn(
+                                                        "w-full p-5 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
+                                                        selectedPricingTier === tier.id
+                                                            ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
+                                                            : "border-border hover:border-blue-300 hover:shadow-sm",
+                                                        tier.isRecommended && selectedPricingTier === tier.id && "pt-8"
+                                                    )}
+                                                >
+                                                    {/* Selection glow effect */}
+                                                    {selectedPricingTier === tier.id && (
+                                                        <motion.div
+                                                            layoutId="selectedPricing"
+                                                            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10"
+                                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                        />
+                                                    )}
+                                                    
+                                                    <div className="flex items-center justify-between relative z-10">
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center gap-2.5 mb-1.5">
+                                                                <span className="text-sm text-pink-600 line-through">
+                                                                    €{tier.originalPrice}
+                                                                </span>
+                                                                <span className={cn(
+                                                                    "text-lg font-bold transition-colors",
+                                                                    selectedPricingTier === tier.id && "text-blue-600"
+                                                                )}>
+                                                                    €{Math.round(tier.discountedPrice)}/month
+                                                                </span>
+                                                            </div>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                {tier.description}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex items-center gap-3">
+                                                            {selectedPricingTier === tier.id && (
+                                                                <motion.span
+                                                                    initial={{ scale: 0, opacity: 0 }}
+                                                                    animate={{ scale: 1, opacity: 1 }}
+                                                                    className="px-2.5 py-0.5 bg-pink-500 text-white text-xs font-bold rounded-full"
+                                                                >
+                                                                    {tier.discountPercentage}% off
+                                                                </motion.span>
+                                                            )}
+                                                            <motion.div
+                                                                initial={false}
+                                                                animate={{
+                                                                    scale: selectedPricingTier === tier.id ? 1 : 0,
+                                                                    opacity: selectedPricingTier === tier.id ? 1 : 0
+                                                                }}
+                                                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                                                className="w-6 h-6 rounded-full border-2 border-blue-500 flex items-center justify-center flex-shrink-0"
+                                                            >
+                                                                <div className="w-3 h-3 rounded-full bg-blue-500" />
+                                                            </motion.div>
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
 
-            {/* Pricing Modal */}
-            <PricingModal isOpen={showPricingModal} onClose={closePricingModal} />
+                                    {/* CTA Button */}
+                                    <Button
+                                        size="lg"
+                                        className="w-full mt-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-base py-5 rounded-full font-bold shadow-lg transition-all"
+                                    >
+                                        Buy now for €{Math.round(PRICING_TIERS.find(t => t.id === selectedPricingTier)?.discountedPrice || 0)}/month
+                                    </Button>
+
+                                    <div className="text-center mt-4 text-xs text-muted-foreground">
+                                        <p>100% risk-free.<br />Cancel anytime within 7 days ✓</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
