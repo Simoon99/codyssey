@@ -192,6 +192,8 @@ export default function PricingPage() {
     const [selectedPricingTier, setSelectedPricingTier] = useState<string>('monthly');
     const [openFAQ, setOpenFAQ] = useState<number | null>(null);
     const [helperIndex, setHelperIndex] = useState(0);
+    const [touchStart, setTouchStart] = useState(0);
+    const [touchEnd, setTouchEnd] = useState(0);
 
     // Remove body padding for full-width banner
     useEffect(() => {
@@ -229,6 +231,29 @@ export default function PricingPage() {
 
     const prevHelper = () => {
         setHelperIndex((prev) => (prev - 1 + HELPERS.length) % HELPERS.length);
+    };
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+        setTouchEnd(e.changedTouches[0].clientX);
+        handleSwipe(e);
+    };
+
+    const handleSwipe = (e: React.TouchEvent) => {
+        if (!touchStart || !touchEnd) return;
+        const distance = touchStart - touchEnd;
+        const minSwipeDistance = 50;
+
+        if (Math.abs(distance) > minSwipeDistance) {
+            if (distance > 0) {
+                nextHelper();
+            } else {
+                prevHelper();
+            }
+        }
     };
 
     const faqs = [
@@ -438,62 +463,68 @@ export default function PricingPage() {
 
                             {/* Mobile Carousel */}
                             <div className="md:hidden">
-                                <div className="flex justify-center mb-4">
-                                    <div className="w-full max-w-xs">
-                                        {HELPERS[helperIndex] && (
-                                            <motion.div
-                                                key={helperIndex}
-                                                initial={{ opacity: 0, x: 50 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -50 }}
-                                                transition={{ duration: 0.3 }}
-                                                className={cn(
-                                                    "relative overflow-hidden rounded-3xl aspect-square",
-                                                    "bg-gradient-to-br",
-                                                    HELPERS[helperIndex].color,
-                                                    "group cursor-pointer transition-all hover:shadow-lg"
-                                                )}
-                                            >
-                                                {/* Background placeholder - simulates character image */}
-                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                    <div className="text-center">
-                                                        <div className="text-7xl mb-2 opacity-80">{HELPERS[helperIndex].emoji}</div>
-                                                    </div>
-                                                </div>
-
-                                                {/* Gradient overlay */}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-
-                                                {/* Content overlay */}
-                                                <div className="absolute inset-0 flex flex-col justify-between p-4">
-                                                    {/* Helper name at top */}
-                                                    <div>
-                                                        <h3 className="font-bold text-white text-lg drop-shadow-lg">
-                                                            {HELPERS[helperIndex].name}
-                                                        </h3>
+                                <div className="flex justify-center mb-3">
+                                    <div 
+                                        className="w-full max-w-xs cursor-grab active:cursor-grabbing"
+                                        onTouchStart={handleTouchStart}
+                                        onTouchEnd={handleTouchEnd}
+                                    >
+                                        <AnimatePresence mode="wait">
+                                            {HELPERS[helperIndex] && (
+                                                <motion.div
+                                                    key={helperIndex}
+                                                    initial={{ opacity: 1 }}
+                                                    animate={{ opacity: 1 }}
+                                                    exit={{ opacity: 0 }}
+                                                    transition={{ duration: 0.2 }}
+                                                    className={cn(
+                                                        "relative overflow-hidden rounded-3xl aspect-square",
+                                                        "bg-gradient-to-br",
+                                                        HELPERS[helperIndex].color,
+                                                        "cursor-pointer transition-all hover:shadow-lg"
+                                                    )}
+                                                >
+                                                    {/* Background placeholder - simulates character image */}
+                                                    <div className="absolute inset-0 flex items-center justify-center">
+                                                        <div className="text-center">
+                                                            <div className="text-7xl mb-2 opacity-80">{HELPERS[helperIndex].emoji}</div>
+                                                        </div>
                                                     </div>
 
-                                                    {/* Helper role at bottom */}
-                                                    <div>
-                                                        <p className="text-white/90 text-xs font-medium drop-shadow-lg">
-                                                            {HELPERS[helperIndex].role}
-                                                        </p>
+                                                    {/* Gradient overlay */}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+                                                    {/* Content overlay */}
+                                                    <div className="absolute inset-0 flex flex-col justify-between p-4">
+                                                        {/* Helper name at top */}
+                                                        <div>
+                                                            <h3 className="font-bold text-white text-lg drop-shadow-lg">
+                                                                {HELPERS[helperIndex].name}
+                                                            </h3>
+                                                        </div>
+
+                                                        {/* Helper role at bottom */}
+                                                        <div>
+                                                            <p className="text-white/90 text-xs font-medium drop-shadow-lg">
+                                                                {HELPERS[helperIndex].role}
+                                                            </p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </motion.div>
-                                        )}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
                                 </div>
 
-                                {/* Minimalistic Indicators */}
-                                <div className="flex justify-center gap-1.5">
+                                {/* Ultra-Minimalistic Indicators */}
+                                <div className="flex justify-center gap-1 py-2">
                                     {HELPERS.map((_, index) => (
                                         <button
                                             key={index}
                                             onClick={() => setHelperIndex(index)}
                                             className={cn(
-                                                "h-1 rounded-full transition-all duration-300",
-                                                index === helperIndex ? "bg-blue-500 w-6" : "bg-gray-300 w-1.5"
+                                                "rounded-full transition-all duration-300",
+                                                index === helperIndex ? "bg-foreground w-1.5 h-1.5" : "bg-gray-400/40 w-1 h-1"
                                             )}
                                             aria-label={`Show helper ${index + 1}`}
                                         />
