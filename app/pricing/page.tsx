@@ -192,15 +192,38 @@ export default function PricingPage() {
     const [selectedPricingTier, setSelectedPricingTier] = useState<string>('monthly');
     const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
-    // Remove body padding for full-width banner
+    // Remove body padding for full-width banner and optimize scrolling
     useEffect(() => {
         document.body.style.paddingLeft = '0';
         document.body.style.paddingRight = '0';
+        
+        // Enable smooth scrolling with hardware acceleration
+        document.documentElement.style.scrollBehavior = 'smooth';
+        document.body.style.scrollBehavior = 'smooth';
+        
+        // Prevent layout shifts
+        document.body.style.overflowX = 'hidden';
+        
         return () => {
             document.body.style.paddingLeft = '';
             document.body.style.paddingRight = '';
+            document.documentElement.style.scrollBehavior = '';
+            document.body.style.scrollBehavior = '';
+            document.body.style.overflowX = '';
         };
     }, []);
+
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (showPricingModal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [showPricingModal]);
 
     const handleRedeemClick = () => {
         setShowPricingModal(true);
@@ -266,7 +289,9 @@ export default function PricingPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, ease: "easeOut" }}
                             className="text-center mb-12"
+                            style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="inline-flex items-center gap-2 bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 mb-6 border border-border/40">
                                 <Image
@@ -288,7 +313,9 @@ export default function PricingPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
                             className="max-w-4xl mx-auto mb-12"
+                            style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="relative overflow-hidden rounded-3xl p-10 shadow-xl border border-border bg-card">
                                 <div className="flex items-start justify-between gap-8">
@@ -359,7 +386,9 @@ export default function PricingPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
                             className="mb-12"
+                            style={{ willChange: 'transform, opacity' }}
                         >
                             <h2 className="text-2xl font-bold mb-8">Everything You're Getting</h2>
                             <div className="max-w-4xl mx-auto bg-card rounded-2xl border border-border p-6">
@@ -403,13 +432,19 @@ export default function PricingPage() {
                                         key={helper.id}
                                         initial={{ opacity: 0, y: 10 }}
                                         whileInView={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3 }}
+                                        viewport={{ once: true, margin: "-50px" }}
+                                        transition={{ 
+                                            duration: 0.4, 
+                                            ease: "easeOut",
+                                            delay: 0.05 * HELPERS.indexOf(helper)
+                                        }}
                                         className={cn(
                                             "relative overflow-hidden rounded-3xl aspect-square",
                                             "bg-gradient-to-br",
                                             helper.color,
                                             "group cursor-pointer transition-all hover:shadow-lg"
                                         )}
+                                        style={{ willChange: 'transform, opacity' }}
                                     >
                                         {/* Background placeholder - simulates character image */}
                                         <div className="absolute inset-0 flex items-center justify-center">
@@ -532,7 +567,7 @@ export default function PricingPage() {
             <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
 
             {/* Pricing Modal - Slides up from bottom */}
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
                 {showPricingModal && (
                     <>
                         {/* Backdrop */}
@@ -540,8 +575,10 @@ export default function PricingPage() {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
                             onClick={closePricingModal}
                             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                            style={{ willChange: 'opacity' }}
                         />
 
                         {/* Floating Close Button */}
@@ -549,19 +586,27 @@ export default function PricingPage() {
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
                             onClick={closePricingModal}
                             className="fixed top-4 right-4 z-[60] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
+                            style={{ willChange: 'transform, opacity' }}
                         >
                             <X className="w-5 h-5" />
                         </motion.button>
 
                         {/* Modal */}
                         <motion.div
-                            initial={{ y: "100%" }}
-                            animate={{ y: 0 }}
-                            exit={{ y: "100%" }}
-                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                            initial={{ y: "100%", opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: "100%", opacity: 0 }}
+                            transition={{ 
+                                type: "spring", 
+                                damping: 35, 
+                                stiffness: 400,
+                                mass: 0.8
+                            }}
                             className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-hidden"
+                            style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
                                 {/* Content */}
@@ -594,7 +639,13 @@ export default function PricingPage() {
                                                         <motion.div
                                                             layoutId="selectedPricing"
                                                             className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10"
-                                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                                            transition={{ 
+                                                                type: "spring", 
+                                                                bounce: 0.15, 
+                                                                duration: 0.4,
+                                                                ease: "easeInOut"
+                                                            }}
+                                                            style={{ willChange: 'transform' }}
                                                         />
                                                     )}
                                                     
@@ -620,7 +671,15 @@ export default function PricingPage() {
                                                                 <motion.span
                                                                     initial={{ scale: 0, opacity: 0 }}
                                                                     animate={{ scale: 1, opacity: 1 }}
+                                                                    exit={{ scale: 0, opacity: 0 }}
+                                                                    transition={{ 
+                                                                        type: "spring", 
+                                                                        stiffness: 500, 
+                                                                        damping: 25,
+                                                                        duration: 0.3
+                                                                    }}
                                                                     className="px-2.5 py-0.5 bg-pink-500 text-white text-xs font-bold rounded-full"
+                                                                    style={{ willChange: 'transform, opacity' }}
                                                                 >
                                                                     {tier.discountPercentage}% off
                                                                 </motion.span>
@@ -631,8 +690,14 @@ export default function PricingPage() {
                                                                     scale: selectedPricingTier === tier.id ? 1 : 0,
                                                                     opacity: selectedPricingTier === tier.id ? 1 : 0
                                                                 }}
-                                                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                                                transition={{ 
+                                                                    type: "spring", 
+                                                                    stiffness: 500, 
+                                                                    damping: 25,
+                                                                    duration: 0.3
+                                                                }}
                                                                 className="w-6 h-6 rounded-full border-2 border-blue-500 flex items-center justify-center flex-shrink-0"
+                                                                style={{ willChange: 'transform, opacity' }}
                                                             >
                                                                 <div className="w-3 h-3 rounded-full bg-blue-500" />
                                                             </motion.div>
