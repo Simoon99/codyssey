@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import React from "react";
 
 type Helper = {
     id: string;
@@ -553,7 +554,7 @@ export default function PricingPage() {
             {/* Pricing Modal - Slides up from bottom */}
             <AnimatePresence mode="wait">
                 {showPricingModal && (
-                    <>
+                    <React.Fragment key="pricing-modal">
                         {/* Backdrop */}
                         <motion.div
                             initial={{ opacity: 0 }}
@@ -709,14 +710,14 @@ export default function PricingPage() {
                                 </div>
                             </div>
                         </motion.div>
-                    </>
+                    </React.Fragment>
                 )}
             </AnimatePresence>
 
             {/* Fog & CTA Button - Sticky at bottom of viewport */}
             {!showPricingModal && (
                 <div 
-                    className="sticky bottom-0 left-0 right-0 z-[40] w-full h-32 flex items-center justify-center"
+                    className="sticky bottom-0 left-0 right-0 z-[40] w-full h-24 flex items-center justify-center"
                     style={{
                         background: 'linear-gradient(to top, rgba(245, 245, 245, 1) 0%, rgba(245, 245, 245, 0.95) 25%, rgba(245, 245, 245, 0.7) 50%, rgba(245, 245, 245, 0) 100%)'
                     }}
