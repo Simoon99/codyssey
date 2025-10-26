@@ -1,175 +1,205 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 import { cn } from "@/lib";
-import {
-  Sheet,
-  SheetContent,
-  SheetOverlay,
-  SheetPortal,
-} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
 
-type PricingOption = {
-  id: string;
-  originalPrice: number;
-  price: number;
-  billingPeriod: string;
-  badge?: string;
-  discount?: string;
-  totalSaved?: string;
+type PricingTier = {
+    id: string;
+    name: string;
+    originalPrice: number;
+    discountedPrice: number;
+    discountPercentage: number;
+    billingPeriod: string;
+    description: string;
+    isRecommended?: boolean;
 };
 
-const PRICING_OPTIONS: PricingOption[] = [
-  {
-    id: "yearly",
-    originalPrice: 52,
-    price: 18,
-    billingPeriod: "Pay yearly",
-    badge: "Most Popular - Save €406",
-    totalSaved: "€406",
-  },
-  {
-    id: "quarterly",
-    originalPrice: 52,
-    price: 29,
-    billingPeriod: "Pay quarterly",
-  },
-  {
-    id: "monthly",
-    originalPrice: 52,
-    price: 39,
-    billingPeriod: "Pay monthly",
-    discount: "25% off",
-  },
+const PRICING_TIERS: PricingTier[] = [
+    {
+        id: 'yearly',
+        name: 'Pay Yearly',
+        originalPrice: 52,
+        discountedPrice: 18.2,
+        discountPercentage: 65,
+        billingPeriod: '/month',
+        description: 'Pay yearly',
+        isRecommended: true,
+    },
+    {
+        id: 'quarterly',
+        name: 'Pay Every 3 Months',
+        originalPrice: 52,
+        discountedPrice: 28.6,
+        discountPercentage: 45,
+        billingPeriod: '/month',
+        description: 'Pay quarterly',
+    },
+    {
+        id: 'monthly',
+        name: 'Pay Monthly',
+        originalPrice: 52,
+        discountedPrice: 39,
+        discountPercentage: 25,
+        billingPeriod: '/month',
+        description: 'Pay monthly',
+    },
 ];
 
 interface PricingModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+    isOpen: boolean;
+    onClose: () => void;
 }
 
-export function PricingModal({ open, onOpenChange }: PricingModalProps) {
-  const [selectedOption, setSelectedOption] = useState("monthly");
+export function PricingModal({ isOpen, onClose }: PricingModalProps) {
+    const [selectedPricingTier, setSelectedPricingTier] = useState<string>('yearly');
 
-  const selectedPricing = PRICING_OPTIONS.find((opt) => opt.id === selectedOption);
-
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetPortal>
-        <SheetOverlay className="bg-black/60 backdrop-blur-sm !z-[100]" />
-        <SheetContent
-          side="bottom"
-          className="h-auto max-h-[90vh] rounded-t-3xl border-0 p-0 overflow-hidden !z-[101]"
-        >
-          {/* Gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-b from-blue-50 via-indigo-50 to-white" />
-          
-          {/* Content */}
-          <div className="relative z-10 p-6 pb-8 max-w-2xl mx-auto">
-            {/* Close indicator */}
-            <div className="flex justify-center mb-6">
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
-            </div>
-
-            {/* Pricing cards */}
-            <div className="space-y-4 mb-6">
-              {PRICING_OPTIONS.map((option, index) => (
+    return (
+        <AnimatePresence mode="wait">
+            {isOpen && (
                 <motion.div
-                  key={option.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="relative"
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "100%" }}
+                    transition={{ 
+                        type: "spring", 
+                        damping: 35, 
+                        stiffness: 400,
+                        mass: 0.8
+                    }}
+                    className="fixed inset-0 z-[110] overflow-y-auto bg-background"
+                    style={{ willChange: 'transform' }}
                 >
-                  {/* Badge for yearly */}
-                  {option.badge && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-semibold px-4 py-1.5 rounded-full shadow-lg">
-                        {option.badge}
-                      </div>
-                    </div>
-                  )}
+                    {/* Floating Close Button */}
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.2, ease: "easeOut", delay: 0.1 }}
+                        onClick={onClose}
+                        className="fixed top-4 right-4 z-[120] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
+                        style={{ willChange: 'transform, opacity' }}
+                    >
+                        <X className="w-5 h-5" />
+                    </motion.button>
 
-                  <button
-                    onClick={() => setSelectedOption(option.id)}
-                    className={cn(
-                      "w-full text-left rounded-2xl border-2 transition-all duration-200",
-                      "bg-white/80 backdrop-blur-sm",
-                      selectedOption === option.id
-                        ? "border-blue-500 bg-blue-50/50 shadow-lg scale-[1.02]"
-                        : "border-gray-200 hover:border-gray-300",
-                      option.badge && "pt-5"
-                    )}
-                  >
-                    <div className="p-5 flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-baseline gap-2 mb-1">
-                          <span className="text-pink-500 line-through text-lg font-medium">
-                            €{option.originalPrice}
-                          </span>
-                          <span className="text-3xl font-bold text-gray-900">
-                            €{option.price}/month
-                          </span>
-                        </div>
-                        <p className="text-gray-600 text-sm">{option.billingPeriod}</p>
-                      </div>
+                    {/* Content */}
+                    <div className="min-h-screen">
+                        <div className="px-6 pt-20 pb-8 max-w-xl mx-auto">
+                            {/* Pricing Tiers */}
+                            <div className="space-y-3">
+                                {PRICING_TIERS.map((tier) => (
+                                    <div key={tier.id} className="relative">
+                                        {/* Most Popular Badge - Only for recommended tier */}
+                                        {tier.isRecommended && (
+                                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 w-auto min-w-[200px] sm:min-w-0">
+                                                <div className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg whitespace-nowrap text-center">
+                                                    Most Popular - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        <button
+                                            onClick={() => setSelectedPricingTier(tier.id)}
+                                            className={cn(
+                                                "w-full p-5 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
+                                                selectedPricingTier === tier.id
+                                                    ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
+                                                    : "border-border hover:border-blue-300 hover:shadow-sm",
+                                                tier.isRecommended && selectedPricingTier === tier.id && "pt-8"
+                                            )}
+                                        >
+                                            {/* Selection glow effect */}
+                                            {selectedPricingTier === tier.id && (
+                                                <motion.div
+                                                    layoutId="selectedPricing"
+                                                    className="absolute inset-0 bg-gradient-to-r from-[#31A8FF]/10 via-[#4763FF]/10 to-[#2E5FD8]/10"
+                                                    transition={{ 
+                                                        type: "spring", 
+                                                        bounce: 0.15, 
+                                                        duration: 0.4,
+                                                        ease: "easeInOut"
+                                                    }}
+                                                    style={{ willChange: 'transform' }}
+                                                />
+                                            )}
+                                            
+                                            <div className="flex items-center justify-between relative z-10">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2.5 mb-1.5">
+                                                        <span className="text-sm text-pink-600 line-through">
+                                                            €{tier.originalPrice}
+                                                        </span>
+                                                        <span className={cn(
+                                                            "text-lg font-bold transition-colors",
+                                                            selectedPricingTier === tier.id && "text-blue-600"
+                                                        )}>
+                                                            €{Math.round(tier.discountedPrice)}/month
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {tier.description}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-3">
+                                                    {selectedPricingTier === tier.id && (
+                                                        <motion.span
+                                                            initial={{ scale: 0, opacity: 0 }}
+                                                            animate={{ scale: 1, opacity: 1 }}
+                                                            exit={{ scale: 0, opacity: 0 }}
+                                                            transition={{ 
+                                                                type: "spring", 
+                                                                stiffness: 500, 
+                                                                damping: 25,
+                                                                duration: 0.3
+                                                            }}
+                                                            className="px-2.5 py-0.5 bg-pink-500 text-white text-xs font-bold rounded-full"
+                                                            style={{ willChange: 'transform, opacity' }}
+                                                        >
+                                                            {tier.discountPercentage}% off
+                                                        </motion.span>
+                                                    )}
+                                                    <motion.div
+                                                        initial={false}
+                                                        animate={{
+                                                            scale: selectedPricingTier === tier.id ? 1 : 0,
+                                                            opacity: selectedPricingTier === tier.id ? 1 : 0
+                                                        }}
+                                                        transition={{ 
+                                                            type: "spring", 
+                                                            stiffness: 500, 
+                                                            damping: 25,
+                                                            duration: 0.3
+                                                        }}
+                                                        className="w-6 h-6 rounded-full border-2 border-blue-500 flex items-center justify-center flex-shrink-0"
+                                                        style={{ willChange: 'transform, opacity' }}
+                                                    >
+                                                        <div className="w-3 h-3 rounded-full bg-blue-500" />
+                                                    </motion.div>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
 
-                      <div className="flex items-center gap-3">
-                        {option.discount && (
-                          <div className="bg-gradient-to-r from-pink-500 to-pink-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                            {option.discount}
-                          </div>
-                        )}
-                        <div
-                          className={cn(
-                            "w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
-                            selectedOption === option.id
-                              ? "border-blue-500 bg-blue-500"
-                              : "border-gray-300 bg-white"
-                          )}
-                        >
-                          {selectedOption === option.id && (
-                            <div className="w-3 h-3 rounded-full bg-white" />
-                          )}
+                            {/* CTA Button */}
+                            <Button
+                                size="lg"
+                                className="w-full mt-6 bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] hover:from-[#2E9FEE] hover:via-[#4055EE] hover:to-[#2954C7] text-white text-base py-5 rounded-full font-bold shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300"
+                            >
+                                Buy now for €{Math.round(PRICING_TIERS.find(t => t.id === selectedPricingTier)?.discountedPrice || 0)}/month
+                            </Button>
+
+                            <div className="text-center mt-4 text-xs text-muted-foreground">
+                                <p>100% risk-free.<br />Cancel anytime within 7 days ✓</p>
+                            </div>
                         </div>
-                      </div>
                     </div>
-                  </button>
                 </motion.div>
-              ))}
-            </div>
-
-            {/* Buy button */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              <Button
-                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg py-7 rounded-2xl shadow-lg hover:shadow-xl transition-all"
-                onClick={() => {
-                  // Handle purchase
-                  console.log("Purchase:", selectedPricing);
-                }}
-              >
-                Buy now for €{selectedPricing?.price}/month
-              </Button>
-
-              {/* Guarantee text */}
-              <div className="text-center mt-4 space-y-1">
-                <p className="text-sm font-medium text-gray-700">100% risk-free.</p>
-                <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                  Cancel anytime within 7 days <Check className="w-4 h-4 text-green-500" />
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </SheetContent>
-      </SheetPortal>
-    </Sheet>
-  );
+            )}
+        </AnimatePresence>
+    );
 }
-
