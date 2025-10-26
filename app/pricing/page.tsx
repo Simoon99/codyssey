@@ -506,7 +506,7 @@ export default function PricingPage() {
             </div>
 
             {/* Sticky Fog Overlay at Bottom */}
-            <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+            <div className="fixed bottom-0 left-0 right-0 h-24 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
 
             {/* Pricing Modal - Slides up from bottom */}
             <AnimatePresence>
