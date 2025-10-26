@@ -554,48 +554,38 @@ export default function PricingPage() {
             </div>
 
             {/* Sticky CTA Button - Always at bottom */}
-            <div className="sticky bottom-6 left-0 right-0 z-50 flex justify-center px-4 mt-auto">
-                <Button
-                    onClick={handleRedeemClick}
-                    className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300"
-                >
-                    Redeem 65% OFF
-                </Button>
-            </div>
+            {!showPricingModal && (
+                <>
+                    <div className="sticky bottom-6 left-0 right-0 z-50 flex justify-center px-4 mt-auto">
+                        <Button
+                            onClick={handleRedeemClick}
+                            className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300"
+                        >
+                            Redeem 65% OFF
+                        </Button>
+                    </div>
 
-            {/* Sticky Fog Overlay at Bottom */}
-            <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+                    {/* Sticky Fog Overlay at Bottom */}
+                    <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+                </>
+            )}
 
             {/* Pricing Modal - Slides up from bottom */}
             <AnimatePresence mode="wait">
                 {showPricingModal && (
-                    <>
-                        {/* Backdrop */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2, ease: "easeInOut" }}
-                            onClick={closePricingModal}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
-                            style={{ willChange: 'opacity' }}
-                        />
-
-                        {/* Modal */}
-                        <motion.div
-                            initial={{ y: "100%", opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: "100%", opacity: 0 }}
-                            transition={{ 
-                                type: "spring", 
-                                damping: 35, 
-                                stiffness: 400,
-                                mass: 0.8
-                            }}
-                            className="fixed inset-0 z-[110] overflow-y-auto"
-                            style={{ willChange: 'transform, opacity' }}
-                        >
-
+                    <motion.div
+                        initial={{ y: "100%", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: "100%", opacity: 0 }}
+                        transition={{ 
+                            type: "spring", 
+                            damping: 35, 
+                            stiffness: 400,
+                            mass: 0.8
+                        }}
+                        className="fixed inset-0 z-[110] overflow-y-auto"
+                        style={{ willChange: 'transform, opacity' }}
+                    >
                         {/* Floating Close Button */}
                         <motion.button
                             initial={{ opacity: 0, scale: 0.8 }}
@@ -721,8 +711,7 @@ export default function PricingPage() {
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    </>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>
