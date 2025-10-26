@@ -203,6 +203,14 @@ export default function PricingPage() {
         };
     }, []);
 
+    // Auto-rotate helpers on mobile
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setHelperIndex((prev) => (prev + 1) % HELPERS.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, []);
+
     const handleRedeemClick = () => {
         setShowPricingModal(true);
     };
@@ -430,7 +438,7 @@ export default function PricingPage() {
 
                             {/* Mobile Carousel */}
                             <div className="md:hidden">
-                                <div className="flex justify-center mb-6">
+                                <div className="flex justify-center mb-4">
                                     <div className="w-full max-w-xs">
                                         {HELPERS[helperIndex] && (
                                             <motion.div
@@ -477,26 +485,17 @@ export default function PricingPage() {
                                     </div>
                                 </div>
 
-                                {/* Mobile Navigation */}
-                                <div className="flex justify-center gap-4 mb-4">
-                                    <button onClick={prevHelper} className="p-2 rounded-full hover:bg-muted transition-colors border border-border">
-                                        <ChevronLeft className="w-5 h-5" />
-                                    </button>
-                                    <button onClick={nextHelper} className="p-2 rounded-full hover:bg-muted transition-colors border border-border">
-                                        <ChevronRight className="w-5 h-5" />
-                                    </button>
-                                </div>
-
-                                {/* Mobile Indicators */}
-                                <div className="flex justify-center gap-2">
+                                {/* Minimalistic Indicators */}
+                                <div className="flex justify-center gap-1.5">
                                     {HELPERS.map((_, index) => (
                                         <button
                                             key={index}
                                             onClick={() => setHelperIndex(index)}
                                             className={cn(
-                                                "w-2 h-2 rounded-full transition-all",
-                                                index === helperIndex ? "bg-blue-500 w-6" : "bg-gray-300"
+                                                "h-1 rounded-full transition-all duration-300",
+                                                index === helperIndex ? "bg-blue-500 w-6" : "bg-gray-300 w-1.5"
                                             )}
+                                            aria-label={`Show helper ${index + 1}`}
                                         />
                                     ))}
                                 </div>
