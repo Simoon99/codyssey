@@ -80,7 +80,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                             stiffness: 400,
                             mass: 0.8
                         }}
-                        className="fixed inset-x-0 bottom-0 z-[110] bg-background max-h-[90vh] overflow-y-auto rounded-t-3xl shadow-2xl"
+                        className="fixed inset-x-0 bottom-0 z-[110] bg-background w-full rounded-t-3xl shadow-2xl"
                         style={{ 
                             willChange: 'transform'
                         }}
