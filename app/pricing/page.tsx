@@ -537,7 +537,7 @@ export default function PricingPage() {
                             initial={{ y: "100%" }}
                             animate={{ y: 0 }}
                             exit={{ y: "100%" }}
-                            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                            transition={{ type: "spring", damping: 35, stiffness: 400, mass: 0.8 }}
                             className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-hidden"
                         >
                             <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
@@ -549,8 +549,8 @@ export default function PricingPage() {
                                             <div key={tier.id} className="relative">
                                                 {/* Most Popular Badge - Only for recommended tier */}
                                                 {tier.isRecommended && (
-                                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                                                        <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg">
+                                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 w-[90%] sm:w-auto">
+                                                        <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">
                                                             Most Popular - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
                                                         </div>
                                                     </div>
@@ -629,7 +629,7 @@ export default function PricingPage() {
                                     </Button>
 
                                     <div className="text-center mt-4 text-xs text-muted-foreground">
-                                        <p>100% risk-free.<br />Cancel anytime within 7 days ✓</p>
+                                        <p>100% risk-free.<br />Cancel anytime within 7 days ✅</p>
                                     </div>
                                 </div>
                             </div>
