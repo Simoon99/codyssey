@@ -577,22 +577,9 @@ export default function PricingPage() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2, ease: "easeInOut" }}
                             onClick={closePricingModal}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
                             style={{ willChange: 'opacity' }}
                         />
-
-                        {/* Floating Close Button */}
-                        <motion.button
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
-                            onClick={closePricingModal}
-                            className="fixed top-4 right-4 z-[60] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
-                            style={{ willChange: 'transform, opacity' }}
-                        >
-                            <X className="w-5 h-5" />
-                        </motion.button>
 
                         {/* Modal */}
                         <motion.div
@@ -605,9 +592,22 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-0 z-50 overflow-y-auto"
+                            className="fixed inset-0 z-[110] overflow-y-auto"
                             style={{ willChange: 'transform, opacity' }}
                         >
+
+                        {/* Floating Close Button */}
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            onClick={closePricingModal}
+                            className="fixed top-4 right-4 z-[120] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
+                            style={{ willChange: 'transform, opacity' }}
+                        >
+                            <X className="w-5 h-5" />
+                        </motion.button>
                             <div className="bg-background min-h-screen shadow-2xl relative">
                                 {/* Content */}
                                 <div className="px-6 pt-20 pb-8 max-w-xl mx-auto">
