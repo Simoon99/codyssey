@@ -554,14 +554,17 @@ export default function PricingPage() {
             </div>
 
             {/* Fixed Floating Button - Always visible at bottom */}
-            <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4">
+            <motion.div 
+                className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
+                style={{ willChange: 'transform' }}
+            >
                 <Button
                     onClick={handleRedeemClick}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-bold text-lg px-12 py-6 rounded-full shadow-2xl"
+                    className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300 pointer-events-auto"
                 >
                     Redeem 65% OFF
                 </Button>
-            </div>
+            </motion.div>
 
             {/* Sticky Fog Overlay at Bottom */}
             <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
@@ -605,20 +608,20 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-hidden"
+                            className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-y-auto overscroll-contain"
                             style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
                                 {/* Content */}
-                                <div className="px-6 pt-8 pb-6 max-w-xl mx-auto">
+                                <div className="px-6 pt-8 pb-24 max-w-xl mx-auto">
                                     {/* Pricing Tiers */}
                                     <div className="space-y-3">
                                         {PRICING_TIERS.map((tier, index) => (
                                             <div key={tier.id} className="relative">
                                                 {/* Most Popular Badge - Only for recommended tier */}
                                                 {tier.isRecommended && (
-                                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                                                        <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg">
+                                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 px-2">
+                                                        <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-3 md:px-4 py-1 rounded-full text-xs md:text-sm font-bold shadow-lg whitespace-nowrap">
                                                             Most Popular - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
                                                         </div>
                                                     </div>
