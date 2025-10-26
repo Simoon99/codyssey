@@ -590,7 +590,7 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-x-0 bottom-0 z-[60] max-h-[90vh] overflow-hidden"
+                            className="fixed inset-x-0 bottom-0 z-[60] max-h-[90vh] overflow-y-auto"
                             style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
