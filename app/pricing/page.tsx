@@ -605,12 +605,12 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-x-0 bottom-0 z-50 h-screen overflow-hidden"
+                            className="fixed inset-0 z-50 overflow-y-auto"
                             style={{ willChange: 'transform, opacity' }}
                         >
-                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
+                            <div className="bg-background min-h-screen shadow-2xl relative">
                                 {/* Content */}
-                                <div className="px-6 pt-8 pb-6 max-w-xl mx-auto">
+                                <div className="px-6 pt-20 pb-8 max-w-xl mx-auto">
                                     {/* Pricing Tiers */}
                                     <div className="space-y-3">
                                         {PRICING_TIERS.map((tier, index) => (
