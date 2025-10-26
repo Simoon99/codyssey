@@ -80,11 +80,12 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                             stiffness: 400,
                             mass: 0.8
                         }}
-                        className="fixed inset-x-0 bottom-0 z-[110] bg-background w-full rounded-t-3xl shadow-2xl"
+                        className="fixed inset-0 z-[110] flex items-end pointer-events-none"
                         style={{ 
                             willChange: 'transform'
                         }}
                     >
+                        <div className="w-full bg-background max-h-[90vh] overflow-y-auto rounded-t-3xl shadow-2xl pointer-events-auto">
                     {/* Floating Close Button */}
                     <motion.button
                         initial={{ opacity: 0, scale: 0.8 }}
@@ -211,6 +212,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                             </div>
                         </div>
                     </div>
+                        </div>
                     </motion.div>
                 </>
             )}
