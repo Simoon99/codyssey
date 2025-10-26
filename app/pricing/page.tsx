@@ -499,14 +499,14 @@ export default function PricingPage() {
                                             {HELPERS[helperIndex] && (
                                                 <motion.div
                                                     key={helperIndex}
-                                                    initial={{ x: direction > 0 ? 50 : -50, opacity: 0.5 }}
+                                                    initial={{ x: direction > 0 ? 40 : -40, opacity: 0.3 }}
                                                     animate={{ x: 0, opacity: 1 }}
-                                                    exit={{ x: direction > 0 ? -50 : 50, opacity: 0.5 }}
+                                                    exit={{ x: direction > 0 ? -40 : 40, opacity: 0.3 }}
                                                     transition={{ 
                                                         type: "spring", 
-                                                        stiffness: 300, 
-                                                        damping: 30,
-                                                        mass: 0.8
+                                                        stiffness: 200, 
+                                                        damping: 25,
+                                                        mass: 1
                                                     }}
                                                     className={cn(
                                                         "relative overflow-hidden rounded-3xl aspect-square",
