@@ -269,14 +269,14 @@ export default function PricingPage() {
             {/* Countdown Timer Banner - Always visible at top */}
             <div className="sticky top-0 z-40 bg-gradient-to-r from-blue-600 to-blue-500 text-white py-2.5 w-full">
                 <div className="flex items-center justify-center gap-3">
-                    <span className="font-semibold text-base">Limited Time: Up to 65% OFF</span>
+                    <span className="font-semibold text-base">Autumn Sale: Up to 65% OFF</span>
                     <CountdownTimer />
                 </div>
             </div>
 
             {/* Main Content - Scrollable */}
             <div className="pb-32 w-full">
-                <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-6">
+                <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-3">
                         {/* Header */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -428,23 +428,14 @@ export default function PricingPage() {
 
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                                 {HELPERS.map((helper) => (
-                                    <motion.div
+                                    <div
                                         key={helper.id}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true, margin: "-50px" }}
-                                        transition={{ 
-                                            duration: 0.4, 
-                                            ease: "easeOut",
-                                            delay: 0.05 * HELPERS.indexOf(helper)
-                                        }}
                                         className={cn(
                                             "relative overflow-hidden rounded-3xl aspect-square",
                                             "bg-gradient-to-br",
                                             helper.color,
                                             "group cursor-pointer transition-all hover:shadow-lg"
                                         )}
-                                        style={{ willChange: 'transform, opacity' }}
                                     >
                                         {/* Background placeholder - simulates character image */}
                                         <div className="absolute inset-0 flex items-center justify-center">
@@ -472,7 +463,7 @@ export default function PricingPage() {
                                                 </p>
                                             </div>
                                         </div>
-                                    </motion.div>
+                                    </div>
                                 ))}
                             </div>
                         </div>
@@ -553,21 +544,20 @@ export default function PricingPage() {
                 </div>
             </div>
 
-            {/* Fixed Floating Button - Always visible at bottom */}
-            <motion.div 
-                className="fixed bottom-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none"
-                style={{ willChange: 'transform' }}
-            >
-                <Button
-                    onClick={handleRedeemClick}
-                    className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300 pointer-events-auto"
-                >
-                    Redeem 65% OFF
-                </Button>
-            </motion.div>
-
             {/* Sticky Fog Overlay at Bottom */}
-            <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+            <div className="fixed bottom-0 left-0 right-0 h-48 pointer-events-none z-40 bg-gradient-to-t from-background via-background/80 to-transparent"></div>
+
+            {/* Fixed Floating Button - Sticky at bottom */}
+            <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6 pointer-events-none">
+                <div className="flex justify-center px-4">
+                    <Button
+                        onClick={handleRedeemClick}
+                        className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300 pointer-events-auto"
+                    >
+                        Redeem 65% OFF
+                    </Button>
+                </div>
+            </div>
 
             {/* Pricing Modal - Slides up from bottom */}
             <AnimatePresence mode="wait">
@@ -608,12 +598,12 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-y-auto overscroll-contain"
+                            className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-hidden"
                             style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
                                 {/* Content */}
-                                <div className="px-6 pt-8 pb-24 max-w-xl mx-auto">
+                                <div className="px-6 pt-8 pb-6 max-w-xl mx-auto">
                                     {/* Pricing Tiers */}
                                     <div className="space-y-3">
                                         {PRICING_TIERS.map((tier, index) => (
