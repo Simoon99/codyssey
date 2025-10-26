@@ -551,48 +551,49 @@ export default function PricingPage() {
                 </div>
             </div>
 
-            {/* Pricing Modal - Slides up from bottom */}
-            <AnimatePresence mode="wait">
-                {showPricingModal && (
-                    <React.Fragment key="pricing-modal">
-                        {/* Backdrop */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2, ease: "easeInOut" }}
-                            onClick={closePricingModal}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55]"
-                            style={{ willChange: 'opacity' }}
-                        />
+            {/* Pricing Modal - Rendered via Portal to ensure proper fixed positioning */}
+            {portalRoot && createPortal(
+                <AnimatePresence mode="wait">
+                    {showPricingModal && (
+                        <React.Fragment key="pricing-modal">
+                            {/* Backdrop */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2, ease: "easeInOut" }}
+                                onClick={closePricingModal}
+                                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55]"
+                                style={{ willChange: 'opacity' }}
+                            />
 
-                        {/* Floating Close Button */}
-                        <motion.button
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
-                            onClick={closePricingModal}
-                            className="fixed top-4 right-4 z-[65] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
-                            style={{ willChange: 'transform, opacity' }}
-                        >
-                            <X className="w-5 h-5" />
-                        </motion.button>
+                            {/* Floating Close Button */}
+                            <motion.button
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                onClick={closePricingModal}
+                                className="fixed top-4 right-4 z-[65] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
+                                style={{ willChange: 'transform, opacity' }}
+                            >
+                                <X className="w-5 h-5" />
+                            </motion.button>
 
-                        {/* Modal */}
-                        <motion.div
-                            initial={{ y: "100%", opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            exit={{ y: "100%", opacity: 0 }}
-                            transition={{ 
-                                type: "spring", 
-                                damping: 35, 
-                                stiffness: 400,
-                                mass: 0.8
-                            }}
-                            className="fixed inset-x-0 bottom-0 z-[60]"
-                            style={{ willChange: 'transform, opacity' }}
-                        >
+                            {/* Modal */}
+                            <motion.div
+                                initial={{ y: "100%", opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                exit={{ y: "100%", opacity: 0 }}
+                                transition={{ 
+                                    type: "spring", 
+                                    damping: 35, 
+                                    stiffness: 400,
+                                    mass: 0.8
+                                }}
+                                className="fixed inset-x-0 bottom-0 z-[60]"
+                                style={{ willChange: 'transform, opacity' }}
+                            >
                             <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative max-h-[85vh] overflow-y-auto">
                                 {/* Content */}
                                 <div className="px-4 md:px-6 pt-5 pb-5 md:pt-8 md:pb-6 max-w-xl mx-auto">
@@ -709,10 +710,12 @@ export default function PricingPage() {
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    </React.Fragment>
-                )}
-            </AnimatePresence>
+                            </motion.div>
+                        </React.Fragment>
+                    )}
+                </AnimatePresence>,
+                portalRoot
+            )}
 
             {/* Fog & CTA Button - Sticky at bottom of viewport */}
             {!showPricingModal && (
