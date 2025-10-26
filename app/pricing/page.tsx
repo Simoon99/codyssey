@@ -550,7 +550,7 @@ export default function PricingPage() {
                                                 {/* Most Popular Badge - Only for recommended tier */}
                                                 {tier.isRecommended && (
                                                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                                                        <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">
+                                                        <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">
                                                             Most Popular - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
                                                         </div>
                                                     </div>
@@ -561,19 +561,22 @@ export default function PricingPage() {
                                                     className={cn(
                                                         "w-full p-5 rounded-xl text-left relative overflow-hidden",
                                                         selectedPricingTier === tier.id
-                                                            ? "border-2 bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
+                                                            ? "bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
                                                             : "border-2 border-border",
                                                         tier.isRecommended && selectedPricingTier === tier.id && "pt-8"
                                                     )}
                                                     style={selectedPricingTier === tier.id ? {
-                                                        borderImage: 'linear-gradient(135deg, #2563eb, #3b82f6, #4f46e5) 1'
+                                                        border: '2px solid transparent',
+                                                        backgroundImage: 'linear-gradient(white, white), linear-gradient(135deg, #2563eb, #3b82f6, #6366f1)',
+                                                        backgroundOrigin: 'border-box',
+                                                        backgroundClip: 'padding-box, border-box'
                                                     } : undefined}
                                                 >
                                                     {/* Selection glow effect */}
                                                     {selectedPricingTier === tier.id && (
                                                         <motion.div
                                                             layoutId="selectedPricing"
-                                                            className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-blue-600/15"
+                                                            className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-blue-600/15 rounded-xl"
                                                             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                                         />
                                                     )}
