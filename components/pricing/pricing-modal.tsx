@@ -69,11 +69,9 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                         stiffness: 400,
                         mass: 0.8
                     }}
-                    className="fixed inset-0 z-[110] bg-background"
+                    className="fixed inset-x-0 bottom-0 z-[110] bg-background max-h-screen overflow-y-auto"
                     style={{ 
-                        willChange: 'transform',
-                        overflowY: 'auto',
-                        overflowX: 'hidden'
+                        willChange: 'transform'
                     }}
                 >
                     {/* Floating Close Button */}
@@ -90,7 +88,7 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
                     </motion.button>
 
                     {/* Content */}
-                    <div className="min-h-screen">
+                    <div className="w-full">
                         <div className="px-6 pt-20 pb-8 max-w-xl mx-auto">
                             {/* Pricing Tiers */}
                             <div className="space-y-3">
