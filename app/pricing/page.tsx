@@ -302,7 +302,7 @@ export default function PricingPage() {
                                     priority
                                     className="h-4 w-auto"
                                 />
-                                <span className="text-xs font-medium text-foreground">4.8/5.0</span>
+                                <span className="text-xs font-medium text-foreground">4.8/5.0 Rating</span>
                             </div>
                             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                                 From ideation to launch<br />— every step done right
@@ -605,12 +605,12 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-0 z-50 overflow-y-auto flex flex-col justify-end"
+                            className="fixed inset-x-0 bottom-0 z-50 h-screen overflow-hidden"
                             style={{ willChange: 'transform, opacity' }}
                         >
-                            <div className="bg-background rounded-t-3xl md:rounded-none shadow-2xl border-t border-border relative w-full">
+                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
                                 {/* Content */}
-                                <div className="px-6 pt-8 pb-20 md:pb-8 max-w-xl mx-auto max-h-[90vh] overflow-y-auto">
+                                <div className="px-6 pt-8 pb-6 max-w-xl mx-auto">
                                     {/* Pricing Tiers */}
                                     <div className="space-y-3">
                                         {PRICING_TIERS.map((tier, index) => (
