@@ -339,58 +339,58 @@ export default function PricingPage() {
 
                         {/* Hero Card - Bundle */}
                         <div className="max-w-4xl mx-auto mb-12">
-                            <div className="relative overflow-hidden rounded-3xl p-10 shadow-xl border border-border bg-card">
-                                <div className="flex items-start justify-between gap-8">
+                            <div className="relative overflow-hidden rounded-3xl p-6 md:p-10 shadow-xl border border-border bg-card">
+                                <div className="flex flex-col md:flex-row items-start md:justify-between gap-6 md:gap-8">
                                     {/* Left Side - Content */}
-                                    <div className="flex-1">
-                                        <p className="text-sm text-muted-foreground mb-2">Pricing</p>
-                                        <h2 className="text-5xl font-bold mb-8 bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
+                                    <div className="flex-1 w-full">
+                                        <p className="text-xs md:text-sm text-muted-foreground mb-2">Pricing</p>
+                                        <h2 className="text-3xl md:text-5xl font-bold mb-6 md:mb-8 bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
                                             Codyssey Pro
                                         </h2>
                                         
                                         {/* Benefits List */}
-                                        <div className="space-y-3">
-                                            <div className="flex items-center gap-3">
-                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                                                <span className="text-base text-foreground">All 6 AI Helpers for your journey</span>
+                                        <div className="space-y-2.5 md:space-y-3">
+                                            <div className="flex items-start gap-2.5 md:gap-3">
+                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                                                <span className="text-sm md:text-base text-foreground">All 6 AI Helpers for your journey</span>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                                                <span className="text-base text-foreground">Gamified progress tracking</span>
+                                            <div className="flex items-start gap-2.5 md:gap-3">
+                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                                                <span className="text-sm md:text-base text-foreground">Gamified progress tracking</span>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                                                <span className="text-base text-foreground">From idea to launched product</span>
+                                            <div className="flex items-start gap-2.5 md:gap-3">
+                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                                                <span className="text-sm md:text-base text-foreground">From idea to launched product</span>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                                                <span className="text-base text-foreground">Built for Cursor, Lovable & Bolt</span>
+                                            <div className="flex items-start gap-2.5 md:gap-3">
+                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                                                <span className="text-sm md:text-base text-foreground">Built for Cursor, Lovable & Bolt</span>
                                             </div>
-                                            <div className="flex items-center gap-3">
-                                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                                                <span className="text-base text-foreground">30-day money back guarantee</span>
+                                            <div className="flex items-start gap-2.5 md:gap-3">
+                                                <Check className="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                                                <span className="text-sm md:text-base text-foreground">30-day money back guarantee</span>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Right Side - Pricing & Avatars */}
-                                    <div className="flex flex-col items-end gap-6">
+                                    <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-6 w-full md:w-auto">
                                         {/* Pricing */}
-                                        <div className="text-right">
-                                            <p className="text-xl text-red-500 line-through mb-1">€52</p>
+                                        <div className="text-left md:text-right">
+                                            <p className="text-lg md:text-xl text-red-500 line-through mb-1">€52</p>
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-5xl font-bold text-foreground">€18</span>
+                                                <span className="text-4xl md:text-5xl font-bold text-foreground">€18</span>
                                             </div>
-                                            <p className="text-sm text-muted-foreground mt-1">per month</p>
+                                            <p className="text-xs md:text-sm text-muted-foreground mt-1">per month</p>
                                         </div>
 
                                         {/* Helper Avatars */}
-                                        <div className="grid grid-cols-3 gap-2">
+                                        <div className="grid grid-cols-3 gap-1.5 md:gap-2">
                                             {HELPERS.slice(0, 6).map((helper, index) => (
                                                 <div
                                                     key={helper.id}
                                                     className={cn(
-                                                        "w-12 h-12 rounded-full flex items-center justify-center text-lg",
+                                                        "w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-base md:text-lg",
                                                         "bg-gradient-to-br shadow-lg transition-all hover:scale-110",
                                                         helper.color
                                                     )}
@@ -485,28 +485,10 @@ export default function PricingPage() {
                             </div>
 
                             {/* Mobile Carousel */}
-                            <div className="md:hidden relative">
-                                {/* Arrow Navigation - Top Right */}
-                                <div className="absolute top-0 right-4 flex gap-1 z-10">
-                                    <button
-                                        onClick={prevHelper}
-                                        className="p-1.5 rounded-full bg-white/90 shadow-sm hover:bg-white transition-colors"
-                                        aria-label="Previous helper"
-                                    >
-                                        <ChevronLeft className="w-3.5 h-3.5 text-gray-700" />
-                                    </button>
-                                    <button
-                                        onClick={nextHelper}
-                                        className="p-1.5 rounded-full bg-white/90 shadow-sm hover:bg-white transition-colors"
-                                        aria-label="Next helper"
-                                    >
-                                        <ChevronRight className="w-3.5 h-3.5 text-gray-700" />
-                                    </button>
-                                </div>
-
-                                <div className="flex justify-center mb-2">
+                            <div className="md:hidden">
+                                <div className="flex justify-center mb-3">
                                     <div 
-                                        className="w-full max-w-xs overflow-hidden"
+                                        className="w-full max-w-xs"
                                         onTouchStart={handleTouchStart}
                                         onTouchMove={handleTouchMove}
                                         onTouchEnd={handleTouchEnd}
@@ -517,15 +499,15 @@ export default function PricingPage() {
                                             {HELPERS[helperIndex] && (
                                                 <motion.div
                                                     key={helperIndex}
-                                                    initial={{ x: direction > 0 ? 300 : -300, opacity: 0 }}
-                                                    animate={{ x: 0, opacity: 1 }}
-                                                    exit={{ x: direction > 0 ? -300 : 300, opacity: 0 }}
-                                                    transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
+                                                    initial={{ x: direction > 0 ? 100 : -100 }}
+                                                    animate={{ x: 0 }}
+                                                    exit={{ x: direction > 0 ? -100 : 100 }}
+                                                    transition={{ type: "tween", duration: 0.25, ease: "easeOut" }}
                                                     className={cn(
                                                         "relative overflow-hidden rounded-3xl aspect-square",
                                                         "bg-gradient-to-br",
                                                         HELPERS[helperIndex].color,
-                                                        "cursor-pointer transition-all hover:shadow-lg"
+                                                        "cursor-pointer"
                                                     )}
                                                 >
                                                     {/* Background placeholder - simulates character image */}
@@ -560,14 +542,14 @@ export default function PricingPage() {
                                     </div>
                                 </div>
 
-                                {/* Tiny Dot Indicators */}
-                                <div className="flex justify-center gap-0.5 py-1">
+                                {/* Dot Indicators */}
+                                <div className="flex justify-center gap-1 py-2">
                                     {HELPERS.map((_, index) => (
                                         <div
                                             key={index}
                                             className={cn(
                                                 "rounded-full transition-all duration-300",
-                                                index === helperIndex ? "bg-gray-600 w-1 h-1" : "bg-gray-400/30 w-0.5 h-0.5"
+                                                index === helperIndex ? "bg-gray-600 w-1.5 h-1.5" : "bg-gray-400/40 w-1 h-1"
                                             )}
                                         />
                                     ))}
