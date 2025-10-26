@@ -171,12 +171,10 @@ export default function PricingPage() {
         };
     }, []);
 
-    // Prevent body scroll when modal is open and reset scroll position
+    // Prevent body scroll when modal is open
     useEffect(() => {
         if (showPricingModal) {
             document.body.style.overflow = 'hidden';
-            // Reset scroll to top
-            window.scrollTo({ top: 0, behavior: 'instant' });
         } else {
             document.body.style.overflow = '';
         }

@@ -60,17 +60,21 @@ export function PricingModal({ isOpen, onClose }: PricingModalProps) {
         <AnimatePresence mode="wait">
             {isOpen && (
                 <motion.div
-                    initial={{ y: "100%" }}
+                    initial={{ y: "100vh" }}
                     animate={{ y: 0 }}
-                    exit={{ y: "100%" }}
+                    exit={{ y: "100vh" }}
                     transition={{ 
                         type: "spring", 
                         damping: 35, 
                         stiffness: 400,
                         mass: 0.8
                     }}
-                    className="fixed inset-0 z-[110] overflow-y-auto bg-background"
-                    style={{ willChange: 'transform' }}
+                    className="fixed inset-0 z-[110] bg-background"
+                    style={{ 
+                        willChange: 'transform',
+                        overflowY: 'auto',
+                        overflowX: 'hidden'
+                    }}
                 >
                     {/* Floating Close Button */}
                     <motion.button
