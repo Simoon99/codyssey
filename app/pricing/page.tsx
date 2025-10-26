@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
 import { cn } from "@/lib";
 import { Button } from "@/components/ui/button";
 import { 
@@ -9,7 +8,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import React from "react";
 
 type Helper = {
     id: string;
@@ -193,11 +191,6 @@ export default function PricingPage() {
     const [showPricingModal, setShowPricingModal] = useState(false);
     const [selectedPricingTier, setSelectedPricingTier] = useState<string>('monthly');
     const [openFAQ, setOpenFAQ] = useState<number | null>(null);
-    const [portalRoot, setPortalRoot] = useState<Element | null>(null);
-
-    useEffect(() => {
-        setPortalRoot(document.body);
-    }, []);
 
     // Remove body padding for full-width banner and optimize scrolling
     useEffect(() => {
@@ -274,16 +267,16 @@ export default function PricingPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
             {/* Countdown Timer Banner - Always visible at top */}
-            <div className="sticky top-0 z-40 bg-gradient-to-r from-blue-600 to-blue-500 text-white py-2.5 w-full">
+            <div className="sticky top-0 z-40 bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white py-2.5 w-full shadow-lg">
                 <div className="flex items-center justify-center gap-3">
-                    <span className="font-semibold text-base">Autumn Sale: Up to 65% OFF</span>
+                    <span className="font-semibold text-base">Limited Time: Up to 65% OFF</span>
                     <CountdownTimer />
                 </div>
             </div>
 
             {/* Main Content - Scrollable */}
-            <div className="pb-8 w-full">
-                <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-3">
+            <div className="pb-32 w-full">
+                <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-6">
                         {/* Header */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -309,7 +302,7 @@ export default function PricingPage() {
                                     priority
                                     className="h-4 w-auto"
                                 />
-                                <span className="text-xs font-medium text-foreground">4.8/5.0 Rating</span>
+                                <span className="text-xs font-medium text-foreground">4.8/5.0</span>
                             </div>
                             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                                 From ideation to launch<br />— every step done right
@@ -435,14 +428,23 @@ export default function PricingPage() {
 
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                                 {HELPERS.map((helper) => (
-                                    <div
+                                    <motion.div
                                         key={helper.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: "-50px" }}
+                                        transition={{ 
+                                            duration: 0.4, 
+                                            ease: "easeOut",
+                                            delay: 0.05 * HELPERS.indexOf(helper)
+                                        }}
                                         className={cn(
                                             "relative overflow-hidden rounded-3xl aspect-square",
                                             "bg-gradient-to-br",
                                             helper.color,
                                             "group cursor-pointer transition-all hover:shadow-lg"
                                         )}
+                                        style={{ willChange: 'transform, opacity' }}
                                     >
                                         {/* Background placeholder - simulates character image */}
                                         <div className="absolute inset-0 flex items-center justify-center">
@@ -470,7 +472,7 @@ export default function PricingPage() {
                                                 </p>
                                             </div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 ))}
                             </div>
                         </div>
@@ -551,60 +553,72 @@ export default function PricingPage() {
                 </div>
             </div>
 
-            {/* Pricing Modal - Rendered via Portal to ensure proper fixed positioning */}
-            {portalRoot && createPortal(
-                <AnimatePresence mode="wait">
-                    {showPricingModal && (
-                        <React.Fragment key="pricing-modal">
-                            {/* Backdrop */}
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.2, ease: "easeInOut" }}
-                                onClick={closePricingModal}
-                                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[55]"
-                                style={{ willChange: 'opacity' }}
-                            />
+            {/* Sticky CTA Button - Always at bottom */}
+            <div className="sticky bottom-6 left-0 right-0 z-50 flex justify-center px-4 mt-auto">
+                <Button
+                    onClick={handleRedeemClick}
+                    className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300"
+                >
+                    Redeem 65% OFF
+                </Button>
+            </div>
 
-                            {/* Floating Close Button */}
-                            <motion.button
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                transition={{ duration: 0.2, ease: "easeOut" }}
-                                onClick={closePricingModal}
-                                className="fixed top-4 right-4 z-[65] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
-                                style={{ willChange: 'transform, opacity' }}
-                            >
-                                <X className="w-5 h-5" />
-                            </motion.button>
+            {/* Sticky Fog Overlay at Bottom */}
+            <div className="fixed bottom-0 left-0 right-0 h-40 pointer-events-none z-40 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
 
-                            {/* Modal */}
-                            <motion.div
-                                initial={{ y: "100%", opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                exit={{ y: "100%", opacity: 0 }}
-                                transition={{ 
-                                    type: "spring", 
-                                    damping: 35, 
-                                    stiffness: 400,
-                                    mass: 0.8
-                                }}
-                                className="fixed inset-x-0 bottom-0 z-[60]"
-                                style={{ willChange: 'transform, opacity' }}
-                            >
-                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative max-h-[85vh] overflow-y-auto">
+            {/* Pricing Modal - Slides up from bottom */}
+            <AnimatePresence mode="wait">
+                {showPricingModal && (
+                    <>
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                            onClick={closePricingModal}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                            style={{ willChange: 'opacity' }}
+                        />
+
+                        {/* Floating Close Button */}
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            onClick={closePricingModal}
+                            className="fixed top-4 right-4 z-[60] p-3 rounded-full bg-background border border-border hover:bg-muted transition-all shadow-xl"
+                            style={{ willChange: 'transform, opacity' }}
+                        >
+                            <X className="w-5 h-5" />
+                        </motion.button>
+
+                        {/* Modal */}
+                        <motion.div
+                            initial={{ y: "100%", opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: "100%", opacity: 0 }}
+                            transition={{ 
+                                type: "spring", 
+                                damping: 35, 
+                                stiffness: 400,
+                                mass: 0.8
+                            }}
+                            className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] overflow-hidden"
+                            style={{ willChange: 'transform, opacity' }}
+                        >
+                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative">
                                 {/* Content */}
-                                <div className="px-4 md:px-6 pt-5 pb-5 md:pt-8 md:pb-6 max-w-xl mx-auto">
+                                <div className="px-6 pt-8 pb-6 max-w-xl mx-auto">
                                     {/* Pricing Tiers */}
-                                    <div className="space-y-2 md:space-y-3">
+                                    <div className="space-y-3">
                                         {PRICING_TIERS.map((tier, index) => (
                                             <div key={tier.id} className="relative">
                                                 {/* Most Popular Badge - Only for recommended tier */}
                                                 {tier.isRecommended && (
-                                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 px-2">
-                                                        <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white px-3 md:px-4 py-1 rounded-full text-xs md:text-sm font-bold shadow-lg whitespace-nowrap">
+                                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 w-auto min-w-[200px] sm:min-w-0">
+                                                        <div className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg whitespace-nowrap text-center">
                                                             Most Popular - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
                                                         </div>
                                                     </div>
@@ -613,21 +627,18 @@ export default function PricingPage() {
                                                 <button
                                                     onClick={() => setSelectedPricingTier(tier.id)}
                                                     className={cn(
-                                                        "w-full p-4 md:p-5 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
+                                                        "w-full p-5 rounded-xl border-2 transition-all text-left relative overflow-hidden group",
                                                         selectedPricingTier === tier.id
                                                             ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
-                                                            : "border-border hover:border-blue-400 hover:shadow-md hover:bg-muted/30 hover:scale-[1.02]",
-                                                        tier.isRecommended && selectedPricingTier === tier.id && "pt-7"
+                                                            : "border-border hover:border-blue-300 hover:shadow-sm",
+                                                        tier.isRecommended && selectedPricingTier === tier.id && "pt-8"
                                                     )}
-                                                    style={{
-                                                        transformOrigin: 'center'
-                                                    }}
                                                 >
                                                     {/* Selection glow effect */}
                                                     {selectedPricingTier === tier.id && (
                                                         <motion.div
                                                             layoutId="selectedPricing"
-                                                            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10"
+                                                            className="absolute inset-0 bg-gradient-to-r from-[#31A8FF]/10 via-[#4763FF]/10 to-[#2E5FD8]/10"
                                                             transition={{ 
                                                                 type: "spring", 
                                                                 bounce: 0.15, 
@@ -700,7 +711,7 @@ export default function PricingPage() {
                                     {/* CTA Button */}
                                     <Button
                                         size="lg"
-                                        className="w-full mt-6 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white text-base py-5 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all active:scale-95"
+                                        className="w-full mt-6 bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] hover:from-[#2E9FEE] hover:via-[#4055EE] hover:to-[#2954C7] text-white text-base py-5 rounded-full font-bold shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_16px_36px_rgba(71,99,255,0.45)] transition-all duration-300"
                                     >
                                         Buy now for €{Math.round(PRICING_TIERS.find(t => t.id === selectedPricingTier)?.discountedPrice || 0)}/month
                                     </Button>
@@ -710,29 +721,10 @@ export default function PricingPage() {
                                     </div>
                                 </div>
                             </div>
-                            </motion.div>
-                        </React.Fragment>
-                    )}
-                </AnimatePresence>,
-                portalRoot
-            )}
-
-            {/* Fog & CTA Button - Sticky at bottom of viewport */}
-            {!showPricingModal && (
-                <div 
-                    className="sticky bottom-0 left-0 right-0 z-[40] w-full h-20 flex items-center justify-center"
-                    style={{
-                        background: 'linear-gradient(to top, rgba(245, 245, 245, 1) 0%, rgba(245, 245, 245, 0.95) 25%, rgba(245, 245, 245, 0.7) 50%, rgba(245, 245, 245, 0) 100%)'
-                    }}
-                >
-                    <Button
-                        onClick={handleRedeemClick}
-                        className="bg-gradient-to-r from-[#31A8FF] via-[#4763FF] to-[#2E5FD8] text-white font-bold text-lg px-8 md:px-12 py-6 rounded-full shadow-[0_12px_30px_rgba(71,99,255,0.35)] hover:shadow-[0_20px_50px_rgba(71,99,255,0.6)] transition-all duration-300 hover:scale-110 active:scale-95"
-                    >
-                        Redeem 65% OFF
-                    </Button>
-                </div>
-            )}
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
