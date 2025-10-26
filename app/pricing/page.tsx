@@ -590,10 +590,10 @@ export default function PricingPage() {
                                 stiffness: 400,
                                 mass: 0.8
                             }}
-                            className="fixed inset-x-0 bottom-0 z-[60] max-h-[80vh] overflow-hidden"
+                            className="fixed inset-x-0 bottom-0 z-[60]"
                             style={{ willChange: 'transform, opacity' }}
                         >
-                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative h-full overflow-y-auto">
+                            <div className="bg-background rounded-t-3xl shadow-2xl border-t border-border relative max-h-[85vh] overflow-y-auto">
                                 {/* Content */}
                                 <div className="px-4 md:px-6 pt-5 pb-5 md:pt-8 md:pb-6 max-w-xl mx-auto">
                                     {/* Pricing Tiers */}
@@ -717,7 +717,7 @@ export default function PricingPage() {
             {/* Fog & CTA Button - Sticky at bottom of viewport */}
             {!showPricingModal && (
                 <div 
-                    className="sticky bottom-0 left-0 right-0 z-[40] w-full h-24 flex items-center justify-center"
+                    className="sticky bottom-0 left-0 right-0 z-[40] w-full h-20 flex items-center justify-center"
                     style={{
                         background: 'linear-gradient(to top, rgba(245, 245, 245, 1) 0%, rgba(245, 245, 245, 0.95) 25%, rgba(245, 245, 245, 0.7) 50%, rgba(245, 245, 245, 0) 100%)'
                     }}
