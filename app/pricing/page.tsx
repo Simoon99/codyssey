@@ -694,7 +694,7 @@ export default function PricingPage() {
                                                 {tier.isRecommended && (
                                                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
                                                         <div className="bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-lg whitespace-nowrap">
-                                                            Most Popular - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
+                                                            Best Value - Save €{Math.round(52 * 12 - tier.discountedPrice * 12)}
                                                         </div>
                                                     </div>
                                                 )}
@@ -704,7 +704,7 @@ export default function PricingPage() {
                                                     className={cn(
                                                         "w-full p-5 rounded-xl text-left relative overflow-hidden",
                                                         selectedPricingTier === tier.id
-                                                            ? "bg-blue-50 shadow-lg ring-2 ring-blue-200 pt-6"
+                                                            ? "shadow-lg ring-2 ring-blue-200 pt-6"
                                                             : "border-2 border-border",
                                                         tier.isRecommended && selectedPricingTier === tier.id && "pt-8"
                                                     )}
@@ -715,14 +715,6 @@ export default function PricingPage() {
                                                         backgroundClip: 'padding-box, border-box'
                                                     } : undefined}
                                                 >
-                                                    {/* Selection glow effect */}
-                                                    {selectedPricingTier === tier.id && (
-                                                        <motion.div
-                                                            layoutId="selectedPricing"
-                                                            className="absolute inset-0 bg-gradient-to-br from-blue-500/15 via-indigo-500/10 to-blue-600/15 rounded-xl"
-                                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                                        />
-                                                    )}
                                                     
                                                     <div className="flex items-center justify-between relative z-10">
                                                         <div className="flex-1">
@@ -730,10 +722,7 @@ export default function PricingPage() {
                                                                 <span className="text-sm text-pink-600 line-through">
                                                                     €{tier.originalPrice}
                                                                 </span>
-                                                                <span className={cn(
-                                                                    "text-lg font-bold transition-colors",
-                                                                    selectedPricingTier === tier.id && "text-blue-600"
-                                                                )}>
+                                                                <span className="text-lg font-bold text-gray-900">
                                                                     €{Math.round(tier.discountedPrice)}/month
                                                                 </span>
                                                             </div>
