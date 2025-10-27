@@ -28,7 +28,7 @@ const PRICING_OPTIONS: PricingOption[] = [
     originalPrice: 52,
     price: 18,
     billingPeriod: "Pay yearly",
-    badge: "Most Popular - Save €406",
+    badge: "Best Value - Save €406",
     totalSaved: "€406",
   },
   {
@@ -99,7 +99,7 @@ export function PricingModal({ open, onOpenChange }: PricingModalProps) {
                       "w-full text-left rounded-2xl border-2 transition-all duration-200",
                       "bg-white/80 backdrop-blur-sm",
                       selectedOption === option.id
-                        ? "border-blue-500 bg-blue-50/50 shadow-lg scale-[1.02]"
+                        ? "border-blue-500 shadow-lg scale-[1.02]"
                         : "border-gray-200 hover:border-gray-300",
                       option.badge && "pt-5"
                     )}
