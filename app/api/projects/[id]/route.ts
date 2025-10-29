@@ -7,10 +7,10 @@ import { getSupabaseClient } from "@/lib/supabase/server";
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id: projectId } = await params;
+    const projectId = params.id;
 
     const supabase = await getSupabaseClient();
     const {

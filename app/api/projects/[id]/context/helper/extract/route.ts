@@ -8,10 +8,10 @@ import { extractHelperContext } from "@/lib/llm/helper-context-extractor";
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id: projectId } = await params;
+    const projectId = params.id;
     const body = await request.json();
     const { helper, projectName, conversation = [], messageId = null } = body;
 
