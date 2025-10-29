@@ -124,3 +124,4 @@ The project card now correctly displays all data from the database. The data flo
 - API saves and loads data correctly ✅
 - Components receive and display data properly ✅
 
+

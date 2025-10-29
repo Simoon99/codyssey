@@ -29,3 +29,4 @@ COMMENT ON COLUMN user_app_state.active_orb_id IS 'Active journey orb/step ID (e
 COMMENT ON COLUMN user_app_state.step_context IS 'Full step context including tasks, level info, etc.';
 COMMENT ON COLUMN user_app_state.view_mode IS 'Current view mode (journey, chat, or tasks)';
 
+

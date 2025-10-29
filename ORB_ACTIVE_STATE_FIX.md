@@ -150,3 +150,4 @@ console.log("[Dashboard] ✅ Final activeOrbIds map:", map);
   - Updated `ensureStepContextFromProgress` to remove circular dependency
   - Enhanced logging to show full progress data structure
 
+

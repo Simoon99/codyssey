@@ -58,3 +58,4 @@ CREATE TRIGGER trigger_update_helper_context_timestamp
 -- Add this to complete-setup.sql as well
 COMMENT ON TABLE helper_context IS 'Stores evolving project context insights per helper for journey continuity';
 
+

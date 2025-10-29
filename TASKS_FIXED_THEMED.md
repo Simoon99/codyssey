@@ -334,3 +334,4 @@ Show helper name:
 
 The tasks button now provides persistent, themed access to helper-specific tasks with a floating UI that stays visible during scrolling! 🚀
 
+

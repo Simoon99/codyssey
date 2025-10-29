@@ -169,3 +169,4 @@ If messages still duplicate:
 - Check if `Helper Switch` effect is running after journey starts (should be skipped)
 - Verify `isStartingJourney` flag is working correctly
 
+

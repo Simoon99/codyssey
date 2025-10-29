@@ -372,3 +372,4 @@ const tasksByLevel = tasks.reduce((acc, task) => {
 
 Users can now work with multiple helpers at once, each with their own tasks and progress, without any helper blocking another! 🚀
 
+

@@ -11,3 +11,4 @@ COMMENT ON COLUMN projects.goal IS 'Project goal or target (e.g., "Launch in 30 
 COMMENT ON COLUMN projects.location IS 'Project location or team location (e.g., "Massachusetts, United States")';
 COMMENT ON COLUMN projects.avatar_url IS 'URL or data URI for project avatar image';
 
+

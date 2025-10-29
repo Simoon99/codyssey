@@ -18,3 +18,4 @@ COMMENT ON COLUMN projects.current_stage IS 'Current development stage: ideation
 -- Update the updated_at trigger if it exists
 -- (Assumes update_updated_at_column function exists from previous migrations)
 
+

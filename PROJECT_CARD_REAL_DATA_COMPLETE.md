@@ -284,3 +284,4 @@ If no user authenticated and NOT in dev mode → Redirects to homepage
 
 **Every field in the screenshot you shared is now pulling from the database!** 🚀
 
+

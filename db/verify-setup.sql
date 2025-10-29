@@ -199,3 +199,4 @@ UNION ALL
 SELECT 'user_app_state', COUNT(*) FROM user_app_state
 ORDER BY table_name;
 
+

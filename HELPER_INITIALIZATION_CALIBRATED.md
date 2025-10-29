@@ -230,3 +230,4 @@ To test each helper's initialization:
 - Chat interface auto-start (`ChatInterface` component)
 - Step context management (`DashboardLayout` component)
 
+

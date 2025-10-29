@@ -40,3 +40,5 @@ turbo.json.local
 
 # OS
 Thumbs.db
+
+.vercel

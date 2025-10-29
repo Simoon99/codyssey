@@ -172,3 +172,4 @@ Using Tailwind's `animate-in` utilities:
 ✅ **Consistent UX across all entry points**
 ✅ **Polished, modern feel**
 
+

@@ -60,3 +60,4 @@ CREATE TRIGGER update_journey_progress_updated_at BEFORE UPDATE ON journey_progr
 CREATE TRIGGER update_helper_level_tasks_updated_at BEFORE UPDATE ON helper_level_tasks
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+

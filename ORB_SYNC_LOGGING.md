@@ -139,3 +139,4 @@ Check:
 4. **Switch helpers**: Select different helper → verify task button state
 5. **Reload**: Refresh page → verify orb state persists
 
+

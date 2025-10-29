@@ -268,3 +268,4 @@ Progress tracked in database
 
 The tasks card now has a prominent, modern appearance that matches the Quick Actions design and clearly shows users their progress through the helper's level tasks! 🚀
 
+

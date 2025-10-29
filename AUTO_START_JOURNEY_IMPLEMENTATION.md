@@ -128,3 +128,4 @@ To verify the implementation works:
 - ✅ Switching helpers: Each helper gets its own trigger
 - ✅ Session loading race: 100ms delay ensures session is ready
 
+

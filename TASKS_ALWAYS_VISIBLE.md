@@ -311,3 +311,4 @@ When no tasks yet:
 
 The tasks card now provides persistent visibility and smart auto-expansion, ensuring users always know their progress and can access their tasks with one click! 🚀
 
+
