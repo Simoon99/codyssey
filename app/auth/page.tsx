@@ -46,7 +46,8 @@ export default function AuthPage() {
 
   const handleDemoUser = async () => {
     setLoading(true);
-    sessionStorage.setItem('demo_mode', 'true');
+    // Set demo mode cookie that the server can read
+    document.cookie = 'demo_mode=true; path=/; max-age=86400'; // 24 hours
     router.push('/dashboard');
   };
 

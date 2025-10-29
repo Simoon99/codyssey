@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { getSupabaseClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 export default async function DashboardPage() {
   const supabase = await getSupabaseClient();
@@ -8,11 +9,15 @@ export default async function DashboardPage() {
   // Get authenticated user
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   
-  // Dev mode: Use demo user if not authenticated
+  // Check for demo mode from environment or cookie
   const isDev = process.env.NEXT_PUBLIC_DEV_MODE === "true";
-  const userId = user?.id || (isDev ? "00000000-0000-0000-0000-000000000001" : null);
+  const cookieStore = await cookies();
+  const demoModeCookie = cookieStore.get('demo_mode')?.value === 'true';
+  const isDemo = isDev || demoModeCookie;
   
-  if (!userId && !isDev) {
+  const userId = user?.id || (isDemo ? "00000000-0000-0000-0000-000000000001" : null);
+  
+  if (!userId && !isDemo) {
     redirect("/");
   }
 
