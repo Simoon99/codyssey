@@ -2010,31 +2010,52 @@ export function getHelperTasks(helper: string): TaskPrompt[] {
 /**
  * Build enhanced system prompt with task guidance
  */
-export function buildTaskAwarePrompt(taskIds: string[]): string {
-  const tasks = taskIds
-    .map(id => TASK_PROMPTS[id])
+export function buildTaskAwarePrompt(
+  taskIds: string[],
+  options?: { maxTasks?: number; maxTokens?: number }
+): string {
+  const uniqueTaskIds = Array.from(new Set(taskIds));
+
+  const tasks = uniqueTaskIds
+    .map((id) => TASK_PROMPTS[id])
     .filter(Boolean);
 
   if (tasks.length === 0) return "";
 
-  let prompt = "\n\n---\n\n**TASK COMPLETION GUIDANCE:**\n\n";
-  prompt += "You have access to detailed guidance for helping users complete these tasks:\n\n";
+  const maxTasks = options?.maxTasks ?? 5;
+  const selectedTasks = tasks.slice(0, maxTasks);
 
-  tasks.forEach((task) => {
+  let prompt = "\n\n---\n\n**TASK COMPLETION GUIDANCE:**\n\n";
+  prompt +=
+    "You have access to detailed guidance for helping users complete these tasks. Prioritize the tasks in this list and reference the criteria below to stay on track.\n\n";
+
+  const appendTask = (task: TaskPrompt) => {
     prompt += `**${task.taskId}:**\n`;
     prompt += `${task.guidancePrompt}\n\n`;
     prompt += `**Completion Criteria:**\n`;
-    task.completionCriteria.forEach(criteria => {
+    task.completionCriteria.forEach((criteria) => {
       prompt += `- ${criteria}\n`;
     });
     prompt += `\n**Proactive Suggestions:**\n`;
-    task.proactiveSuggestions.forEach(suggestion => {
+    task.proactiveSuggestions.forEach((suggestion) => {
       prompt += `- ${suggestion}\n`;
     });
     prompt += `\n---\n\n`;
-  });
+  };
 
-  prompt += "When users ask for help with these tasks, reference this guidance to provide comprehensive, actionable support.";
+  for (const task of selectedTasks) {
+    appendTask(task);
+
+    if (options?.maxTokens) {
+      const tokenEstimate = Math.round(prompt.length / 4);
+      if (tokenEstimate >= options.maxTokens) {
+        break;
+      }
+    }
+  }
+
+  prompt +=
+    "Use this focused guidance before falling back to general suggestions. If a task is already completed, you can skip it.";
 
   return prompt;
 }

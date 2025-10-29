@@ -3,383 +3,259 @@
     "levels": [
       {
         "id": 1,
-        "key": "spark",
-        "title": "Spark",
-        "description": "Find your idea and validate your vision",
-        "icon": "🌟",
+        "key": "idea_discovery",
+        "title": "Idea Discovery",
+        "description": "Turn idea chaos into clarity with Muse",
+        "icon": "🪄",
+        "mainHelper": "muse",
         "steps": [
           {
             "id": "L1S1",
             "helper": "muse",
-            "title": "Problem & Market Scan",
-            "cta": "Define your problem & market",
-            "firstMessage": "Hey there! 🚀 Let's nail down the problem you're solving. Tell me: **What's the problem?** (Who has it, why does it matter?) And **who are your top 3 competitors?** Once I understand this, I'll help you craft a compelling problem statement and spot opportunities they're missing.",
+            "title": "Refine Your Idea",
+            "cta": "Start with Muse",
+            "firstMessage": "Hey there! 🪄 I'm Muse. Let's turn your idea into something crystal clear and buildable.\n\nI'll help you:\n✓ Define the problem you're solving\n✓ Identify your target users\n✓ Lock down your MVP scope\n✓ Create a project brief\n\nShare your idea with me—no matter how vague! What's the spark?",
             "tasks": [
               "define-problem",
-              "research-competition",
-              "identify-target-audience",
-              "market-size-analysis"
+              "identify-target-users",
+              "lock-mvp-scope",
+              "create-project-brief"
             ],
             "requiredTasks": [
               "define-problem",
-              "research-competition"
-            ]
-          },
-          {
-            "id": "L1S2",
-            "helper": "architect",
-            "title": "Hypotheses & Validation",
-            "cta": "Validate with users",
-            "firstMessage": "Alright, let's validate this idea. 💡 I'll help you create **3 solution hypotheses** and a **interview script** to test with real users. Give me your problem and I'll draft questions that dig into their pain points. After you talk to 5 users, come back with your notes and I'll help you spot patterns.",
-            "tasks": [
-              "brainstorm-solutions",
-              "validate-idea",
-              "user-interview-analysis",
-              "create-value-hypothesis"
-            ],
-            "requiredTasks": [
-              "brainstorm-solutions",
-              "validate-idea"
-            ]
-          },
-          {
-            "id": "L1S3",
-            "helper": "crafter",
-            "title": "MVP Scope",
-            "cta": "Lock in MVP scope",
-            "firstMessage": "Let's lock in your MVP! 🎯 Based on your problem and validation, what are the **3–5 core features** that solve the core pain point? I'll help you write them up cleanly and define what 'done' looks like for each. This becomes your launchpad.",
-            "tasks": [
-              "define-mvp-scope",
-              "create-user-stories",
-              "design-success-metrics"
-            ],
-            "requiredTasks": [
-              "define-mvp-scope"
+              "lock-mvp-scope",
+              "create-project-brief"
             ]
           }
         ],
-        "definitionOfDone": "Validated MVP scope with user evidence; ready for architecture."
+        "definitionOfDone": "Clear project brief with problem, solution, MVP features, and target user. Ready for Architect!",
+        "outcome": "Validated project concept"
       },
       {
         "id": 2,
-        "key": "build_prep",
-        "title": "Build Prep",
-        "description": "Plan your tech stack and architecture",
-        "icon": "🏗️",
+        "key": "structure_and_plan",
+        "title": "Structure & Plan",
+        "description": "Turn idea into blueprint with Architect",
+        "icon": "🧱",
+        "mainHelper": "architect",
         "steps": [
           {
             "id": "L2S1",
             "helper": "architect",
-            "title": "Stack & Architecture",
-            "cta": "Pick your tech stack",
-            "firstMessage": "Time to build the blueprint! 🏗️ Let's pick your tech stack (frontend, backend, database) and draw a simple architecture diagram. I'll help you think through **constraints** (budget, timeline, team size) and recommend a stack that won't slow you down. Then we'll map out how data flows.",
+            "title": "Create Build Prompts",
+            "cta": "Work with Architect",
+            "firstMessage": "Time to build your blueprint! 🧱 I'm Architect.\n\nI'll help you:\n✓ Create structural prompts\n✓ Choose your tech stack\n✓ Design your data model\n✓ Break features into tasks\n\nShare your project brief, and I'll turn it into buildable prompts!",
             "tasks": [
+              "create-structural-prompts",
               "choose-tech-stack",
-              "design-architecture",
-              "document-dependencies",
-              "identify-tech-risks"
+              "design-data-model",
+              "break-into-build-tasks"
             ],
             "requiredTasks": [
+              "create-structural-prompts",
               "choose-tech-stack",
-              "design-architecture"
-            ]
-          },
-          {
-            "id": "L2S2",
-            "helper": "crafter",
-            "title": "Wireframes & Design",
-            "cta": "Sketch your flows",
-            "firstMessage": "Let's sketch the experience! 🎨 I'll help you wireframe the **three critical flows**: onboarding, core action, and success state. These don't need to be pretty—just clear. Grab a pen and paper or use Figma, and let's map it out together.",
-            "tasks": [
-              "create-wireframes",
-              "design-ui-system",
-              "create-user-flows"
-            ],
-            "requiredTasks": [
-              "create-wireframes"
-            ]
-          },
-          {
-            "id": "L2S3",
-            "helper": "hacker",
-            "title": "Repo & Milestones",
-            "cta": "Set up infrastructure",
-            "firstMessage": "Let's set up the foundation! 🔧 I'll help you initialize a Git repo, design your database schema, and break your MVP into **2–4 weekly milestones**. Each milestone should have a clear deliverable so you stay on track.",
-            "tasks": [
-              "setup-repository",
-              "define-data-model",
-              "plan-milestones",
-              "setup-ci-cd",
-              "create-deployment-plan",
-              "write-api-specs"
-            ],
-            "requiredTasks": [
-              "setup-repository",
-              "define-data-model",
-              "plan-milestones"
+              "design-data-model"
             ]
           }
         ],
-        "definitionOfDone": "Repo, schema, and milestone plan set. Ready to code."
+        "definitionOfDone": "Complete set of structural prompts, task breakdown, and build sequence. Ready for UI design!",
+        "outcome": "Prompt-ready MVP blueprint"
       },
       {
         "id": 3,
-        "key": "core_build",
-        "title": "Core Build",
-        "description": "Build your MVP with essential features",
-        "icon": "💻",
+        "key": "visual_direction",
+        "title": "Visual Direction",
+        "description": "Master UI prompts with Crafter",
+        "icon": "🎨",
+        "mainHelper": "crafter",
         "steps": [
           {
             "id": "L3S1",
-            "helper": "hacker",
-            "title": "Foundation",
-            "cta": "Build the base",
-            "firstMessage": "Let's start shipping! 🚀 I'll help you set up your dev environment, build auth, and get your **first core feature working**. Once you have user signup/login + one feature, you'll have momentum. Let's break this into PRs and ship it.",
-            "tasks": [
-              "setup-dev-environment",
-              "build-auth",
-              "build-core-feature-1",
-              "setup-logging-monitoring",
-              "document-setup-guide"
-            ],
-            "requiredTasks": [
-              "setup-dev-environment",
-              "build-auth",
-              "build-core-feature-1"
-            ]
-          },
-          {
-            "id": "L3S2",
             "helper": "crafter",
-            "title": "Features & UI",
-            "cta": "Polish the experience",
-            "firstMessage": "Let's make it beautiful and polished! ✨ You've got feature #1 done. Now let's finish features #2 and #3, and make the entire UI cohesive. I'll help you with **design tokens, spacing, and micro-interactions** to make it feel like a real product.",
+            "title": "Perfect Your UI Prompts",
+            "cta": "Work with Crafter",
+            "firstMessage": "Let's make your UI stunning! 🎨 I'm Crafter.\n\nI'll help you:\n✓ Define your design system\n✓ Design your component structure\n✓ Master v0/Lovable prompts\n✓ Create UI prompt templates\n\nShare your features, and I'll help you create elite-level UI prompts!",
             "tasks": [
-              "build-core-feature-2",
-              "build-core-feature-3",
-              "implement-ui",
-              "add-animations",
-              "implement-accessibility",
-              "optimize-performance"
+              "define-design-system",
+              "design-component-structure",
+              "master-ai-ui-tools",
+              "create-ui-prompt-templates"
             ],
             "requiredTasks": [
-              "build-core-feature-2",
-              "build-core-feature-3",
-              "implement-ui"
+              "define-design-system",
+              "design-component-structure",
+              "create-ui-prompt-templates"
             ]
-          },
-          {
-            "id": "L3S3",
-            "helper": "hacker",
-            "title": "Hardening & Tests",
-            "cta": "Make it bulletproof",
-            "firstMessage": "Let's make it bulletproof! 🛡️ Time to add tests, error handling, and fix any performance bottlenecks. These aren't required for MVP, but they'll save you headaches later. Let me help you prioritize what to test and what to monitor.",
-            "tasks": [
-              "write-tests",
-              "setup-error-boundaries",
-              "create-demo-data",
-              "performance-audit"
-            ],
-            "requiredTasks": []
           }
         ],
-        "definitionOfDone": "MVP core loop functional and demoable. Ready to launch."
+        "definitionOfDone": "Polished UI prompt pack with templates, state descriptions, and tool-specific prompts. Ready to build!",
+        "outcome": "Polished UI prompt pack"
       },
       {
         "id": 4,
-        "key": "launch",
-        "title": "Launch",
-        "description": "Ship your product to the world",
-        "icon": "🚀",
+        "key": "build_execution",
+        "title": "Build Execution",
+        "description": "10x your building speed with Hacker",
+        "icon": "⚙️",
+        "mainHelper": "hacker",
         "steps": [
           {
             "id": "L4S1",
             "helper": "hacker",
-            "title": "Deployment",
-            "cta": "Go live",
-            "firstMessage": "Time to go live! 🌍 Let's get your app into production and set up analytics so you can see what users are doing. I'll help you with **deployment**, **event tracking**, and **monitoring** so you can sleep soundly.",
+            "title": "Master Build Prompts",
+            "cta": "Work with Hacker",
+            "firstMessage": "Time to build like a 10x vibecoder! ⚙️ I'm Hacker.\n\nI'll help you:\n✓ Choose the right AI tools\n✓ Master CAO prompt structure\n✓ Create reusable prompt macros\n✓ Design prompt chains\n\nShare what you're building, and I'll make you FAST!",
             "tasks": [
-              "deploy-production",
-              "setup-analytics",
-              "setup-monitoring",
-              "setup-customer-support"
+              "choose-ai-tools",
+              "master-cao-structure",
+              "create-prompt-macros",
+              "design-prompt-chains"
             ],
             "requiredTasks": [
-              "deploy-production",
-              "setup-analytics"
-            ]
-          },
-          {
-            "id": "L4S2",
-            "helper": "hypebeast",
-            "title": "Landing & Content",
-            "cta": "Craft your narrative",
-            "firstMessage": "Let's make noise! 📣 Time to build a **killer landing page** and craft your **launch narrative**. I'll help you write tweets, emails, and a press narrative that gets people excited. Your landing page should answer in 10 seconds: What is it? Why should I care?",
-            "tasks": [
-              "create-landing-page",
-              "write-launch-content",
-              "create-demo-video",
-              "design-launch-assets"
-            ],
-            "requiredTasks": [
-              "create-landing-page",
-              "write-launch-content"
-            ]
-          },
-          {
-            "id": "L4S3",
-            "helper": "hypebeast",
-            "title": "Launch & Feedback",
-            "cta": "Ship & listen",
-            "firstMessage": "It's go-time! 🎉 Let's **ship this thing**. We'll post on Product Hunt, Twitter, HN, and other platforms simultaneously. Then we'll listen closely to the first 10+ users, document their feedback, and iterate based on what we learn.",
-            "tasks": [
-              "launch-product",
-              "gather-feedback",
-              "create-press-kit",
-              "build-email-list",
-              "community-engagement"
-            ],
-            "requiredTasks": [
-              "launch-product",
-              "gather-feedback"
+              "choose-ai-tools",
+              "master-cao-structure",
+              "create-prompt-macros"
             ]
           }
         ],
-        "definitionOfDone": "Production live, launch executed, feedback collected. Ready to grow."
+        "definitionOfDone": "Complete build prompt system with macros, chains, and optimized workflow. Ready to launch!",
+        "outcome": "10x build prompt system"
       },
       {
         "id": 5,
-        "key": "grow",
-        "title": "Grow",
-        "description": "Scale and optimize for growth",
-        "icon": "📈",
+        "key": "launch_and_story",
+        "title": "Launch & Story",
+        "description": "Create marketing prompts with Hypebeast",
+        "icon": "📢",
+        "mainHelper": "hypebeast",
         "steps": [
           {
             "id": "L5S1",
             "helper": "hypebeast",
-            "title": "Metrics & Growth",
-            "cta": "Analyze & plan experiments",
-            "firstMessage": "You shipped! 🎉 Now let's grow this. First, **Hypebeast** here: let's look at your analytics and spot the bottlenecks. What's your funnel look like? Where do users drop off? Once we see the data, **Sensei** will help you design experiments to fix it.",
+            "title": "Craft Marketing Prompts",
+            "cta": "Work with Hypebeast",
+            "firstMessage": "Let's make some noise! 📢 I'm Hypebeast.\n\nI'll help you:\n✓ Plan your launch strategy\n✓ Write viral launch stories\n✓ Create landing page copy prompts\n✓ Build social media content\n\nTell me about your product, and I'll get you seen!",
             "tasks": [
-              "analyze-metrics",
-              "plan-growth-experiments",
-              "cohort-analysis",
-              "competitive-benchmarking"
+              "plan-launch-strategy",
+              "write-launch-story",
+              "create-landing-copy-prompts",
+              "build-social-content"
             ],
             "requiredTasks": [
-              "analyze-metrics",
-              "plan-growth-experiments"
-            ]
-          },
-          {
-            "id": "L5S2",
-            "helper": "sensei",
-            "title": "Activation & Retention",
-            "cta": "Make users stick",
-            "firstMessage": "Let's make every user a fan. 🌟 The secret to growth is **getting users to that 'aha moment' fast**, then **keeping them coming back**. I'll help you optimize onboarding to reduce time-to-value and build habit loops that make your app sticky.",
-            "tasks": [
-              "optimize-onboarding",
-              "improve-retention",
-              "implement-push-notifications",
-              "build-habit-loops",
-              "create-aha-moment"
-            ],
-            "requiredTasks": [
-              "optimize-onboarding",
-              "improve-retention"
-            ]
-          },
-          {
-            "id": "L5S3",
-            "helper": "sensei",
-            "title": "Scale & Referrals",
-            "cta": "Hit 100 users & beyond",
-            "firstMessage": "You're on your way! 🚀 **Sensei** here: let's hit 100 users by doubling down on what's working—referrals, community, word-of-mouth. Then **Muse** will help you think about the next chapter: monetization, new features, or going deeper. You did it!",
-            "tasks": [
-              "reach-100-users",
-              "build-referral-system",
-              "create-pricing-strategy",
-              "launch-paid-tier",
-              "plan-next-features"
-            ],
-            "requiredTasks": [
-              "reach-100-users"
+              "plan-launch-strategy",
+              "write-launch-story",
+              "create-landing-copy-prompts"
             ]
           }
         ],
-        "definitionOfDone": "Repeatable growth loop established; 100 users achieved. You've gone from 0 to 1 and beyond! 🎉"
+        "definitionOfDone": "Complete marketing prompt pack with copy, social, and launch content. Ready to grow!",
+        "outcome": "Viral marketing prompts"
+      },
+      {
+        "id": 6,
+        "key": "review_and_improve",
+        "title": "Review & Improve",
+        "description": "Level up your skills with Sensei",
+        "icon": "🧘",
+        "mainHelper": "sensei",
+        "steps": [
+          {
+            "id": "L6S1",
+            "helper": "sensei",
+            "title": "Reflect and Grow",
+            "cta": "Work with Sensei",
+            "firstMessage": "Time to level up! 🧘 I'm Sensei.\n\nI'll help you:\n✓ Reflect on your project\n✓ Analyze what worked\n✓ Build your personal playbook\n✓ Plan your next project\n\nShare your journey, and I'll help you compound your skills!",
+            "tasks": [
+              "reflect-on-project",
+              "analyze-what-worked",
+              "build-personal-playbook",
+              "plan-next-project"
+            ],
+            "requiredTasks": [
+              "reflect-on-project",
+              "analyze-what-worked",
+              "build-personal-playbook"
+            ]
+          }
+        ],
+        "definitionOfDone": "Complete reflection with growth insights, improved prompts, and personal playbook. Ready for the next project!",
+        "outcome": "Growth + skill insights"
       }
     ]
   },
   "helpers": {
     "muse": {
       "name": "Muse",
-      "emoji": "🌟",
-      "title": "The Ideator",
-      "specialty": "Ideation, validation, concepts",
-      "vibe": "Playful, strategic",
+      "emoji": "🪄",
+      "title": "From Idea Chaos to Clarity",
+      "specialty": "Idea refinement, validation, prompt-ready briefs",
+      "vibe": "Playful, strategic, clarifying",
       "unlockLevel": 1,
-      "appearLevels": [1, 5]
+      "appearLevels": [1]
     },
     "architect": {
       "name": "Architect",
-      "emoji": "🏗️",
-      "title": "The Stack Master",
-      "specialty": "Planning, stack, architecture",
-      "vibe": "Methodical, practical",
-      "unlockLevel": 1,
-      "appearLevels": [1, 2]
+      "emoji": "🧱",
+      "title": "From Idea to Blueprint",
+      "specialty": "Structural prompts, task breakdown, sequencing",
+      "vibe": "Methodical, organized, systematic",
+      "unlockLevel": 2,
+      "appearLevels": [2]
     },
     "crafter": {
       "name": "Crafter",
-      "emoji": "✨",
-      "title": "The Brand Weaver",
-      "specialty": "Design, UI, brand, polish",
-      "vibe": "Visual, iterative",
-      "unlockLevel": 1,
-      "appearLevels": [1, 2, 3]
+      "emoji": "🎨",
+      "title": "UI Prompt Optimizer",
+      "specialty": "UI prompts, templates, aesthetic mastery",
+      "vibe": "Visual, detailed, educational",
+      "unlockLevel": 3,
+      "appearLevels": [3]
     },
     "hacker": {
       "name": "Hacker",
-      "emoji": "🔧",
-      "title": "The Unblocker",
-      "specialty": "Code, deployment, hardening",
-      "vibe": "Direct, pragmatic",
-      "unlockLevel": 2,
-      "appearLevels": [2, 3, 4]
+      "emoji": "⚙️",
+      "title": "Prompt Engineer's Companion",
+      "specialty": "Build prompts, macros, chaining, optimization",
+      "vibe": "Direct, efficient, pragmatic",
+      "unlockLevel": 4,
+      "appearLevels": [4]
     },
     "hypebeast": {
       "name": "Hypebeast",
-      "emoji": "📣",
-      "title": "The Launch Maestro",
-      "specialty": "Launch, marketing, growth",
-      "vibe": "Energetic, strategic",
-      "unlockLevel": 4,
-      "appearLevels": [4, 5]
+      "emoji": "📢",
+      "title": "The Marketing Prompt Coach",
+      "specialty": "Marketing prompts, viral stories, launch content",
+      "vibe": "Energetic, creative, viral-minded",
+      "unlockLevel": 5,
+      "appearLevels": [5]
     },
     "sensei": {
       "name": "Sensei",
-      "emoji": "🌟",
-      "title": "The Growth Sage",
-      "specialty": "Retention, growth, scaling",
-      "vibe": "Wise, systems-focused",
-      "unlockLevel": 5,
-      "appearLevels": [5]
+      "emoji": "🧘",
+      "title": "Growth and Learning Mentor",
+      "specialty": "Reflection, growth tracking, skill improvement",
+      "vibe": "Wise, reflective, growth-focused",
+      "unlockLevel": 6,
+      "appearLevels": [6]
     }
   },
   "xp": {
     "scaling": {
       "level_1": { "min": 15, "max": 25, "average": 20 },
       "level_2": { "min": 20, "max": 30, "average": 25 },
-      "level_3": { "min": 20, "max": 50, "average": 35 },
-      "level_4": { "min": 20, "max": 60, "average": 40 },
-      "level_5": { "min": 25, "max": 100, "average": 50 }
+      "level_3": { "min": 20, "max": 35, "average": 28 },
+      "level_4": { "min": 25, "max": 40, "average": 32 },
+      "level_5": { "min": 25, "max": 40, "average": 32 },
+      "level_6": { "min": 20, "max": 35, "average": 28 }
     },
     "optionalTaskMultiplier": 1.5
   },
   "notes": {
+    "philosophy": "The ultimate vibecoder co-pilot — helping you go from fuzzy idea → 10x optimized prompts → finished product, across any vibecoding tool.",
     "levelGating": "All levels are freely accessible (no XP gating)",
-    "progression": "Complete all required tasks in current level → auto-unlock next level",
-    "optionalTasks": "Bonus XP + deeper outcomes; encourage users to go beyond MVP"
+    "progression": "Complete required tasks in current level → auto-unlock next level",
+    "optionalTasks": "Bonus XP + deeper learning; encourage users to master each Helper",
+    "journey": "Each level teaches a specific prompt mastery skill. Outputs feed into each other: Muse → Architect → Crafter → Hacker → Hypebeast → Sensei"
   }
 }
+

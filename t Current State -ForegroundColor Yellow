@@ -1,0 +1,1764 @@
+warning: in the working copy of 'components/chat/chat-interface.tsx', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/components/chat/chat-interface.tsx b/components/chat/chat-interface.tsx[m
+[1mindex 28220fe..95112cf 100644[m
+[1m--- a/components/chat/chat-interface.tsx[m
+[1m+++ b/components/chat/chat-interface.tsx[m
+[36m@@ -2,15 +2,64 @@[m
+ [m
+ import { useState, useRef, useEffect } from "react";[m
+ import { Message } from "./message";[m
+[32m+[m[32mimport { PromptModal } from "./prompt-modal";[m
+[32m+[m[32mimport { PromptQualityInlineBadge } from "./prompt-quality-badge";[m
+ import { Button } from "@/components/ui/button";[m
+ import { Card } from "@/components/ui/card";[m
+[31m-import { Send, Loader2, Paperclip, ArrowLeft, CheckCircle2, Info } from "lucide-react";[m
+[32m+[m[32mimport {[m
+[32m+[m[32m  Send,[m
+[32m+[m[32m  Loader2,[m
+[32m+[m[32m  Paperclip,[m
+[32m+[m[32m  ArrowLeft,[m
+[32m+[m[32m  CheckCircle2,[m
+[32m+[m[32m  Info,[m
+[32m+[m[32m  Sparkles,[m
+[32m+[m[32m  ChevronDown,[m
+[32m+[m[32m  ChevronUp,[m
+[32m+[m[32m  Trash2,[m
+[32m+[m[32m  Edit2,[m
+[32m+[m[32m  X,[m
+[32m+[m[32m} from "lucide-react";[m
+ import { type HelperType, getHelperById } from "@/lib/types/helpers";[m
+[32m+[m[32mimport {[m
+[32m+[m[32m  getTemplatesForHelper,[m
+[32m+[m[32m  type PromptTemplate,[m
+[32m+[m[32m} from "@/lib/template-library";[m
+[32m+[m
+[32m+[m[32minterface SearchResult {[m
+[32m+[m[32m  title: string;[m
+[32m+[m[32m  url: string;[m
+[32m+[m[32m  snippet: string;[m
+[32m+[m[32m  domain: string;[m
+[32m+[m[32m}[m
+ [m
+ interface ChatMessage {[m
+   id: string;[m
+   role: "user" | "assistant";[m
+   content: string;[m
+[32m+[m[32m  toolCalls?: Array<{[m
+[32m+[m[32m    tool_name: string;[m
+[32m+[m[32m    tool_args: any;[m
+[32m+[m[32m    result?: any;[m
+[32m+[m[32m  }>;[m
+[32m+[m[32m  searchResults?: {[m
+[32m+[m[32m    results: Array<{[m
+[32m+[m[32m      title: string;[m
+[32m+[m[32m      url: string;[m
+[32m+[m[32m      snippet: string;[m
+[32m+[m[32m      domain: string;[m
+[32m+[m[32m    }>;[m
+[32m+[m[32m    query: string;[m
+[32m+[m[32m    summary?: string;[m
+[32m+[m[32m    citations?: Array<{[m
+[32m+[m[32m      index: number;[m
+[32m+[m[32m      title: string;[m
+[32m+[m[32m      url: string;[m
+[32m+[m[32m      snippet?: string;[m
+[32m+[m[32m      domain?: string;[m
+[32m+[m[32m      date?: string | null;[m
+[32m+[m[32m    }>;[m
+[32m+[m[32m  };[m
+ }[m
+ [m
+ interface ChatInterfaceProps {[m
+[36m@@ -38,6 +87,7 @@[m [minterface ChatInterfaceProps {[m
+     cta: string;[m
+   };[m
+   project?: {[m
+[32m+[m[32m    id?: string;[m
+     name: string;[m
+     description: string;[m
+     techStack?: string;[m
+[36m@@ -47,132 +97,166 @@[m [minterface ChatInterfaceProps {[m
+ [m
+ // Sample recommendations based on helper[m
+ const getRecommendations = (helper: HelperType) => {[m
+[31m-  const recommendations: Record<HelperType, Array<{title: string, subtitle: string, description: string, emoji: string}>> = {[m
+[32m+[m[32m  const recommendations: Record<[m
+[32m+[m[32m    HelperType,[m
+[32m+[m[32m    Array<{[m
+[32m+[m[32m      title: string;[m
+[32m+[m[32m      subtitle: string;[m
+[32m+[m[32m      description: string;[m
+[32m+[m[32m      emoji: string;[m
+[32m+[m[32m    }>[m
+[32m+[m[32m  > = {[m
+     muse: [[m
+[31m-      { [m
+[31m-        title: "Problem-Solution Fit", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Problem-Solution Fit",[m
+         subtitle: "Market Research",[m
+[31m-        description: "Deep dive into validating your idea with target users and understanding pain points.",[m
+[31m-        emoji: "🎯"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Deep dive into validating your idea with target users and understanding pain points.",[m
+[32m+[m[32m        emoji: "🎯",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Competitive Analysis", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Competitive Analysis",[m
+         subtitle: "Market Landscape",[m
+[31m-        description: "Analyze your competitors' strengths and weaknesses to find your unique angle.",[m
+[31m-        emoji: "🔍"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Analyze your competitors' strengths and weaknesses to find your unique angle.",[m
+[32m+[m[32m        emoji: "🔍",[m
+       },[m
+[31m-      { [m
+[31m-        title: "MVP Scope Definition", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "MVP Scope Definition",[m
+         subtitle: "Feature Planning",[m
+[31m-        description: "Identify the core 3-5 features that will make your first version valuable.",[m
+[31m-        emoji: "✨"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Identify the core 3-5 features that will make your first version valuable.",[m
+[32m+[m[32m        emoji: "✨",[m
+       },[m
+     ],[m
+     architect: [[m
+[31m-      { [m
+[31m-        title: "Tech Stack Selection", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Tech Stack Selection",[m
+         subtitle: "Modern & Scalable",[m
+[31m-        description: "Choose the right frameworks and tools that fit your timeline and team skills.",[m
+[31m-        emoji: "🏗️"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Choose the right frameworks and tools that fit your timeline and team skills.",[m
+[32m+[m[32m        emoji: "🏗️",[m
+       },[m
+[31m-      { [m
+[31m-        title: "System Architecture", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "System Architecture",[m
+         subtitle: "Clean Design",[m
+[31m-        description: "Design a maintainable architecture that can scale with your product.",[m
+[31m-        emoji: "📐"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Design a maintainable architecture that can scale with your product.",[m
+[32m+[m[32m        emoji: "📐",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Database Schema", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Database Schema",[m
+         subtitle: "Data Modeling",[m
+[31m-        description: "Create efficient database structures with proper relationships and indexes.",[m
+[31m-        emoji: "🗄️"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Create efficient database structures with proper relationships and indexes.",[m
+[32m+[m[32m        emoji: "🗄️",[m
+       },[m
+     ],[m
+     crafter: [[m
+[31m-      { [m
+[31m-        title: "UI Design System", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "UI Design System",[m
+         subtitle: "Consistent & Beautiful",[m
+[31m-        description: "Build a cohesive design language with colors, typography, and components.",[m
+[31m-        emoji: "🎨"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Build a cohesive design language with colors, typography, and components.",[m
+[32m+[m[32m        emoji: "🎨",[m
+       },[m
+[31m-      { [m
+[31m-        title: "User Experience Flow", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "User Experience Flow",[m
+         subtitle: "Seamless Interactions",[m
+[31m-        description: "Craft intuitive user journeys that make your product easy to use.",[m
+[31m-        emoji: "✨"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Craft intuitive user journeys that make your product easy to use.",[m
+[32m+[m[32m        emoji: "✨",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Brand Identity", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Brand Identity",[m
+         subtitle: "Memorable Style",[m
+[31m-        description: "Develop a unique brand personality that resonates with your audience.",[m
+[31m-        emoji: "🌟"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Develop a unique brand personality that resonates with your audience.",[m
+[32m+[m[32m        emoji: "🌟",[m
+       },[m
+     ],[m
+     hacker: [[m
+[31m-      { [m
+[31m-        title: "Debug & Fix Issues", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Debug & Fix Issues",[m
+         subtitle: "Problem Solving",[m
+[31m-        description: "Systematic approach to identifying and resolving technical bugs.",[m
+[31m-        emoji: "⚡"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Systematic approach to identifying and resolving technical bugs.",[m
+[32m+[m[32m        emoji: "⚡",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Code Optimization", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Code Optimization",[m
+         subtitle: "Performance",[m
+         description: "Improve code efficiency and application performance.",[m
+[31m-        emoji: "🚀"[m
+[32m+[m[32m        emoji: "🚀",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Feature Implementation", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Feature Implementation",[m
+         subtitle: "Build Fast",[m
+         description: "Ship new features quickly with clean, maintainable code.",[m
+[31m-        emoji: "💻"[m
+[32m+[m[32m        emoji: "💻",[m
+       },[m
+     ],[m
+     hypebeast: [[m
+[31m-      { [m
+[31m-        title: "Launch Strategy", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Launch Strategy",[m
+         subtitle: "Go-to-Market",[m
+[31m-        description: "Plan your product launch across multiple channels for maximum impact.",[m
+[31m-        emoji: "🚀"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Plan your product launch across multiple channels for maximum impact.",[m
+[32m+[m[32m        emoji: "🚀",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Content Creation", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Content Creation",[m
+         subtitle: "Social Media",[m
+[31m-        description: "Craft compelling tweets, posts, and announcements that go viral.",[m
+[31m-        emoji: "📱"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Craft compelling tweets, posts, and announcements that go viral.",[m
+[32m+[m[32m        emoji: "📱",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Community Building", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Community Building",[m
+         subtitle: "Early Adopters",[m
+[31m-        description: "Build a loyal community around your product before and after launch.",[m
+[31m-        emoji: "👥"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Build a loyal community around your product before and after launch.",[m
+[32m+[m[32m        emoji: "👥",[m
+       },[m
+     ],[m
+     sensei: [[m
+[31m-      { [m
+[31m-        title: "Growth Experiments", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Growth Experiments",[m
+         subtitle: "Data-Driven",[m
+[31m-        description: "Design and run experiments to find sustainable growth channels.",[m
+[31m-        emoji: "📊"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Design and run experiments to find sustainable growth channels.",[m
+[32m+[m[32m        emoji: "📊",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Retention Strategy", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Retention Strategy",[m
+         subtitle: "Keep Users Coming",[m
+[31m-        description: "Implement features and flows that keep users engaged long-term.",[m
+[31m-        emoji: "🔄"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Implement features and flows that keep users engaged long-term.",[m
+[32m+[m[32m        emoji: "🔄",[m
+       },[m
+[31m-      { [m
+[31m-        title: "Scaling to 100+", [m
+[32m+[m[32m      {[m
+[32m+[m[32m        title: "Scaling to 100+",[m
+         subtitle: "Sustainable Growth",[m
+[31m-        description: "Proven tactics to grow from first users to 100+ active customers.",[m
+[31m-        emoji: "📈"[m
+[32m+[m[32m        description:[m
+[32m+[m[32m          "Proven tactics to grow from first users to 100+ active customers.",[m
+[32m+[m[32m        emoji: "📈",[m
+       },[m
+     ],[m
+   };[m
+[31m-  [m
+[32m+[m
+   return recommendations[helper] || [];[m
+ };[m
+ [m
+[32m+[m[32minterface ChatSession {[m
+[32m+[m[32m  id: string;[m
+[32m+[m[32m  helper: HelperType;[m
+[32m+[m[32m  thread_id: string;[m
+[32m+[m[32m  title: string;[m
+[32m+[m[32m  last_message_preview?: string;[m
+[32m+[m[32m  last_message_at: string;[m
+[32m+[m[32m  created_at: string;[m
+[32m+[m[32m}[m
+[32m+[m
+ export function ChatInterface({[m
+   helper,[m
+   chatId,[m
+[36m@@ -184,88 +268,236 @@[m [mexport function ChatInterface({[m
+   stepContext,[m
+   project,[m
+ }: ChatInterfaceProps) {[m
+[31m-  // Store chat histories for each helper separately[m
+[31m-  const [chatHistories, setChatHistories] = useState<Record<HelperType, ChatMessage[]>>({[m
+[31m-    muse: [],[m
+[31m-    architect: [],[m
+[31m-    crafter: [],[m
+[31m-    hacker: [],[m
+[31m-    hypebeast: [],[m
+[31m-    sensei: [],[m
+[31m-  });[m
+[31m-  [m
+[32m+[m[32m  // Session-based state[m
+[32m+[m[32m  const [sessions, setSessions] = useState<ChatSession[]>([]);[m
+[32m+[m[32m  const [currentSession, setCurrentSession] = useState<ChatSession | null>([m
+[32m+[m[32m    null,[m
+[32m+[m[32m  );[m
+[32m+[m[32m  const [messages, setMessages] = useState<ChatMessage[]>([]);[m
+[32m+[m[32m  const [isLoadingSessions, setIsLoadingSessions] = useState(true);[m
+[32m+[m
+   const [input, setInput] = useState("");[m
+   const [isLoading, setIsLoading] = useState(false);[m
+   const [isStreaming, setIsStreaming] = useState(false);[m
+   const [tasksExpanded, setTasksExpanded] = useState(false);[m
+   const [completingTaskId, setCompletingTaskId] = useState<string | null>(null);[m
+   const [showHelperInfoMobile, setShowHelperInfoMobile] = useState(false);[m
+[32m+[m[32m  const [showPromptModal, setShowPromptModal] = useState(false);[m
+[32m+[m[32m  const [generatedPrompt, setGeneratedPrompt] = useState("");[m
+[32m+[m[32m  const [isGeneratingPrompt, setIsGeneratingPrompt] = useState(false);[m
+[32m+[m[32m  const [templatesExpanded, setTemplatesExpanded] = useState(false);[m
+[32m+[m[32m  const [currentToolCalls, setCurrentToolCalls] = useState<[m
+[32m+[m[32m    Array<{ tool_name: string; tool_args: any; result?: any }>[m
+[32m+[m[32m  >([]); // Active tool calls[m
+[32m+[m[32m  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);[m
+[32m+[m[32m  const [editingTitle, setEditingTitle] = useState("");[m
+   const messagesEndRef = useRef<HTMLDivElement>(null);[m
+[32m+[m[32m  const templatesRef = useRef<HTMLDivElement>(null);[m
+ [m
+[31m-  // Load chat history from localStorage on mount[m
+[32m+[m[32m  const projectId = project?.id || "00000000-0000-0000-0000-000000000002";[m
+[32m+[m[32m  const templates = getTemplatesForHelper(helper);[m
+[32m+[m
+[32m+[m[32m  // Close templates dropdown when clicking outside[m
+   useEffect(() => {[m
+[31m-    if (typeof window !== "undefined") {[m
+[31m-      const saved = localStorage.getItem(`chat:${helper}`);[m
+[31m-      if (saved) {[m
+[31m-        try {[m
+[31m-          const parsed: ChatMessage[] = JSON.parse(saved);[m
+[31m-          setChatHistories(prev => ({ ...prev, [helper]: parsed }));[m
+[31m-        } catch (error) {[m
+[31m-          console.error("Failed to load chat history:", error);[m
+[31m-        }[m
+[32m+[m[32m    const handleClickOutside = (event: MouseEvent) => {[m
+[32m+[m[32m      if ([m
+[32m+[m[32m        templatesRef.current &&[m
+[32m+[m[32m        !templatesRef.current.contains(event.target as Node)[m
+[32m+[m[32m      ) {[m
+[32m+[m[32m        setTemplatesExpanded(false);[m
+       }[m
+[32m+[m[32m    };[m
+[32m+[m
+[32m+[m[32m    if (templatesExpanded) {[m
+[32m+[m[32m      document.addEventListener("mousedown", handleClickOutside);[m
+[32m+[m[32m      return () =>[m
+[32m+[m[32m        document.removeEventListener("mousedown", handleClickOutside);[m
+     }[m
+[31m-  }, [helper]);[m
+[32m+[m[32m  }, [templatesExpanded]);[m
+ [m
+[31m-  // Save chat history to localStorage whenever it changes[m
+[32m+[m[32m  // Load sessions on mount[m
+   useEffect(() => {[m
+[31m-    if (typeof window !== "undefined" && chatHistories[helper].length > 0) {[m
+[31m-      const data = JSON.stringify(chatHistories[helper]);[m
+[31m-      localStorage.setItem(`chat:${helper}`, data);[m
+[32m+[m[32m    const loadSessions = async () => {[m
+[32m+[m[32m      setIsLoadingSessions(true);[m
+[32m+[m[32m      try {[m
+[32m+[m[32m        const response = await fetch([m
+[32m+[m[32m          `/api/chat/sessions?projectId=${projectId}&helper=${helper}`,[m
+[32m+[m[32m        );[m
+[32m+[m[32m        if (response.ok) {[m
+[32m+[m[32m          const { sessions: loadedSessions } = await response.json();[m
+[32m+[m[32m          setSessions(loadedSessions || []);[m
+[32m+[m
+[32m+[m[32m          // If there are sessions, load the most recent one[m
+[32m+[m[32m          if (loadedSessions && loadedSessions.length > 0) {[m
+[32m+[m[32m            await loadSession(loadedSessions[0]);[m
+[32m+[m[32m          }[m
+[32m+[m[32m        }[m
+[32m+[m[32m      } catch (error) {[m
+[32m+[m[32m        console.error("Failed to load sessions:", error);[m
+[32m+[m[32m      } finally {[m
+[32m+[m[32m        setIsLoadingSessions(false);[m
+[32m+[m[32m      }[m
+[32m+[m[32m    };[m
+[32m+[m
+[32m+[m[32m    loadSessions();[m
+[32m+[m[32m  }, [helper, projectId]);[m
+[32m+[m
+[32m+[m[32m  // Load messages for a specific session[m
+[32m+[m[32m  const loadSession = async (session: ChatSession) => {[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      console.log("[loadSession] Loading messages for session:", session.id);[m
+[32m+[m[32m      const response = await fetch(`/api/chat/sessions/${session.id}/messages`);[m
+[32m+[m[32m      if (response.ok) {[m
+[32m+[m[32m        const { messages: loadedMessages } = await response.json();[m
+[32m+[m[32m        console.log("[loadSession] Received messages:", loadedMessages);[m
+[32m+[m[32m        console.log([m
+[32m+[m[32m          "[loadSession] Message count:",[m
+[32m+[m[32m          loadedMessages?.length || 0,[m
+[32m+[m[32m        );[m
+[32m+[m[32m        setMessages(loadedMessages || []);[m
+[32m+[m[32m        setCurrentSession(session);[m
+[32m+[m[32m        setEditingSessionId(null);[m
+[32m+[m[32m        console.log([m
+[32m+[m[32m          "[loadSession] Messages set to state, count:",[m
+[32m+[m[32m          loadedMessages?.length || 0,[m
+[32m+[m[32m        );[m
+[32m+[m[32m      } else {[m
+[32m+[m[32m        console.error([m
+[32m+[m[32m          "[loadSession] Failed to load session, status:",[m
+[32m+[m[32m          response.status,[m
+[32m+[m[32m        );[m
+[32m+[m[32m        const errorData = await response.json().catch(() => ({}));[m
+[32m+[m[32m        console.error("[loadSession] Error data:", errorData);[m
+[32m+[m[32m      }[m
+[32m+[m[32m    } catch (error) {[m
+[32m+[m[32m      console.error("Failed to load session messages:", error);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  // Delete a session[m
+[32m+[m[32m  const deleteSession = async (sessionId: string) => {[m
+[32m+[m[32m    if (!confirm("Are you sure you want to delete this chat session?")) {[m
+[32m+[m[32m      return;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      const response = await fetch(`/api/chat/sessions/${sessionId}`, {[m
+[32m+[m[32m        method: "DELETE",[m
+[32m+[m[32m      });[m
+[32m+[m[32m      if (response.ok) {[m
+[32m+[m[32m        // Remove from sessions list[m
+[32m+[m[32m        setSessions((prev) => prev.filter((s) => s.id !== sessionId));[m
+[32m+[m[32m        // Clear current session if it was deleted[m
+[32m+[m[32m        if (currentSession?.id === sessionId) {[m
+[32m+[m[32m          setCurrentSession(null);[m
+[32m+[m[32m          setMessages([]);[m
+[32m+[m[32m        }[m
+[32m+[m[32m      }[m
+[32m+[m[32m    } catch (error) {[m
+[32m+[m[32m      console.error("Failed to delete session:", error);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  // Update session title[m
+[32m+[m[32m  const updateSessionTitle = async (sessionId: string, newTitle: string) => {[m
+[32m+[m[32m    if (!newTitle.trim()) {[m
+[32m+[m[32m      setEditingSessionId(null);[m
+[32m+[m[32m      return;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      const response = await fetch(`/api/chat/sessions/${sessionId}`, {[m
+[32m+[m[32m        method: "PATCH",[m
+[32m+[m[32m        headers: { "Content-Type": "application/json" },[m
+[32m+[m[32m        body: JSON.stringify({ title: newTitle }),[m
+[32m+[m[32m      });[m
+[32m+[m[32m      if (response.ok) {[m
+[32m+[m[32m        // Update in sessions list[m
+[32m+[m[32m        setSessions((prev) =>[m
+[32m+[m[32m          prev.map((s) => (s.id === sessionId ? { ...s, title: newTitle } : s)),[m
+[32m+[m[32m        );[m
+[32m+[m[32m        // Update current session if it was edited[m
+[32m+[m[32m        if (currentSession?.id === sessionId) {[m
+[32m+[m[32m          setCurrentSession({ ...currentSession, title: newTitle });[m
+[32m+[m[32m        }[m
+[32m+[m[32m        setEditingSessionId(null);[m
+[32m+[m[32m      }[m
+[32m+[m[32m    } catch (error) {[m
+[32m+[m[32m      console.error("Failed to update session title:", error);[m
+     }[m
+[31m-  }, [chatHistories, helper]);[m
+[32m+[m[32m  };[m
+ [m
+[31m-  // Get messages for current helper[m
+[31m-  const messages = chatHistories[helper];[m
+[32m+[m[32m  // Save a message to the database[m
+[32m+[m[32m  const saveMessage = async ([m
+[32m+[m[32m    sessionId: string,[m
+[32m+[m[32m    role: "user" | "assistant",[m
+[32m+[m[32m    content: string,[m
+[32m+[m[32m    toolCalls?: any,[m
+[32m+[m[32m  ) => {[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      console.log("[saveMessage] Saving message:", {[m
+[32m+[m[32m        sessionId,[m
+[32m+[m[32m        role,[m
+[32m+[m[32m        contentLength: content.length,[m
+[32m+[m[32m        hasToolCalls: !!toolCalls,[m
+[32m+[m[32m      });[m
+[32m+[m[32m      const response = await fetch(`/api/chat/sessions/${sessionId}/messages`, {[m
+[32m+[m[32m        method: "POST",[m
+[32m+[m[32m        headers: { "Content-Type": "application/json" },[m
+[32m+[m[32m        body: JSON.stringify({ role, content, toolCalls }),[m
+[32m+[m[32m      });[m
+[32m+[m[32m      if (!response.ok) {[m
+[32m+[m[32m        console.error([m
+[32m+[m[32m          "[saveMessage] Failed to save message, status:",[m
+[32m+[m[32m          response.status,[m
+[32m+[m[32m        );[m
+[32m+[m[32m      } else {[m
+[32m+[m[32m        console.log("[saveMessage] Message saved successfully");[m
+[32m+[m[32m      }[m
+[32m+[m[32m    } catch (error) {[m
+[32m+[m[32m      console.error("Failed to save message:", error);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  };[m
+ [m
+   // Calculate task completion stats[m
+[31m-  const completedTasks = tasks.filter(t => t.status === 'done').length;[m
+[32m+[m[32m  const completedTasks = tasks.filter((t) => t.status === "done").length;[m
+   const totalTasks = tasks.length;[m
+ [m
+   const helperData = getHelperById(helper);[m
+ [m
+   // Helper-specific gradient themes[m
+[31m-  const helperThemes: Record<HelperType, { dark: string; light: string; button: string }> = {[m
+[32m+[m[32m  const helperThemes: Record<[m
+[32m+[m[32m    HelperType,[m
+[32m+[m[32m    { dark: string; light: string; button: string }[m
+[32m+[m[32m  > = {[m
+     muse: {[m
+[31m-      dark: 'from-purple-500 via-pink-500 to-rose-500',[m
+[31m-      light: 'from-purple-100 via-pink-100 to-rose-100',[m
+[31m-      button: 'from-purple-400 via-pink-400 to-rose-400'[m
+[32m+[m[32m      dark: "from-purple-500 via-pink-500 to-rose-500",[m
+[32m+[m[32m      light: "from-purple-100 via-pink-100 to-rose-100",[m
+[32m+[m[32m      button: "from-purple-400 via-pink-400 to-rose-400",[m
+     },[m
+     architect: {[m
+[31m-      dark: 'from-blue-500 via-cyan-500 to-teal-500',[m
+[31m-      light: 'from-blue-100 via-cyan-100 to-teal-100',[m
+[31m-      button: 'from-blue-400 via-cyan-400 to-teal-400'[m
+[32m+[m[32m      dark: "from-blue-500 via-cyan-500 to-teal-500",[m
+[32m+[m[32m      light: "from-blue-100 via-cyan-100 to-teal-100",[m
+[32m+[m[32m      button: "from-blue-400 via-cyan-400 to-teal-400",[m
+     },[m
+     crafter: {[m
+[31m-      dark: 'from-pink-500 via-rose-500 to-red-500',[m
+[31m-      light: 'from-pink-100 via-rose-100 to-red-100',[m
+[31m-      button: 'from-pink-400 via-rose-400 to-red-400'[m
+[32m+[m[32m      dark: "from-pink-500 via-rose-500 to-red-500",[m
+[32m+[m[32m      light: "from-pink-100 via-rose-100 to-red-100",[m
+[32m+[m[32m      button: "from-pink-400 via-rose-400 to-red-400",[m
+     },[m
+     hacker: {[m
+[31m-      dark: 'from-green-500 via-emerald-500 to-teal-500',[m
+[31m-      light: 'from-green-100 via-emerald-100 to-teal-100',[m
+[31m-      button: 'from-green-400 via-emerald-400 to-teal-400'[m
+[32m+[m[32m      dark: "from-green-500 via-emerald-500 to-teal-500",[m
+[32m+[m[32m      light: "from-green-100 via-emerald-100 to-teal-100",[m
+[32m+[m[32m      button: "from-green-400 via-emerald-400 to-teal-400",[m
+     },[m
+     hypebeast: {[m
+[31m-      dark: 'from-orange-500 via-red-500 to-pink-500',[m
+[31m-      light: 'from-orange-100 via-red-100 to-pink-100',[m
+[31m-      button: 'from-orange-400 via-red-400 to-pink-400'[m
+[32m+[m[32m      dark: "from-orange-500 via-red-500 to-pink-500",[m
+[32m+[m[32m      light: "from-orange-100 via-red-100 to-pink-100",[m
+[32m+[m[32m      button: "from-orange-400 via-red-400 to-pink-400",[m
+     },[m
+     sensei: {[m
+[31m-      dark: 'from-amber-500 via-yellow-500 to-orange-500',[m
+[31m-      light: 'from-amber-100 via-yellow-100 to-orange-100',[m
+[31m-      button: 'from-amber-400 via-yellow-400 to-orange-400'[m
+[31m-    }[m
+[32m+[m[32m      dark: "from-amber-500 via-yellow-500 to-orange-500",[m
+[32m+[m[32m      light: "from-amber-100 via-yellow-100 to-orange-100",[m
+[32m+[m[32m      button: "from-amber-400 via-yellow-400 to-orange-400",[m
+[32m+[m[32m    },[m
+   };[m
+ [m
+   const currentTheme = helperThemes[helper];[m
+[36m@@ -278,7 +510,64 @@[m [mexport function ChatInterface({[m
+     scrollToBottom();[m
+   }, [messages]);[m
+ [m
+[31m-  const handleStartJourney = async () => {[m
+[32m+[m[32m  // Create a new chat session[m
+[32m+[m[32m  const handleNewChat = async () => {[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      const response = await fetch("/api/chat/sessions", {[m
+[32m+[m[32m        method: "POST",[m
+[32m+[m[32m        headers: { "Content-Type": "application/json" },[m
+[32m+[m[32m        body: JSON.stringify({[m
+[32m+[m[32m          projectId,[m
+[32m+[m[32m          helper,[m
+[32m+[m[32m          title: "New Chat",[m
+[32m+[m[32m        }),[m
+[32m+[m[32m      });[m
+[32m+[m
+[32m+[m[32m      if (response.ok) {[m
+[32m+[m[32m        const { session } = await response.json();[m
+[32m+[m[32m        setSessions((prev) => [session, ...prev]);[m
+[32m+[m[32m        setCurrentSession(session);[m
+[32m+[m[32m        setMessages([]);[m
+[32m+[m
+[32m+[m[32m        // Auto-start journey with new session[m
+[32m+[m[32m        await handleStartJourney(session);[m
+[32m+[m[32m      }[m
+[32m+[m[32m    } catch (error) {[m
+[32m+[m[32m      console.error("Failed to create new session:", error);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  const handleStartJourney = async (session?: ChatSession) => {[m
+[32m+[m[32m    // Create session if one doesn't exist[m
+[32m+[m[32m    let activeSession = session || currentSession;[m
+[32m+[m[32m    if (!activeSession) {[m
+[32m+[m[32m      const response = await fetch("/api/chat/sessions", {[m
+[32m+[m[32m        method: "POST",[m
+[32m+[m[32m        headers: { "Content-Type": "application/json" },[m
+[32m+[m[32m        body: JSON.stringify({[m
+[32m+[m[32m          projectId,[m
+[32m+[m[32m          helper,[m
+[32m+[m[32m          title: "New Chat",[m
+[32m+[m[32m        }),[m
+[32m+[m[32m      });[m
+[32m+[m
+[32m+[m[32m      if (response.ok) {[m
+[32m+[m[32m        const { session: newSession } = await response.json();[m
+[32m+[m[32m        activeSession = newSession;[m
+[32m+[m[32m        setSessions((prev) => [newSession, ...prev]);[m
+[32m+[m[32m        setCurrentSession(newSession);[m
+[32m+[m[32m      } else {[m
+[32m+[m[32m        const errorData = await response[m
+[32m+[m[32m          .json()[m
+[32m+[m[32m          .catch(() => ({ error: "Unknown error" }));[m
+[32m+[m[32m        console.error("Failed to create session:", response.status, errorData);[m
+[32m+[m[32m        alert([m
+[32m+[m[32m          `Failed to create session: ${errorData.error || "Unknown error"}. Check browser console and terminal for details.`,[m
+[32m+[m[32m        );[m
+[32m+[m[32m        return;[m
+[32m+[m[32m      }[m
+[32m+[m[32m    }[m
+[32m+[m
+     setIsLoading(true);[m
+     setIsStreaming(true);[m
+ [m
+[36m@@ -290,11 +579,8 @@[m [mexport function ChatInterface({[m
+         content: "",[m
+       };[m
+ [m
+[31m-      // Add empty assistant message to chat history[m
+[31m-      setChatHistories((prev) => ({[m
+[31m-        ...prev,[m
+[31m-        [helper]: [...prev[helper], assistantMessage],[m
+[31m-      }));[m
+[32m+[m[32m      // Add empty assistant message to state[m
+[32m+[m[32m      setMessages((prev) => [...prev, assistantMessage]);[m
+ [m
+       // Call API with startJourney flag to generate opening message[m
+       const response = await fetch("/api/chat", {[m
+[36m@@ -305,18 +591,21 @@[m [mexport function ChatInterface({[m
+         body: JSON.stringify({[m
+           helper,[m
+           message: "", // Empty message signals we want opening message[m
+[31m-          projectId: "demo-1",[m
+[32m+[m[32m          threadId: activeSession?.thread_id,[m
+[32m+[m[32m          projectId,[m
+           startJourney: true, // Special flag for opening message[m
+           context: {[m
+             projectName: project?.name || "Untitled Project",[m
+             projectDescription: project?.description || "A new project",[m
+             projectTechStack: project?.techStack,[m
+             projectStage: project?.stage,[m
+[31m-            currentStep: stepContext ? {[m
+[31m-              levelTitle: `Level ${stepContext.levelIndex + 1}`,[m
+[31m-              stepTitle: stepContext.orbId,[m
+[31m-              cta: stepContext.cta,[m
+[31m-            } : undefined,[m
+[32m+[m[32m            currentStep: stepContext[m
+[32m+[m[32m              ? {[m
+[32m+[m[32m                  levelTitle: `Level ${stepContext.levelIndex + 1}`,[m
+[32m+[m[32m                  stepTitle: stepContext.orbId,[m
+[32m+[m[32m                  cta: stepContext.cta,[m
+[32m+[m[32m                }[m
+[32m+[m[32m              : undefined,[m
+             tasks: tasks.length > 0 ? tasks : undefined,[m
+             requiredTasks: stepContext?.requiredTasks,[m
+           },[m
+[36m@@ -336,44 +625,128 @@[m [mexport function ChatInterface({[m
+       }[m
+ [m
+       let buffer = "";[m
+[31m-      [m
+[32m+[m
+       while (true) {[m
+         const { done, value } = await reader.read();[m
+[31m-        [m
+[32m+[m
+         if (done) break;[m
+[31m-        [m
+[32m+[m
+         buffer += decoder.decode(value, { stream: true });[m
+         const lines = buffer.split("\n\n");[m
+         buffer = lines.pop() || "";[m
+[31m-        [m
+[32m+[m
+         for (const line of lines) {[m
+           if (line.startsWith("data: ")) {[m
+             const data = JSON.parse(line.slice(6));[m
+[31m-            [m
+[31m-            if (data.done) {[m
+[31m-              setIsStreaming(false);[m
+[31m-              break;[m
+[31m-            }[m
+[31m-            [m
+[31m-            if (data.content) {[m
+[32m+[m
+[32m+[m[32m            if (data.type === "text" && data.content) {[m
+               // First character - stop showing thinking indicator[m
+               if (assistantMessage.content === "") {[m
+                 setIsStreaming(false);[m
+               }[m
+[31m-              [m
+[31m-              // Update assistant message with streamed content[m
+[31m-              setChatHistories((prev) => {[m
+[31m-                const helperMessages = [...prev[helper]];[m
+[31m-                helperMessages[helperMessages.length - 1] = {[m
+[31m-                  ...helperMessages[helperMessages.length - 1],[m
+[31m-                  content: helperMessages[helperMessages.length - 1].content + data.content,[m
+[31m-                };[m
+[31m-                return {[m
+[31m-                  ...prev,[m
+[31m-                  [helper]: helperMessages,[m
+[32m+[m
+[32m+[m[32m              // Only update if we're still on this session[m
+[32m+[m[32m              setMessages((prev) => {[m
+[32m+[m[32m                const msgs = [...prev];[m
+[32m+[m[32m                msgs[msgs.length - 1] = {[m
+[32m+[m[32m                  ...msgs[msgs.length - 1],[m
+[32m+[m[32m                  content: msgs[msgs.length - 1].content + data.content,[m
+                 };[m
+[32m+[m[32m                return msgs;[m
+               });[m
+             }[m
+[32m+[m
+[32m+[m[32m            if (data.type === "tool_call") {[m
+[32m+[m[32m              // Agent is using a tool[m
+[32m+[m[32m              setCurrentToolCalls((prev) => [[m
+[32m+[m[32m                ...prev,[m
+[32m+[m[32m                {[m
+[32m+[m[32m                  tool_name: data.tool_name,[m
+[32m+[m[32m                  tool_args: data.tool_args,[m
+[32m+[m[32m                },[m
+[32m+[m[32m              ]);[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            if (data.type === "tool_result") {[m
+[32m+[m[32m              // Tool execution result[m
+[32m+[m[32m              setCurrentToolCalls((prev) =>[m
+[32m+[m[32m                prev.map((tc) =>[m
+[32m+[m[32m                  tc.tool_name === data.tool_name && !tc.result[m
+[32m+[m[32m                    ? { ...tc, result: data.result }[m
+[32m+[m[32m                    : tc,[m
+[32m+[m[32m                ),[m
+[32m+[m[32m              );[m
+[32m+[m
+[32m+[m[32m              if (data.tool_name === "web_search" && data.result?.data) {[m
+[32m+[m[32m                const resultData = data.result.data;[m
+[32m+[m[32m                const resultsArray = resultData.results || [];[m
+[32m+[m[32m                if (resultsArray.length > 0) {[m
+[32m+[m[32m                  setMessages((prev) => {[m
+[32m+[m[32m                    const msgs = [...prev];[m
+[32m+[m[32m                    if ([m
+[32m+[m[32m                      msgs.length > 0 &&[m
+[32m+[m[32m                      msgs[msgs.length - 1].role === "assistant"[m
+[32m+[m[32m                    ) {[m
+[32m+[m[32m                      msgs[msgs.length - 1] = {[m
+[32m+[m[32m                        ...msgs[msgs.length - 1],[m
+[32m+[m[32m                        searchResults: {[m
+[32m+[m[32m                          results: resultsArray,[m
+[32m+[m[32m                          query: resultData.query,[m
+[32m+[m[32m                          summary: resultData.summary,[m
+[32m+[m[32m                          citations: resultData.citations,[m
+[32m+[m[32m                        },[m
+[32m+[m[32m                      };[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                    return msgs;[m
+[32m+[m[32m                  });[m
+[32m+[m[32m                }[m
+[32m+[m[32m              }[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            if (data.type === "done") {[m
+[32m+[m[32m              // Get final content from state (not from assistantMessage ref which is stale)[m
+[32m+[m[32m              console.log([m
+[32m+[m[32m                "[handleStartJourney] Stream done, checking message state",[m
+[32m+[m[32m              );[m
+[32m+[m[32m              setMessages((prev) => {[m
+[32m+[m[32m                const finalMsg = prev[prev.length - 1];[m
+[32m+[m[32m                const finalContent = finalMsg?.content || "";[m
+[32m+[m[32m                console.log([m
+[32m+[m[32m                  "[handleStartJourney] Final message content length:",[m
+[32m+[m[32m                  finalContent.length,[m
+[32m+[m[32m                );[m
+[32m+[m
+[32m+[m[32m                // Save to database[m
+[32m+[m[32m                console.log([m
+[32m+[m[32m                  "[handleStartJourney] About to save message, activeSession:",[m
+[32m+[m[32m                  activeSession?.id,[m
+[32m+[m[32m                );[m
+[32m+[m[32m                if (activeSession && finalContent.length > 0) {[m
+[32m+[m[32m                  console.log([m
+[32m+[m[32m                    "[handleStartJourney] Saving assistant message...",[m
+[32m+[m[32m                  );[m
+[32m+[m[32m                  saveMessage([m
+[32m+[m[32m                    activeSession.id,[m
+[32m+[m[32m                    "assistant",[m
+[32m+[m[32m                    finalContent,[m
+[32m+[m[32m                    currentToolCalls.length > 0 ? currentToolCalls : undefined,[m
+[32m+[m[32m                  );[m
+[32m+[m[32m                } else {[m
+[32m+[m[32m                  console.log([m
+[32m+[m[32m                    "[handleStartJourney] Not saving - activeSession:",[m
+[32m+[m[32m                    !!activeSession,[m
+[32m+[m[32m                    "content length:",[m
+[32m+[m[32m                    finalContent.length,[m
+[32m+[m[32m                  );[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m[32m                return prev;[m
+[32m+[m[32m              });[m
+[32m+[m
+[32m+[m[32m              setCurrentToolCalls([]);[m
+[32m+[m[32m              setIsStreaming(false);[m
+[32m+[m[32m              break;[m
+[32m+[m[32m            }[m
+           }[m
+         }[m
+       }[m
+[36m@@ -382,14 +755,12 @@[m [mexport function ChatInterface({[m
+       const errorMessage: ChatMessage = {[m
+         id: (Date.now() + 1).toString(),[m
+         role: "assistant",[m
+[31m-        content: "Sorry, I encountered an error starting our conversation. Please try again!",[m
+[32m+[m[32m        content:[m
+[32m+[m[32m          "Sorry, I encountered an error starting our conversation. Please try again!",[m
+       };[m
+[31m-      [m
+[31m-      // Add error message to current helper's history[m
+[31m-      setChatHistories((prev) => ({[m
+[31m-        ...prev,[m
+[31m-        [helper]: [...prev[helper], errorMessage],[m
+[31m-      }));[m
+[32m+[m
+[32m+[m[32m      // Add error message[m
+[32m+[m[32m      setMessages((prev) => [...prev, errorMessage]);[m
+     } finally {[m
+       setIsLoading(false);[m
+       setIsStreaming(false);[m
+[36m@@ -397,18 +768,46 @@[m [mexport function ChatInterface({[m
+   };[m
+ [m
+   const handleSubmitMessage = async (messageContent: string) => {[m
+[32m+[m[32m    // Create session if one doesn't exist[m
+[32m+[m[32m    let activeSession = currentSession;[m
+[32m+[m[32m    if (!activeSession) {[m
+[32m+[m[32m      const response = await fetch("/api/chat/sessions", {[m
+[32m+[m[32m        method: "POST",[m
+[32m+[m[32m        headers: { "Content-Type": "application/json" },[m
+[32m+[m[32m        body: JSON.stringify({[m
+[32m+[m[32m          projectId,[m
+[32m+[m[32m          helper,[m
+[32m+[m[32m          title:[m
+[32m+[m[32m            messageContent.substring(0, 50) +[m
+[32m+[m[32m            (messageContent.length > 50 ? "..." : ""),[m
+[32m+[m[32m        }),[m
+[32m+[m[32m      });[m
+[32m+[m
+[32m+[m[32m      if (response.ok) {[m
+[32m+[m[32m        const { session: newSession } = await response.json();[m
+[32m+[m[32m        activeSession = newSession;[m
+[32m+[m[32m        setSessions((prev) => [newSession, ...prev]);[m
+[32m+[m[32m        setCurrentSession(newSession);[m
+[32m+[m[32m      } else {[m
+[32m+[m[32m        console.error("Failed to create session");[m
+[32m+[m[32m        return;[m
+[32m+[m[32m      }[m
+[32m+[m[32m    }[m
+[32m+[m
+     const userMessage: ChatMessage = {[m
+       id: Date.now().toString(),[m
+       role: "user",[m
+       content: messageContent,[m
+     };[m
+ [m
+[31m-    // Add user message to current helper's history[m
+[31m-    setChatHistories((prev) => ({[m
+[31m-      ...prev,[m
+[31m-      [helper]: [...prev[helper], userMessage],[m
+[31m-    }));[m
+[31m-    [m
+[32m+[m[32m    // Add user message to state[m
+[32m+[m[32m    setMessages((prev) => [...prev, userMessage]);[m
+[32m+[m
+[32m+[m[32m    // Save user message to database[m
+[32m+[m[32m    if (activeSession) {[m
+[32m+[m[32m      await saveMessage(activeSession.id, "user", messageContent);[m
+[32m+[m[32m    }[m
+[32m+[m
+     setIsLoading(true);[m
+ [m
+     try {[m
+[36m@@ -422,11 +821,8 @@[m [mexport function ChatInterface({[m
+           content: "",[m
+         };[m
+ [m
+[31m-        // Add empty assistant message to current helper's history[m
+[31m-        setChatHistories((prev) => ({[m
+[31m-          ...prev,[m
+[31m-          [helper]: [...prev[helper], assistantMessage],[m
+[31m-        }));[m
+[32m+[m[32m        // Add empty assistant message to state[m
+[32m+[m[32m        setMessages((prev) => [...prev, assistantMessage]);[m
+         setIsStreaming(true);[m
+ [m
+         // Make API call to chat endpoint[m
+[36m@@ -438,17 +834,22 @@[m [mexport function ChatInterface({[m
+           body: JSON.stringify({[m
+             helper,[m
+             message: messageContent,[m
+[31m-            projectId: "demo-1",[m
+[32m+[m[32m            threadId: activeSession?.thread_id,[m
+[32m+[m[32m            projectId,[m
+             context: {[m
+               projectName: project?.name || "My First Project",[m
+[31m-              projectDescription: project?.description || "Building something amazing with Codyssey",[m
+[32m+[m[32m              projectDescription:[m
+[32m+[m[32m                project?.description ||[m
+[32m+[m[32m                "Building something amazing with Codyssey",[m
+               projectTechStack: project?.techStack,[m
+               projectStage: project?.stage,[m
+[31m-              currentStep: stepContext ? {[m
+[31m-                levelTitle: `Level ${stepContext.levelIndex + 1}`,[m
+[31m-                stepTitle: stepContext.orbId,[m
+[31m-                cta: stepContext.cta,[m
+[31m-              } : undefined,[m
+[32m+[m[32m              currentStep: stepContext[m
+[32m+[m[32m                ? {[m
+[32m+[m[32m                    levelTitle: `Level ${stepContext.levelIndex + 1}`,[m
+[32m+[m[32m                    stepTitle: stepContext.orbId,[m
+[32m+[m[32m                    cta: stepContext.cta,[m
+[32m+[m[32m                  }[m
+[32m+[m[32m                : undefined,[m
+               tasks: tasks.length > 0 ? tasks : undefined,[m
+               requiredTasks: stepContext?.requiredTasks,[m
+             },[m
+[36m@@ -459,7 +860,7 @@[m [mexport function ChatInterface({[m
+           throw new Error("Failed to get response from API");[m
+         }[m
+ [m
+[31m-        // Handle streaming response[m
+[32m+[m[32m        // Handle agentic streaming response[m
+         const reader = response.body?.getReader();[m
+         const decoder = new TextDecoder();[m
+ [m
+[36m@@ -468,44 +869,130 @@[m [mexport function ChatInterface({[m
+         }[m
+ [m
+         let buffer = "";[m
+[31m-        [m
+[32m+[m
+         while (true) {[m
+           const { done, value } = await reader.read();[m
+[31m-          [m
+[32m+[m
+           if (done) break;[m
+[31m-          [m
+[32m+[m
+           buffer += decoder.decode(value, { stream: true });[m
+           const lines = buffer.split("\n\n");[m
+           buffer = lines.pop() || "";[m
+[31m-          [m
+[32m+[m
+           for (const line of lines) {[m
+             if (line.startsWith("data: ")) {[m
+               const data = JSON.parse(line.slice(6));[m
+[31m-              [m
+[31m-              if (data.done) {[m
+[31m-                setIsStreaming(false);[m
+[31m-                break;[m
+[31m-              }[m
+[31m-              [m
+[31m-              if (data.content) {[m
+[31m-                // First character - stop showing thinking indicator[m
+[32m+[m
+[32m+[m[32m              if (data.type === "text" && data.content) {[m
+                 if (assistantMessage.content === "") {[m
+                   setIsStreaming(false);[m
+                 }[m
+[31m-                [m
+[31m-                // Update assistant message in current helper's history[m
+[31m-                setChatHistories((prev) => {[m
+[31m-                  const helperMessages = [...prev[helper]];[m
+[31m-                  helperMessages[helperMessages.length - 1] = {[m
+[31m-                    ...helperMessages[helperMessages.length - 1],[m
+[31m-                    content: helperMessages[helperMessages.length - 1].content + data.content,[m
+[31m-                  };[m
+[31m-                  return {[m
+[31m-                    ...prev,[m
+[31m-                    [helper]: helperMessages,[m
+[32m+[m
+[32m+[m[32m                // Only update if we're still on this session[m
+[32m+[m[32m                setMessages((prev) => {[m
+[32m+[m[32m                  const msgs = [...prev];[m
+[32m+[m[32m                  msgs[msgs.length - 1] = {[m
+[32m+[m[32m                    ...msgs[msgs.length - 1],[m
+[32m+[m[32m                    content: msgs[msgs.length - 1].content + data.content,[m
+                   };[m
+[32m+[m[32m                  return msgs;[m
+                 });[m
+               }[m
+[32m+[m
+[32m+[m[32m              if (data.type === "tool_call") {[m
+[32m+[m[32m                setCurrentToolCalls((prev) => [[m
+[32m+[m[32m                  ...prev,[m
+[32m+[m[32m                  {[m
+[32m+[m[32m                    tool_name: data.tool_name,[m
+[32m+[m[32m                    tool_args: data.tool_args,[m
+[32m+[m[32m                  },[m
+[32m+[m[32m                ]);[m
+[32m+[m[32m              }[m
+[32m+[m
+[32m+[m[32m              if (data.type === "tool_result") {[m
+[32m+[m[32m                setCurrentToolCalls((prev) =>[m
+[32m+[m[32m                  prev.map((tc) =>[m
+[32m+[m[32m                    tc.tool_name === data.tool_name && !tc.result[m
+[32m+[m[32m                      ? { ...tc, result: data.result }[m
+[32m+[m[32m                      : tc,[m
+[32m+[m[32m                  ),[m
+[32m+[m[32m                );[m
+[32m+[m
+[32m+[m[32m                if (data.tool_name === "web_search" && data.result?.data) {[m
+[32m+[m[32m                  const resultData = data.result.data;[m
+[32m+[m[32m                  const resultsArray = resultData.results || [];[m
+[32m+[m[32m                  if (resultsArray.length > 0) {[m
+[32m+[m[32m                    setMessages((prev) => {[m
+[32m+[m[32m                      if (currentSession?.id !== activeSession?.id) {[m
+[32m+[m[32m                        return prev;[m
+[32m+[m[32m                      }[m
+[32m+[m[32m                      const msgs = [...prev];[m
+[32m+[m[32m                      if ([m
+[32m+[m[32m                        msgs.length > 0 &&[m
+[32m+[m[32m                        msgs[msgs.length - 1].role === "assistant"[m
+[32m+[m[32m                      ) {[m
+[32m+[m[32m                        msgs[msgs.length - 1] = {[m
+[32m+[m[32m                          ...msgs[msgs.length - 1],[m
+[32m+[m[32m                          searchResults: {[m
+[32m+[m[32m                            results: resultsArray,[m
+[32m+[m[32m                            query: resultData.query,[m
+[32m+[m[32m                            summary: resultData.summary,[m
+[32m+[m[32m                            citations: resultData.citations,[m
+[32m+[m[32m                          },[m
+[32m+[m[32m                        };[m
+[32m+[m[32m                      }[m
+[32m+[m[32m                      return msgs;[m
+[32m+[m[32m                    });[m
+[32m+[m[32m                  }[m
+[32m+[m[32m                }[m
+[32m+[m[32m              }[m
+[32m+[m
+[32m+[m[32m              if (data.type === "done") {[m
+[32m+[m[32m                // Get final content from state (not from assistantMessage ref which is stale)[m
+[32m+[m[32m                console.log([m
+[32m+[m[32m                  "[handleSubmitMessage] Stream done, checking message state",[m
+[32m+[m[32m                );[m
+[32m+[m[32m                setMessages((prev) => {[m
+[32m+[m[32m                  const finalMsg = prev[prev.length - 1];[m
+[32m+[m[32m                  const finalContent = finalMsg?.content || "";[m
+[32m+[m[32m                  console.log([m
+[32m+[m[32m                    "[handleSubmitMessage] Final message content length:",[m
+[32m+[m[32m                    finalContent.length,[m
+[32m+[m[32m                  );[m
+[32m+[m
+[32m+[m[32m                  // Save to database[m
+[32m+[m[32m                  console.log([m
+[32m+[m[32m                    "[handleSubmitMessage] About to save message, activeSession:",[m
+[32m+[m[32m                    activeSession?.id,[m
+[32m+[m[32m                  );[m
+[32m+[m[32m                  if (activeSession && finalContent.length > 0) {[m
+[32m+[m[32m                    console.log([m
+[32m+[m[32m                      "[handleSubmitMessage] Saving assistant message...",[m
+[32m+[m[32m                    );[m
+[32m+[m[32m                    saveMessage([m
+[32m+[m[32m                      activeSession.id,[m
+[32m+[m[32m                      "assistant",[m
+[32m+[m[32m                      finalContent,[m
+[32m+[m[32m                      currentToolCalls.length > 0[m
+[32m+[m[32m                        ? currentToolCalls[m
+[32m+[m[32m                        : undefined,[m
+[32m+[m[32m                    );[m
+[32m+[m[32m                  } else {[m
+[32m+[m[32m                    console.log([m
+[32m+[m[32m                      "[handleSubmitMessage] Not saving - activeSession:",[m
+[32m+[m[32m                      !!activeSession,[m
+[32m+[m[32m                      "content length:",[m
+[32m+[m[32m                      finalContent.length,[m
+[32m+[m[32m                    );[m
+[32m+[m[32m                  }[m
+[32m+[m
+[32m+[m[32m                  return prev;[m
+[32m+[m[32m                });[m
+[32m+[m
+[32m+[m[32m                setCurrentToolCalls([]);[m
+[32m+[m[32m                setIsStreaming(false);[m
+[32m+[m[32m                break;[m
+[32m+[m[32m              }[m
+             }[m
+           }[m
+         }[m
+[36m@@ -517,12 +1004,9 @@[m [mexport function ChatInterface({[m
+         role: "assistant",[m
+         content: "Sorry, I encountered an error. Please try again!",[m
+       };[m
+[31m-      [m
+[31m-      // Add error message to current helper's history[m
+[31m-      setChatHistories((prev) => ({[m
+[31m-        ...prev,[m
+[31m-        [helper]: [...prev[helper], errorMessage],[m
+[31m-      }));[m
+[32m+[m
+[32m+[m[32m      // Add error message[m
+[32m+[m[32m      setMessages((prev) => [...prev, errorMessage]);[m
+     } finally {[m
+       setIsLoading(false);[m
+     }[m
+[36m@@ -534,51 +1018,139 @@[m [mexport function ChatInterface({[m
+ [m
+     const currentInput = input.trim();[m
+     setInput("");[m
+[31m-    [m
+[32m+[m
+     await handleSubmitMessage(currentInput);[m
+   };[m
+ [m
+[32m+[m[32m  const handleGeneratePrompt = async () => {[m
+[32m+[m[32m    setIsGeneratingPrompt(true);[m
+[32m+[m[32m    setShowPromptModal(true);[m
+[32m+[m[32m    setGeneratedPrompt("");[m
+[32m+[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      const response = await fetch("/api/prompt/generate", {[m
+[32m+[m[32m        method: "POST",[m
+[32m+[m[32m        headers: {[m
+[32m+[m[32m          "Content-Type": "application/json",[m
+[32m+[m[32m        },[m
+[32m+[m[32m        body: JSON.stringify({[m
+[32m+[m[32m          projectId,[m
+[32m+[m[32m          currentTask: input.trim() || undefined,[m
+[32m+[m[32m          promptType: "full",[m
+[32m+[m[32m        }),[m
+[32m+[m[32m      });[m
+[32m+[m
+[32m+[m[32m      if (!response.ok) {[m
+[32m+[m[32m        throw new Error("Failed to generate prompt");[m
+[32m+[m[32m      }[m
+[32m+[m
+[32m+[m[32m      const { prompt } = await response.json();[m
+[32m+[m[32m      setGeneratedPrompt(prompt);[m
+[32m+[m[32m    } catch (error) {[m
+[32m+[m[32m      console.error("Failed to generate prompt:", error);[m
+[32m+[m[32m      setGeneratedPrompt("Failed to generate prompt. Please try again.");[m
+[32m+[m[32m    } finally {[m
+[32m+[m[32m      setIsGeneratingPrompt(false);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  const handleTemplateSelect = (template: PromptTemplate) => {[m
+[32m+[m[32m    setInput(template.prompt);[m
+[32m+[m[32m    setTemplatesExpanded(false);[m
+[32m+[m[32m  };[m
+[32m+[m
+   return ([m
+     <div className="flex h-full items-center justify-center bg-white p-2 md:p-3">[m
+[32m+[m[32m      {/* Scrollbar Styles for Chat */}[m
+[32m+[m[32m      <style jsx>{`[m
+[32m+[m[32m        .chat-scrollbar::-webkit-scrollbar {[m
+[32m+[m[32m          width: 8px;[m
+[32m+[m[32m          height: 8px;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        .chat-scrollbar::-webkit-scrollbar-track {[m
+[32m+[m[32m          background: transparent;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        .chat-scrollbar::-webkit-scrollbar-thumb {[m
+[32m+[m[32m          background: #d1d5db;[m
+[32m+[m[32m          border-radius: 4px;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        .chat-scrollbar::-webkit-scrollbar-thumb:hover {[m
+[32m+[m[32m          background: #9ca3af;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        .chat-scrollbar {[m
+[32m+[m[32m          scrollbar-width: thin;[m
+[32m+[m[32m          scrollbar-color: #d1d5db transparent;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        /* Sidebar scrollbar - lighter for dark backgrounds */[m
+[32m+[m[32m        .chat-sidebar-scrollbar::-webkit-scrollbar {[m
+[32m+[m[32m          width: 6px;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        .chat-sidebar-scrollbar::-webkit-scrollbar-track {[m
+[32m+[m[32m          background: transparent;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        .chat-sidebar-scrollbar::-webkit-scrollbar-thumb {[m
+[32m+[m[32m          background: rgba(255, 255, 255, 0.4);[m
+[32m+[m[32m          border-radius: 3px;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        .chat-sidebar-scrollbar::-webkit-scrollbar-thumb:hover {[m
+[32m+[m[32m          background: rgba(255, 255, 255, 0.6);[m
+[32m+[m[32m        }[m
+[32m+[m[32m      `}</style>[m
+[32m+[m
+       <div className="flex h-full max-h-full w-full max-w-7xl overflow-hidden rounded-2xl shadow-2xl md:rounded-3xl">[m
+         {/* Left Column - Helper Info Card with Gradient (Hidden on Mobile) */}[m
+[31m-        <div className={`hidden w-64 flex-col bg-gradient-to-b ${currentTheme.dark} p-6 text-white md:flex`}>[m
+[31m-        {/* Helper Title & Subtitle with Back Arrow */}[m
+[31m-        <div className="mb-6 flex items-start justify-between">[m
+[31m-          <div className="flex-1">[m
+[31m-            <h2 className="mb-1 text-2xl font-bold text-white drop-shadow-md">[m
+[31m-              {helperData.name}[m
+[31m-            </h2>[m
+[31m-            <p className="text-sm font-medium text-white/90">[m
+[31m-              {helperData.title}[m
+[31m-            </p>[m
+[32m+[m[32m        <div[m
+[32m+[m[32m          className={`hidden w-64 flex-col bg-gradient-to-b ${currentTheme.dark} p-6 text-white md:flex`}[m
+[32m+[m[32m        >[m
+[32m+[m[32m          {/* Helper Title & Subtitle with Back Arrow */}[m
+[32m+[m[32m          <div className="mb-6 flex items-start justify-between">[m
+[32m+[m[32m            <div className="flex-1">[m
+[32m+[m[32m              <h2 className="mb-1 text-2xl font-bold text-white drop-shadow-md">[m
+[32m+[m[32m                {helperData.name}[m
+[32m+[m[32m              </h2>[m
+[32m+[m[32m              <p className="text-sm font-medium text-white/90">[m
+[32m+[m[32m                {helperData.title}[m
+[32m+[m[32m              </p>[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m            <button[m
+[32m+[m[32m              onClick={onBackToJourney}[m
+[32m+[m[32m              className="ml-4 flex items-center justify-center rounded-lg p-2 text-white/80 transition-colors hover:bg-white/20 hover:text-white"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              <ArrowLeft size={20} />[m
+[32m+[m[32m            </button>[m
+           </div>[m
+[32m+[m
+[32m+[m[32m          {/* + New Chat Button */}[m
+           <button[m
+[31m-            onClick={onBackToJourney}[m
+[31m-            className="ml-4 flex items-center justify-center rounded-lg p-2 text-white/80 transition-colors hover:bg-white/20 hover:text-white"[m
+[32m+[m[32m            onClick={handleNewChat}[m
+[32m+[m[32m            disabled={isLoading}[m
+[32m+[m[32m            className={`mb-6 w-full rounded-full bg-gradient-to-r ${currentTheme.button} py-3 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed`}[m
+           >[m
+[31m-            <ArrowLeft size={20} />[m
+[32m+[m[32m            + New Chat[m
+           </button>[m
+[31m-        </div>[m
+[31m-[m
+[31m-        {/* + New Chat Button */}[m
+[31m-        <button className={`mb-6 w-full rounded-full bg-gradient-to-r ${currentTheme.button} py-3 text-sm font-semibold text-white shadow-md transition-all hover:shadow-lg hover:scale-105`}>[m
+[31m-          + New Chat[m
+[31m-        </button>[m
+ [m
+[31m-        {/* Helper Graphic Placeholder Card */}[m
+[31m-        <div className="mb-6 flex justify-center rounded-2xl bg-white/10 p-10 shadow-lg backdrop-blur-sm">[m
+[31m-          <div className="text-7xl">[m
+[31m-            {helperData.emoji}[m
+[32m+[m[32m          {/* Helper Graphic Placeholder Card */}[m
+[32m+[m[32m          <div className="mb-6 flex justify-center rounded-2xl bg-white/10 p-10 shadow-lg backdrop-blur-sm">[m
+[32m+[m[32m            <div className="text-7xl">{helperData.emoji}</div>[m
+           </div>[m
+[31m-        </div>[m
+ [m
+[31m-        {/* Chat History - Modern Scrollbar */}[m
+[31m-        <div className="flex-1 space-y-2 overflow-y-auto pr-1" style={{[m
+[31m-          scrollbarWidth: 'thin',[m
+[31m-          scrollbarColor: 'rgba(255, 255, 255, 0.4) transparent'[m
+[31m-        }}>[m
+[31m-          <style>{`[m
+[32m+[m[32m          {/* Chat History - Modern Scrollbar */}[m
+[32m+[m[32m          <div[m
+[32m+[m[32m            className="flex-1 space-y-2 overflow-y-auto pr-1 chat-sidebar-scrollbar"[m
+[32m+[m[32m            style={{[m
+[32m+[m[32m              scrollbarWidth: "thin",[m
+[32m+[m[32m              scrollbarColor: "rgba(255, 255, 255, 0.4) transparent",[m
+[32m+[m[32m            }}[m
+[32m+[m[32m          >[m
+[32m+[m[32m            <style>{`[m
+             ::-webkit-scrollbar {[m
+               width: 6px;[m
+             }[m
+[36m@@ -593,275 +1165,560 @@[m [mexport function ChatInterface({[m
+               background: rgba(255, 255, 255, 0.6);[m
+             }[m
+           `}</style>[m
+[31m-          <p className="text-xs font-semibold uppercase tracking-wide text-white/70">[m
+[31m-            Chat History[m
+[31m-          </p>[m
+[31m-          <div className="space-y-2">[m
+[31m-            {/* Placeholder for future chat history items */}[m
+[31m-            <div className="rounded-lg bg-white/10 px-4 py-3 backdrop-blur-sm">[m
+[31m-              <p className="text-xs text-white/60">No previous chats</p>[m
+[32m+[m[32m            <p className="text-xs font-semibold uppercase tracking-wide text-white/70">[m
+[32m+[m[32m              Chat History[m
+[32m+[m[32m            </p>[m
+[32m+[m[32m            <div className="space-y-2">[m
+[32m+[m[32m              {isLoadingSessions ? ([m
+[32m+[m[32m                <div className="rounded-lg bg-white/10 px-4 py-3 backdrop-blur-sm">[m
+[32m+[m[32m                  <p className="text-xs text-white/60">Loading...</p>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m              ) : sessions.length === 0 ? ([m
+[32m+[m[32m                <div className="rounded-lg bg-white/10 px-4 py-3 backdrop-blur-sm">[m
+[32m+[m[32m                  <p className="text-xs text-white/60">No previous chats</p>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m              ) : ([m
+[32m+[m[32m                sessions.map((session) => ([m
+[32m+[m[32m                  <div[m
+[32m+[m[32m                    key={session.id}[m
+[32m+[m[32m                    className={`group rounded-lg transition-all relative ${[m
+[32m+[m[32m                      currentSession?.id === session.id[m
+[32m+[m[32m                        ? "bg-white/20 backdrop-blur-sm"[m
+[32m+[m[32m                        : "bg-white/10 backdrop-blur-sm hover:bg-white/15"[m
+[32m+[m[32m                    }`}[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    {editingSessionId === session.id ? ([m
+[32m+[m[32m                      // Edit mode - minimalistic with just input and save icon[m
+[32m+[m[32m                      <div className="p-3 flex items-center gap-2">[m
+[32m+[m[32m                        <input[m
+[32m+[m[32m                          type="text"[m
+[32m+[m[32m                          value={editingTitle}[m
+[32m+[m[32m                          onChange={(e) => setEditingTitle(e.target.value)}[m
+[32m+[m[32m                          placeholder="Title..."[m
+[32m+[m[32m                          className="flex-1 min-w-0 bg-white/20 text-white text-xs rounded px-2 py-1.5 placeholder-white/50 focus:outline-none focus:ring-1 focus:ring-white/40 truncate"[m
+[32m+[m[32m                          autoFocus[m
+[32m+[m[32m                          onKeyDown={(e) => {[m
+[32m+[m[32m                            if (e.key === "Enter") {[m
+[32m+[m[32m                              updateSessionTitle(session.id, editingTitle);[m
+[32m+[m[32m                            } else if (e.key === "Escape") {[m
+[32m+[m[32m                              setEditingSessionId(null);[m
+[32m+[m[32m                            }[m
+[32m+[m[32m                          }}[m
+[32m+[m[32m                        />[m
+[32m+[m[32m                        <button[m
+[32m+[m[32m                          onClick={() =>[m
+[32m+[m[32m                            updateSessionTitle(session.id, editingTitle)[m
+[32m+[m[32m                          }[m
+[32m+[m[32m                          className="text-green-400 hover:text-green-300 transition-colors flex-shrink-0"[m
+[32m+[m[32m                          title="Save title"[m
+[32m+[m[32m                        >[m
+[32m+[m[32m                          <CheckCircle2 size={16} />[m
+[32m+[m[32m                        </button>[m
+[32m+[m[32m                        <button[m
+[32m+[m[32m                          onClick={() => setEditingSessionId(null)}[m
+[32m+[m[32m                          className="text-white/60 hover:text-white/80 transition-colors flex-shrink-0"[m
+[32m+[m[32m                          title="Cancel"[m
+[32m+[m[32m                        >[m
+[32m+[m[32m                          <X size={16} />[m
+[32m+[m[32m                        </button>[m
+[32m+[m[32m                      </div>[m
+[32m+[m[32m                    ) : ([m
+[32m+[m[32m                      // Normal mode[m
+[32m+[m[32m                      <>[m
+[32m+[m[32m                        <button[m
+[32m+[m[32m                          onClick={() => loadSession(session)}[m
+[32m+[m[32m                          className="w-full px-4 py-3 text-left"[m
+[32m+[m[32m                        >[m
+[32m+[m[32m                          <p className="text-xs font-medium text-white truncate pr-16">[m
+[32m+[m[32m                            {session.title}[m
+[32m+[m[32m                          </p>[m
+[32m+[m[32m                          {session.last_message_preview && ([m
+[32m+[m[32m                            <p className="text-[10px] text-white/60 truncate mt-1">[m
+[32m+[m[32m                              {session.last_message_preview}[m
+[32m+[m[32m                            </p>[m
+[32m+[m[32m                          )}[m
+[32m+[m[32m                          <p className="text-[9px] text-white/40 mt-1">[m
+[32m+[m[32m                            {new Date([m
+[32m+[m[32m                              session.last_message_at,[m
+[32m+[m[32m                            ).toLocaleDateString()}[m
+[32m+[m[32m                          </p>[m
+[32m+[m[32m                        </button>[m
+[32m+[m
+[32m+[m[32m                        {/* Action icons - top right corner, visible on hover */}[m
+[32m+[m[32m                        <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">[m
+[32m+[m[32m                          <button[m
+[32m+[m[32m                            onClick={() => {[m
+[32m+[m[32m                              setEditingSessionId(session.id);[m
+[32m+[m[32m                              setEditingTitle(session.title);[m
+[32m+[m[32m                            }}[m
+[32m+[m[32m                            className="p-1.5 text-white/60 hover:text-white hover:bg-white/20 rounded transition-colors"[m
+[32m+[m[32m                            title="Edit title"[m
+[32m+[m[32m                          >[m
+[32m+[m[32m                            <Edit2 size={14} />[m
+[32m+[m[32m                          </button>[m
+[32m+[m[32m                          <button[m
+[32m+[m[32m                            onClick={() => deleteSession(session.id)}[m
+[32m+[m[32m                            className="p-1.5 text-white/60 hover:text-red-300 hover:bg-red-500/20 rounded transition-colors"[m
+[32m+[m[32m                            title="Delete session"[m
+[32m+[m[32m                          >[m
+[32m+[m[32m                            <Trash2 size={14} />[m
+[32m+[m[32m                          </button>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                      </>[m
+[32m+[m[32m                    )}[m
+[32m+[m[32m                  </div>[m
+[32m+[m[32m                ))[m
+[32m+[m[32m              )}[m
+             </div>[m
+           </div>[m
+         </div>[m
+[31m-        </div>[m
+ [m
+         {/* Right Column - Chat Area with Light Gradient (Mobile optimized) */}[m
+[31m-        <div className={`flex flex-1 flex-col bg-gradient-to-b ${currentTheme.light}`}>[m
+[31m-        {/* Mobile Header with Back Button and Info Icon */}[m
+[31m-        <div className="flex items-center justify-between border-b border-white/20 px-3 py-2.5 md:hidden md:border-b-0 md:p-0">[m
+[31m-          <button[m
+[31m-            onClick={() => setShowHelperInfoMobile(!showHelperInfoMobile)}[m
+[31m-            className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200"[m
+[31m-            title="View helper info"[m
+[31m-          >[m
+[31m-            <Info size={18} />[m
+[31m-          </button>[m
+[31m-          <div className="flex-1 px-2">[m
+[31m-            <h3 className="truncate text-center text-sm font-bold text-zinc-800">[m
+[31m-              {helperData.name}[m
+[31m-            </h3>[m
+[32m+[m[32m        <div[m
+[32m+[m[32m          className={`flex flex-1 flex-col bg-gradient-to-b ${currentTheme.light} relative`}[m
+[32m+[m[32m        >[m
+[32m+[m[32m          {/* Mobile Header with Back Button and Info Icon */}[m
+[32m+[m[32m          <div className="flex items-center justify-between border-b border-white/20 px-3 py-2.5 md:hidden md:border-b-0 md:p-0">[m
+[32m+[m[32m            <button[m
+[32m+[m[32m              onClick={() => setShowHelperInfoMobile(!showHelperInfoMobile)}[m
+[32m+[m[32m              className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200"[m
+[32m+[m[32m              title="View helper info"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              <Info size={18} />[m
+[32m+[m[32m            </button>[m
+[32m+[m[32m            <div className="flex-1 px-2">[m
+[32m+[m[32m              <h3 className="truncate text-center text-sm font-bold text-zinc-800">[m
+[32m+[m[32m                {helperData.name}[m
+[32m+[m[32m              </h3>[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m            <button[m
+[32m+[m[32m              onClick={onBackToJourney}[m
+[32m+[m[32m              className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200"[m
+[32m+[m[32m              title="Back to journey"[m
+[32m+[m[32m            >[m
+[32m+[m[32m              <ArrowLeft size={18} />[m
+[32m+[m[32m            </button>[m
+           </div>[m
+[31m-          <button[m
+[31m-            onClick={onBackToJourney}[m
+[31m-            className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200"[m
+[31m-            title="Back to journey"[m
+[31m-          >[m
+[31m-            <ArrowLeft size={18} />[m
+[31m-          </button>[m
+[31m-        </div>[m
+ [m
+[31m-        {/* Mobile Helper Info Card - Slide down when info button clicked */}[m
+[31m-        {showHelperInfoMobile && ([m
+[31m-          <div className={`md:hidden border-b border-white/20 bg-gradient-to-br ${currentTheme.dark} p-4 animate-in slide-in-from-top-2 rounded-b-3xl`}>[m
+[31m-            <div className="flex items-center gap-2">[m
+[31m-              <div className="text-3xl">{helperData.emoji}</div>[m
+[31m-              <div>[m
+[31m-                <h3 className="font-bold text-white">{helperData.name}</h3>[m
+[31m-                <p className="text-xs text-white/80">{helperData.title}</p>[m
+[32m+[m[32m          {/* Mobile Helper Info Card - Slide down when info button clicked */}[m
+[32m+[m[32m          {showHelperInfoMobile && ([m
+[32m+[m[32m            <div[m
+[32m+[m[32m              className={`md:hidden border-b border-white/20 bg-gradient-to-br ${currentTheme.dark} p-4 animate-in slide-in-from-top-2 rounded-b-3xl`}[m
+[32m+[m[32m            >[m
+[32m+[m[32m              <div className="flex items-center gap-2">[m
+[32m+[m[32m                <div className="text-3xl">{helperData.emoji}</div>[m
+[32m+[m[32m                <div>[m
+[32m+[m[32m                  <h3 className="font-bold text-white">{helperData.name}</h3>[m
+[32m+[m[32m                  <p className="text-xs text-white/80">{helperData.title}</p>[m
+[32m+[m[32m                </div>[m
+               </div>[m
+             </div>[m
+[31m-          </div>[m
+[31m-        )}[m
+[32m+[m[32m          )}[m
+ [m
+[31m-        {/* Messages Area */}[m
+[31m-        <div className="flex-1 overflow-y-auto px-3 py-3 relative md:px-6 md:py-6">[m
+[31m-          {/* Active Tasks Card - Overlay Dropdown (Mobile optimized) */}[m
+[31m-          {tasks && tasks.length > 0 && ([m
+[31m-            <div className="absolute top-3 left-3 z-10 md:top-6 md:left-6">[m
+[31m-              <button[m
+[31m-                onClick={() => setTasksExpanded(!tasksExpanded)}[m
+[31m-                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white shadow-md hover:shadow-lg hover:bg-zinc-50 transition-all md:gap-2 md:px-3 md:py-2"[m
+[32m+[m[32m          {/* Quick Actions Floating Icon Row - Fixed position outside scroll */}[m
+[32m+[m[32m          <div[m
+[32m+[m[32m            ref={templatesRef}[m
+[32m+[m[32m            className="absolute top-3 right-4 z-20 md:top-4 md:right-6"[m
+[32m+[m[32m          >[m
+[32m+[m[32m            <div className="flex items-center gap-2">[m
+[32m+[m[32m              {/* Expanded Template Icons - Slide from right */}[m
+[32m+[m[32m              <div[m
+[32m+[m[32m                className={`flex items-center gap-2 transition-all duration-300 ease-in-out origin-right ${[m
+[32m+[m[32m                  templatesExpanded[m
+[32m+[m[32m                    ? "opacity-100 scale-x-100"[m
+[32m+[m[32m                    : "opacity-0 scale-x-0 w-0"[m
+[32m+[m[32m                }`}[m
+               >[m
+[31m-                <h3 className="text-[11px] font-bold text-zinc-800 md:text-xs">Tasks</h3>[m
+[31m-                <span className={`text-[9px] font-semibold px-1 py-0.5 rounded md:text-[10px] md:px-1.5 md:py-0.5 ${[m
+[31m-                  completedTasks === totalTasks && totalTasks > 0[m
+[31m-                    ? 'text-green-700 bg-green-50'[m
+[31m-                    : 'text-amber-600 bg-amber-50'[m
+[31m-                }`}>[m
+[31m-                  {completedTasks}/{totalTasks}[m
+[31m-                </span>[m
+[31m-                <svg[m
+[31m-                  className={`w-2.5 h-2.5 text-zinc-600 transition-transform md:w-3 md:h-3 ${tasksExpanded ? 'rotate-180' : ''}`}[m
+[31m-                  fill="none"[m
+[31m-                  stroke="currentColor"[m
+[31m-                  viewBox="0 0 24 24"[m
+[31m-                >[m
+[31m-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />[m
+[31m-                </svg>[m
+[31m-              </button>[m
+[31m-              [m
+[31m-              {tasksExpanded && ([m
+[31m-                <div className="absolute top-full left-0 mt-1.5 w-64 rounded-lg bg-white shadow-lg border border-zinc-200 z-50 overflow-hidden md:mt-2 md:w-72 md:rounded-xl md:shadow-xl">[m
+[31m-                  <div className="max-h-64 overflow-y-auto md:max-h-80">[m
+[31m-                    {tasks.map((task) => ([m
+[31m-                      <div key={task.id} className="flex items-center justify-between gap-1 px-2.5 py-2 border-b border-zinc-100 last:border-b-0 hover:bg-zinc-50 transition-colors text-[10px] md:gap-2 md:px-3 md:py-2.5 md:text-[11px]">[m
+[31m-                        <div className="flex items-center gap-1.5 flex-1 min-w-0 md:gap-2">[m
+[31m-                          <div className={`flex h-3 w-3 items-center justify-center rounded text-[7px] font-bold text-white flex-shrink-0 md:h-3.5 md:w-3.5 md:text-[8px] ${[m
+[31m-                            task.status === 'done' [m
+[31m-                              ? 'bg-gradient-to-br from-green-400 to-emerald-500' [m
+[31m-                              : 'bg-gradient-to-br from-amber-400 to-orange-500'[m
+[31m-                          }`}>[m
+[31m-                            {task.status === 'done' ? '✓' : task.status === 'in_progress' ? '⟳' : '○'}[m
+[32m+[m[32m                {templatesExpanded &&[m
+[32m+[m[32m                  templates.map((template) => ([m
+[32m+[m[32m                    <button[m
+[32m+[m[32m                      key={template.id}[m
+[32m+[m[32m                      type="button"[m
+[32m+[m[32m                      onClick={() => handleTemplateSelect(template)}[m
+[32m+[m[32m                      className="group relative flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md hover:shadow-lg transition-all hover:scale-110 md:h-9 md:w-9"[m
+[32m+[m[32m                      title={template.title}[m
+[32m+[m[32m                    >[m
+[32m+[m[32m                      <span className="text-lg md:text-xl">[m
+[32m+[m[32m                        {template.icon}[m
+[32m+[m[32m                      </span>[m
+[32m+[m
+[32m+[m[32m                      {/* Tooltip below icon */}[m
+[32m+[m[32m                      <div className="absolute top-full mt-2 hidden group-hover:block">[m
+[32m+[m[32m                        <div className="bg-zinc-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap shadow-xl">[m
+[32m+[m[32m                          {/* Arrow pointing up */}[m
+[32m+[m[32m                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-[-1px]">[m
+[32m+[m[32m                            <div className="border-4 border-transparent border-b-zinc-900"></div>[m
+                           </div>[m
+[31m-                          <div className="flex-1 min-w-0">[m
+[31m-                            <p className="font-semibold text-zinc-800 truncate">[m
+[31m-                              {task.title}[m
+[31m-                              {!task.required && <span className="text-[8px] font-normal text-zinc-500 ml-1 md:text-[9px]">(optional)</span>}[m
+[31m-                            </p>[m
+[32m+[m[32m                          <div className="font-semibold">{template.title}</div>[m
+[32m+[m[32m                          <div className="text-zinc-300 text-[10px] mt-0.5">[m
+[32m+[m[32m                            {template.category}[m
+                           </div>[m
+                         </div>[m
+[31m-[m
+[31m-                        {/* Action Icons */}[m
+[31m-                        <div className="flex items-center gap-0.5 flex-shrink-0 md:gap-1">[m
+[31m-                          {/* Send to Helper */}[m
+[31m-                          <button[m
+[31m-                            onClick={() => setInput(`Help me with: ${task.title}. ${task.description}`)}[m
+[31m-                            className="p-0.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors md:p-1"[m
+[31m-                            title="Send to helper"[m
+[31m-                          >[m
+[31m-                            <Send size={10} className="md:size-3" />[m
+[31m-                          </button>[m
+[31m-[m
+[31m-                          {/* Mark Complete */}[m
+[31m-                          <button[m
+[31m-                            onClick={async () => {[m
+[31m-                              if (!onCompleteTask) return;[m
+[31m-                              setCompletingTaskId(task.id);[m
+[31m-                              try {[m
+[31m-                                await onCompleteTask(task.id);[m
+[31m-                              } catch (error) {[m
+[31m-                                console.error("Failed to complete task:", error);[m
+[31m-                              } finally {[m
+[31m-                                setCompletingTaskId(null);[m
+[31m-                              }[m
+[31m-                            }}[m
+[31m-                            disabled={completingTaskId === task.id}[m
+[31m-                            className="p-0.5 text-green-600 hover:text-green-700 hover:bg-green-50 rounded transition-colors disabled:opacity-50 md:p-1"[m
+[31m-                            title="Mark as complete"[m
+[31m-                          >[m
+[31m-                            {completingTaskId === task.id ? ([m
+[31m-                              <Loader2 size={10} className="animate-spin md:size-3" />[m
+[31m-                            ) : ([m
+[31m-                              <CheckCircle2 size={10} className="md:size-3" />[m
+[31m-                            )}[m
+[31m-                          </button>[m
+[31m-                        </div>[m
+[31m-[m
+[31m-                        <span className="text-[8px] font-medium text-zinc-500 whitespace-nowrap ml-1 md:text-[9px]">{task.xp_reward}xp</span>[m
+                       </div>[m
+[31m-                    ))}[m
+[31m-                  </div>[m
+[31m-                </div>[m
+[31m-              )}[m
+[32m+[m[32m                    </button>[m
+[32m+[m[32m                  ))}[m
+[32m+[m[32m              </div>[m
+[32m+[m
+[32m+[m[32m              {/* Toggle Icon Button - Always visible with gradient */}[m
+[32m+[m[32m              <button[m
+[32m+[m[32m                onClick={() => setTemplatesExpanded(!templatesExpanded)}[m
+[32m+[m[32m                className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-400 to-blue-400 shadow-lg transition-all hover:scale-110 hover:shadow-xl md:h-9 md:w-9"[m
+[32m+[m[32m                title="Quick Actions"[m
+[32m+[m[32m              >[m
+[32m+[m[32m                <Sparkles[m
+[32m+[m[32m                  className={`h-4 w-4 md:h-4.5 md:w-4.5 transition-transform duration-300 text-white ${[m
+[32m+[m[32m                    templatesExpanded ? "rotate-180" : ""[m
+[32m+[m[32m                  }`}[m
+[32m+[m[32m                />[m
+[32m+[m[32m              </button>[m
+             </div>[m
+[31m-          )}[m
+[31m-          [m
+[31m-          {messages.length === 0 ? ([m
+[31m-            <div className="flex h-full items-center justify-center">[m
+[31m-              <div className="max-w-2xl text-center px-4">[m
+[31m-                <div className="mb-3 text-5xl md:mb-6 md:text-7xl">{helperData.emoji}</div>[m
+[31m-                <h3 className="mb-2 text-base font-bold text-zinc-800 md:mb-3 md:text-2xl">[m
+[31m-                  Welcome! I'm {helperData.name}, your {helperData.title}[m
+[31m-                </h3>[m
+[31m-                <p className="mb-4 text-xs text-zinc-600 md:mb-6 md:text-base">[m
+[31m-                  {helperData.description}. {stepContext?.firstMessage ? "I'm here to guide you through this journey step by step." : "I'm here to help you succeed."}[m
+[31m-                </p>[m
+[31m-                [m
+[31m-                {/* Start Button */}[m
+[32m+[m[32m          </div>[m
+[32m+[m
+[32m+[m[32m          {/* Messages Area */}[m
+[32m+[m[32m          <div[m
+[32m+[m[32m            className={`flex-1 overflow-y-auto chat-scrollbar px-3 py-3 relative md:px-6 md:py-6 ${messages.length > 0 ? "pb-48 md:pb-52" : ""}`}[m
+[32m+[m[32m          >[m
+[32m+[m[32m            {/* Active Tasks Card - Overlay Dropdown (Mobile optimized) */}[m
+[32m+[m[32m            {tasks && tasks.length > 0 && ([m
+[32m+[m[32m              <div className="absolute top-3 left-3 z-10 md:top-6 md:left-6">[m
+                 <button[m
+[31m-                  onClick={handleStartJourney}[m
+[31m-                  disabled={isLoading}[m
+[31m-                  className={`group relative inline-flex items-center gap-2 px-6 py-3 md:px-8 md:py-4 rounded-full bg-gradient-to-r ${currentTheme.dark} text-white font-semibold text-sm md:text-base shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100`}[m
+[32m+[m[32m                  onClick={() => setTasksExpanded(!tasksExpanded)}[m
+[32m+[m[32m                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white shadow-md hover:shadow-lg hover:bg-zinc-50 transition-all md:gap-2 md:px-3 md:py-2"[m
+                 >[m
+[31m-                  {isLoading ? ([m
+[31m-                    <>[m
+[31m-                      <Loader2 className="h-4 w-4 animate-spin md:h-5 md:w-5" />[m
+[31m-                      <span>Preparing...</span>[m
+[31m-                    </>[m
+[31m-                  ) : ([m
+[31m-                    <>[m
+[31m-                      <span className="text-2xl">🚀</span>[m
+[31m-                      <span>Start Your Journey with {helperData.name}</span>[m
+[31m-                    </>[m
+[31m-                  )}[m
+[32m+[m[32m                  <h3 className="text-[11px] font-bold text-zinc-800 md:text-xs">[m
+[32m+[m[32m                    Tasks[m
+[32m+[m[32m                  </h3>[m
+[32m+[m[32m                  <span[m
+[32m+[m[32m                    className={`text-[9px] font-semibold px-1 py-0.5 rounded md:text-[10px] md:px-1.5 md:py-0.5 ${[m
+[32m+[m[32m                      completedTasks === totalTasks && totalTasks > 0[m
+[32m+[m[32m                        ? "text-green-700 bg-green-50"[m
+[32m+[m[32m                        : "text-amber-600 bg-amber-50"[m
+[32m+[m[32m                    }`}[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    {completedTasks}/{totalTasks}[m
+[32m+[m[32m                  </span>[m
+[32m+[m[32m                  <svg[m
+[32m+[m[32m                    className={`w-2.5 h-2.5 text-zinc-600 transition-transform md:w-3 md:h-3 ${tasksExpanded ? "rotate-180" : ""}`}[m
+[32m+[m[32m                    fill="none"[m
+[32m+[m[32m                    stroke="currentColor"[m
+[32m+[m[32m                    viewBox="0 0 24 24"[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    <path[m
+[32m+[m[32m                      strokeLinecap="round"[m
+[32m+[m[32m                      strokeLinejoin="round"[m
+[32m+[m[32m                      strokeWidth={2}[m
+[32m+[m[32m                      d="M19 14l-7 7m0 0l-7-7m7 7V3"[m
+[32m+[m[32m                    />[m
+[32m+[m[32m                  </svg>[m
+                 </button>[m
+ [m
+[31m-                {/* Task Overview */}[m
+[31m-                {tasks && tasks.length > 0 && ([m
+[31m-                  <div className="mt-6 md:mt-8 text-left">[m
+[31m-                    <p className="text-xs md:text-sm text-zinc-500 mb-3 text-center font-medium">[m
+[31m-                      What we'll accomplish together:[m
+[31m-                    </p>[m
+[31m-                    <div className="grid gap-2 md:gap-3 max-w-lg mx-auto">[m
+[31m-                      {tasks.slice(0, 3).map((task) => ([m
+[31m-                        <div [m
+[31m-                          key={task.id} [m
+[31m-                          className="flex items-start gap-2 md:gap-3 p-2.5 md:p-3 bg-white/60 backdrop-blur-sm rounded-lg border border-white/40"[m
+[32m+[m[32m                {tasksExpanded && ([m
+[32m+[m[32m                  <div className="absolute top-full left-0 mt-1.5 w-64 rounded-lg bg-white shadow-lg border border-zinc-200 z-50 overflow-hidden md:mt-2 md:w-72 md:rounded-xl md:shadow-xl">[m
+[32m+[m[32m                    <div className="max-h-64 overflow-y-auto md:max-h-80">[m
+[32m+[m[32m                      {tasks.map((task) => ([m
+[32m+[m[32m                        <div[m
+[32m+[m[32m                          key={task.id}[m
+[32m+[m[32m                          className="flex items-center justify-between gap-1 px-2.5 py-2 border-b border-zinc-100 last:border-b-0 hover:bg-zinc-50 transition-colors text-[10px] md:gap-2 md:px-3 md:py-2.5 md:text-[11px]"[m
+                         >[m
+[31m-                          <div className={`flex h-5 w-5 md:h-6 md:w-6 items-center justify-center rounded-full flex-shrink-0 ${[m
+[31m-                            task.required [m
+[31m-                              ? 'bg-gradient-to-br from-blue-400 to-indigo-500' [m
+[31m-                              : 'bg-gradient-to-br from-zinc-300 to-zinc-400'[m
+[31m-                          }`}>[m
+[31m-                            <span className="text-white text-xs md:text-sm font-bold">[m
+[31m-                              {task.required ? '★' : '○'}[m
+[31m-                            </span>[m
+[32m+[m[32m                          <div className="flex items-center gap-1.5 flex-1 min-w-0 md:gap-2">[m
+[32m+[m[32m                            <div[m
+[32m+[m[32m                              className={`flex h-3 w-3 items-center justify-center rounded text-[7px] font-bold text-white flex-shrink-0 md:h-3.5 md:w-3.5 md:text-

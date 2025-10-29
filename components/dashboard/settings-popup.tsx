@@ -141,7 +141,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
             </div>
 
             {/* Content Tabs */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto dashboard-scrollbar p-6">
               {activeTab === "profile" && <ProfileTab />}
               {activeTab === "subscription" && <SubscriptionTab />}
             </div>

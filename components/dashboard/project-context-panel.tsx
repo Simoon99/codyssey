@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, Save, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +13,11 @@ interface ProjectContextPanelProps {
     description: string;
     goal?: string;
     location?: string;
+    problemStatement?: string;
+    targetAudience?: string;
+    valueProposition?: string;
+    techStack?: string;
+    currentStage?: string;
   };
   onSave: (updatedProject: {
     name: string;
@@ -35,17 +40,33 @@ export function ProjectContextPanel({
 }: ProjectContextPanelProps) {
   const [formData, setFormData] = useState({
     name: project.name,
-    description: project.description,
+    description: project.description || "",
     goal: project.goal || "",
     location: project.location || "",
-    problemStatement: "",
-    targetAudience: "",
-    valueProposition: "",
-    techStack: "",
-    currentStage: "",
+    problemStatement: project.problemStatement || "",
+    targetAudience: project.targetAudience || "",
+    valueProposition: project.valueProposition || "",
+    techStack: project.techStack || "",
+    currentStage: project.currentStage || "",
   });
 
   console.log("ProjectContextPanel render - isOpen:", isOpen, "project:", project);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setFormData({
+      name: project.name,
+      description: project.description || "",
+      goal: project.goal || "",
+      location: project.location || "",
+      problemStatement: project.problemStatement || "",
+      targetAudience: project.targetAudience || "",
+      valueProposition: project.valueProposition || "",
+      techStack: project.techStack || "",
+      currentStage: project.currentStage || "",
+    });
+  }, [isOpen, project]);
 
   const handleSave = () => {
     onSave(formData);
@@ -103,7 +124,7 @@ export function ProjectContextPanel({
         </div>
 
         {/* Scrollable content */}
-        <div className="h-[calc(100%-140px)] overflow-y-auto px-6 py-6">
+        <div className="h-[calc(100%-140px)] overflow-y-auto dashboard-scrollbar px-6 py-6">
           <div className="space-y-6">
             {/* Basic Info */}
             <div>

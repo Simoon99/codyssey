@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { getSupabaseClient } from "@/lib/supabase/server";
 import { completeTask } from "@/lib/levels/progression";
 
 interface CompleteTaskRequest {
@@ -22,43 +22,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Always use demo mode for now (bypass auth)
-    console.log("Demo mode: Task completed", { taskId, projectId });
-    
-    // Mock XP reward based on task
-    const xpReward = 50; // Default XP
-    
+    const supabase = await getSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Dev mode: Use a demo user ID if not authenticated
+    const isDev = process.env.NEXT_PUBLIC_DEV_MODE === "true";
+    const userId = user?.id || (isDev ? "00000000-0000-0000-0000-000000000001" : null);
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Complete the task
+    const result = await completeTask(userId, projectId, taskId);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Failed to complete task" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
-      xpAwarded: xpReward,
-      leveledUp: false,
+      xpAwarded: result.xpAwarded,
+      leveledUp: result.leveledUp,
     });
-
-    // Production mode with authentication (disabled for demo)
-    // const supabase = await createClient();
-    // const {
-    //   data: { user },
-    // } = await supabase.auth.getUser();
-
-    // if (!user) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
-
-    // // Complete the task
-    // const result = await completeTask(user.id, projectId, taskId);
-
-    // if (!result.success) {
-    //   return NextResponse.json(
-    //     { error: "Failed to complete task" },
-    //     { status: 500 }
-    //   );
-    // }
-
-    // return NextResponse.json({
-    //   success: true,
-    //   xpAwarded: result.xpAwarded,
-    //   leveledUp: result.leveledUp,
-    // });
   } catch (error) {
     console.error("Task completion error:", error);
     return NextResponse.json(

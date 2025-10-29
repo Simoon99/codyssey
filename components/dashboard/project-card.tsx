@@ -14,6 +14,11 @@ interface ProjectCardProps {
     goal?: string;
     location?: string;
     avatarUrl?: string;
+    problemStatement?: string;
+    targetAudience?: string;
+    valueProposition?: string;
+    techStack?: string;
+    currentStage?: string;
   };
   user: {
     displayName: string;
@@ -63,10 +68,30 @@ export function ProjectCard({ project, user, onUpdate }: ProjectCardProps) {
     }
   };
 
-  const handleSave = (updatedProject: any) => {
-    console.log("Saving project:", updatedProject);
-    if (onUpdate) {
-      onUpdate(updatedProject);
+  const handleSave = async (updatedProject: any) => {
+    console.log("[ProjectCard] 💾 Saving project context:", updatedProject);
+    
+    try {
+      // Save to database via API
+      const response = await fetch(`/api/projects/${project.id}/context`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedProject),
+      });
+      
+      if (response.ok) {
+        console.log("[ProjectCard] ✅ Project context saved successfully");
+        if (onUpdate) {
+          const { project: savedProject } = await response.json();
+          onUpdate(savedProject ?? updatedProject);
+        }
+      } else {
+        console.error("[ProjectCard] ❌ Failed to save project context");
+        alert("Failed to save project context. Please try again.");
+      }
+    } catch (error) {
+      console.error("[ProjectCard] ❌ Error saving project context:", error);
+      alert("Error saving project context. Please try again.");
     }
   };
 

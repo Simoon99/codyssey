@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
 /**
@@ -29,5 +30,43 @@ export async function createClient() {
       },
     }
   );
+}
+
+/**
+ * Create a Supabase client with service role key (bypasses RLS)
+ * Use this for admin operations or dev mode
+ */
+export function createServiceClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  );
+}
+
+/**
+ * Get appropriate Supabase client based on environment
+ * In dev mode with no auth, uses service role to bypass RLS
+ */
+export async function getSupabaseClient() {
+  const isDev = process.env.NEXT_PUBLIC_DEV_MODE === "true";
+  
+  if (isDev) {
+    // Try to get user first
+    const client = await createClient();
+    const { data: { user } } = await client.auth.getUser();
+    
+    // If no user in dev mode, use service role to bypass RLS
+    if (!user) {
+      return createServiceClient();
+    }
+  }
+  
+  return createClient();
 }
 

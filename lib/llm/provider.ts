@@ -14,6 +14,11 @@ export interface HelperContext {
   projectDescription?: string;
   projectTechStack?: string;
   projectStage?: string;
+  projectGoal?: string;
+  projectLocation?: string;
+  problemStatement?: string;
+  targetAudience?: string;
+  valueProposition?: string;
   currentStep?: {
     levelTitle: string;
     stepTitle: string;
@@ -28,6 +33,42 @@ export interface HelperContext {
     xp_reward: number;
   }>;
   requiredTasks?: string[];
+  // Cross-helper and journey context
+  allCompletedTasks?: Array<{
+    id: string;
+    title: string;
+    level: number;
+    completedAt: string;
+  }>;
+  otherHelperConversations?: Array<{
+    helper: string;
+    recentMessages: Array<{ role: string; content: string }>;
+  }>;
+  journeyProgress?: {
+    currentLevel: number;
+    xp: number;
+    totalTasks: number;
+    completedCount: number;
+  };
+  // Recent messages from current chat session
+  recentMessages?: Array<{
+    role: "user" | "assistant";
+    content: string;
+  }>;
+  // Structured insights from each helper
+  helperInsights?: Array<{
+    helper: string;
+    summary?: string;
+    keyInsights?: Array<string>;
+    decisionsMade?: Array<string>;
+    artifactsCreated?: Array<string>;
+    museValidation?: any;
+    architectBlueprint?: any;
+    crafterDesign?: any;
+    hackerPrompts?: any;
+    hypebeastLaunch?: any;
+    senseiGrowth?: any;
+  }>;
 }
 
 /**
@@ -143,10 +184,23 @@ function buildContextualSystemPrompt(
   if (context) {
     prompt += "\n\n---\n\n**CURRENT CONTEXT:**\n";
 
+    // Project Information
     if (context.projectName) {
       prompt += `\n**Project:** ${context.projectName}`;
       if (context.projectDescription) {
         prompt += ` — ${context.projectDescription}`;
+      }
+      if (context.projectGoal) {
+        prompt += `\n**Goal:** ${context.projectGoal}`;
+      }
+      if (context.problemStatement) {
+        prompt += `\n**Problem Statement:** ${context.problemStatement}`;
+      }
+      if (context.targetAudience) {
+        prompt += `\n**Target Audience:** ${context.targetAudience}`;
+      }
+      if (context.valueProposition) {
+        prompt += `\n**Value Proposition:** ${context.valueProposition}`;
       }
       if (context.projectTechStack) {
         prompt += `\n**Tech Stack:** ${context.projectTechStack}`;
@@ -154,42 +208,147 @@ function buildContextualSystemPrompt(
       if (context.projectStage) {
         prompt += `\n**Current Stage:** ${context.projectStage}`;
       }
+      if (context.projectLocation) {
+        prompt += `\n**Project Location:** ${context.projectLocation}`;
+      }
     }
 
+    // Journey Progress
+    if (context.journeyProgress) {
+      prompt += `\n\n**Journey Progress:**`;
+      prompt += `\n- Level ${context.journeyProgress.currentLevel}`;
+      prompt += `\n- ${context.journeyProgress.xp} XP earned`;
+      prompt += `\n- ${context.journeyProgress.completedCount}/${context.journeyProgress.totalTasks} total tasks completed`;
+    }
+
+    // Current Step
     if (context.currentStep) {
       prompt += `\n\n**Current Step:** ${context.currentStep.levelTitle} → ${context.currentStep.stepTitle}`;
       prompt += `\n**Goal:** ${context.currentStep.cta}`;
     }
 
+    // Active Tasks for Current Step
     if (context.tasks && context.tasks.length > 0) {
-      prompt += `\n\n**Active Tasks for this Step:**`;
+      prompt += `\n\n**Tasks for this Step:**`;
       
-      const requiredTasks = context.tasks.filter(t => t.required);
-      const optionalTasks = context.tasks.filter(t => !t.required);
-
-      if (requiredTasks.length > 0) {
-        prompt += `\n\nRequired Tasks:`;
-        requiredTasks.forEach(task => {
-          const statusIcon = task.status === 'done' ? '✅' : task.status === 'in_progress' ? '🔄' : '⭕';
-          prompt += `\n- ${statusIcon} ${task.title} — ${task.description} (${task.xp_reward}xp)`;
-        });
-      }
-
-      if (optionalTasks.length > 0) {
-        prompt += `\n\nOptional Tasks:`;
-        optionalTasks.forEach(task => {
-          const statusIcon = task.status === 'done' ? '✅' : task.status === 'in_progress' ? '🔄' : '⭕';
-          prompt += `\n- ${statusIcon} ${task.title} — ${task.description} (${task.xp_reward}xp)`;
-        });
-      }
+      context.tasks.forEach(task => {
+        const statusIcon = task.status === 'done' ? '✅' : task.status === 'in_progress' ? '🔄' : '⭕';
+        prompt += `\n- ${statusIcon} ${task.title} — ${task.description} (${task.xp_reward}xp)`;
+      });
 
       prompt += `\n\n**Your Role:** Help the user complete these tasks by providing guidance, examples, and actionable steps. Reference specific tasks when relevant. Celebrate completed tasks!`;
       
       // Add task-specific guidance if available
       const taskIds = context.tasks.map(t => t.id);
-      const taskGuidance = buildTaskAwarePrompt(taskIds);
+      const taskGuidance = buildTaskAwarePrompt(taskIds, {
+        maxTasks: 5,
+        maxTokens: 700,
+      });
       if (taskGuidance) {
         prompt += taskGuidance;
+      }
+    }
+
+    // All Completed Tasks (for context, not displayed in UI) - Only recent levels
+    if (context.allCompletedTasks && context.allCompletedTasks.length > 0) {
+      const currentLevel = context.journeyProgress?.currentLevel || 1;
+      // Only show tasks from current and previous level to save tokens
+      const recentTasks = context.allCompletedTasks.filter(
+        task => task.level >= currentLevel - 1 && task.level <= currentLevel
+      );
+      
+      if (recentTasks.length > 0) {
+        prompt += `\n\n**Recent Completed Tasks:** ${recentTasks.map(t => t.title).join(', ')}`;
+      }
+    }
+
+    // Helper relevance map: which helpers' insights are most relevant to each helper
+    const relevanceMap: Record<string, string[]> = {
+      muse: [], // Muse is first, no previous context
+      architect: ["muse"], // Needs problem validation and MVP scope
+      crafter: ["muse", "architect"], // Needs problem/users + tech stack
+      hacker: ["architect", "crafter"], // Needs tech stack + design system
+      hypebeast: ["muse", "crafter"], // Needs value prop + brand identity
+      sensei: ["muse", "architect", "hacker", "hypebeast"], // Needs all previous work
+    };
+
+    const relevantHelpers = relevanceMap[helper] || [];
+
+    // Structured Helper Insights (PREFERRED - use if available)
+    if (context.helperInsights && context.helperInsights.length > 0) {
+      const filteredInsights = context.helperInsights.filter((insight) =>
+        relevantHelpers.includes(insight.helper.toLowerCase())
+      );
+
+      if (filteredInsights.length > 0) {
+        prompt += `\n\n**Insights from Previous Helpers:**`;
+        prompt += `\n(Reference these when relevant to the user's question)\n`;
+
+        filteredInsights.forEach((insight) => {
+          const helperName =
+            insight.helper.charAt(0).toUpperCase() + insight.helper.slice(1);
+
+          if (insight.summary) {
+            prompt += `\n**${helperName}:** ${insight.summary}`;
+          } else if (
+            insight.keyInsights &&
+            insight.keyInsights.length > 0
+          ) {
+            prompt += `\n**${helperName}:** ${insight.keyInsights.slice(0, 3).join("; ")}`;
+          }
+
+          // Add helper-specific structured data if relevant
+          const helperDataMap: Record<string, string> = {
+            muse: "museValidation",
+            architect: "architectBlueprint",
+            crafter: "crafterDesign",
+            hacker: "hackerPrompts",
+            hypebeast: "hypebeastLaunch",
+            sensei: "senseiGrowth",
+          };
+
+          const dataKey = helperDataMap[insight.helper.toLowerCase()];
+          if (dataKey && (insight as any)[dataKey]) {
+            const data = (insight as any)[dataKey];
+            // Show compact version of structured data
+            const compactData = Object.entries(data)
+              .slice(0, 3)
+              .map(([k, v]) => `${k}: ${JSON.stringify(v).slice(0, 50)}`)
+              .join("; ");
+            if (compactData) {
+              prompt += ` | Details: ${compactData}`;
+            }
+          }
+        });
+      }
+    } else if (
+      context.otherHelperConversations &&
+      context.otherHelperConversations.length > 0
+    ) {
+      // Fallback to conversation snippets (filtered by relevancy)
+      const filteredHelpers = context.otherHelperConversations.filter(
+        (h) =>
+          relevantHelpers.includes(h.helper.toLowerCase()) &&
+          h.recentMessages.length > 0
+      );
+
+      if (filteredHelpers.length > 0) {
+        prompt += `\n\n**Insights from Previous Helpers:**`;
+        prompt += `\n(Reference these when relevant to the user's question)\n`;
+
+        filteredHelpers.forEach((helperConvo) => {
+          const lastAssistantMsg = helperConvo.recentMessages
+            .filter((m) => m.role === "assistant")
+            .slice(-1)[0];
+
+          if (lastAssistantMsg) {
+            const helperName =
+              helperConvo.helper.charAt(0).toUpperCase() +
+              helperConvo.helper.slice(1);
+            const preview = lastAssistantMsg.content.substring(0, 150);
+            prompt += `\n**${helperName}:** ${preview}${lastAssistantMsg.content.length > 150 ? "..." : ""}`;
+          }
+        });
       }
     }
   }
@@ -207,12 +366,14 @@ export async function createChatCompletion(
   options?: {
     temperature?: number;
     maxTokens?: number;
+    model?: string;
   }
 ): Promise<string> {
   const systemPrompt = buildContextualSystemPrompt(helper, context);
+  const model = options?.model || process.env.OPENAI_CHAT_MODEL || "gpt-4o-mini";
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model,
     messages: [
       { role: "system", content: systemPrompt },
       ...messages.map((msg) => ({
@@ -237,12 +398,14 @@ export async function createStreamingChatCompletion(
   options?: {
     temperature?: number;
     maxTokens?: number;
+    model?: string;
   }
 ) {
   const systemPrompt = buildContextualSystemPrompt(helper, context);
+  const model = options?.model || process.env.OPENAI_CHAT_MODEL || "gpt-4o-mini";
 
   const stream = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model,
     messages: [
       { role: "system", content: systemPrompt },
       ...messages.map((msg) => ({

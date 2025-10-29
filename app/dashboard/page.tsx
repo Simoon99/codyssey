@@ -1,36 +1,99 @@
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
+import { getSupabaseClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
-  // Demo data - no auth required
+  const supabase = await getSupabaseClient();
+  
+  // Get authenticated user
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  
+  // Dev mode: Use demo user if not authenticated
+  const isDev = process.env.NEXT_PUBLIC_DEV_MODE === "true";
+  const userId = user?.id || (isDev ? "00000000-0000-0000-0000-000000000001" : null);
+  
+  if (!userId && !isDev) {
+    redirect("/");
+  }
+
+  // Fetch real user profile from database
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  // Fetch user's active project
+  const { data: projects } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("owner_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  const activeProject = projects?.[0];
+
+  // Fetch journey progress for this project
+  const { data: journey } = await supabase
+    .from("journeys")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("project_id", activeProject?.id || "")
+    .single();
+
+  // Count completed tasks for this project
+  const { count: completedTasksCount } = await supabase
+    .from("task_progress")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("project_id", activeProject?.id || "")
+    .eq("status", "done");
+
+  // Count total tasks up to current level
+  const currentLevel = journey?.current_level || 1;
+  const { count: totalTasksCount } = await supabase
+    .from("tasks")
+    .select("*", { count: "exact", head: true })
+    .lte("level_id", currentLevel);
+
+  // Build user data from database
   const userData = {
-    displayName: "Builder",
-    avatarUrl: undefined,
+    displayName: profile?.display_name || user?.email?.split("@")[0] || "Builder",
+    avatarUrl: profile?.avatar_url,
     about: "Building amazing projects with Codyssey",
     stats: {
-      level: 1,
-      xp: 0,
+      level: journey?.current_level || 1,
+      xp: journey?.xp || 0,
       xpToNextLevel: 100,
-      tasksCompleted: 0,
-      totalTasks: 15,
+      tasksCompleted: completedTasksCount || 0,
+      totalTasks: totalTasksCount || 15,
     },
   };
 
-  // Demo project
-  const projectData = {
-    id: "demo-1",
+  // Build project data from database (if exists)
+  const projectData = activeProject ? {
+    id: activeProject.id,
+    name: activeProject.name,
+    description: activeProject.description || "Building something amazing with Codyssey",
+    goal: activeProject.goal || "Launch in 30 days",
+    location: activeProject.location || "Not set",
+    links: activeProject.external_links || {},
+  } : {
+    // Fallback to demo project if no project exists yet
+    id: "00000000-0000-0000-0000-000000000002",
     name: "My First Project",
-    description: "My First Project - Building something amazing with Codyssey",
+    description: "Building something amazing with Codyssey",
     goal: "Launch in 30 days",
-    location: "Massachusetts, United States",
+    location: "Not set",
     links: {},
   };
 
-  // Demo levels
+  // Demo levels - matching journey-config.json
   const levels = [
     {
       id: 1,
-      title: "Spark",
-      description: "Ignite your idea",
+      title: "Idea Discovery",
+      description: "Turn idea chaos into clarity with Muse",
       xpRequired: 0,
       unlocked: true,
       completed: false,
@@ -38,8 +101,8 @@ export default async function DashboardPage() {
     },
     {
       id: 2,
-      title: "Build Prep",
-      description: "Prepare your foundation",
+      title: "Structure & Plan",
+      description: "Turn idea into blueprint with Architect",
       xpRequired: 100,
       unlocked: true,
       completed: false,
@@ -47,8 +110,8 @@ export default async function DashboardPage() {
     },
     {
       id: 3,
-      title: "Core Build",
-      description: "Create your MVP",
+      title: "Visual Direction",
+      description: "Master UI prompts with Crafter",
       xpRequired: 250,
       unlocked: true,
       completed: false,
@@ -56,8 +119,8 @@ export default async function DashboardPage() {
     },
     {
       id: 4,
-      title: "Launch",
-      description: "Ship to the world",
+      title: "Build Execution",
+      description: "10x your building speed with Hacker",
       xpRequired: 500,
       unlocked: true,
       completed: false,
@@ -65,8 +128,17 @@ export default async function DashboardPage() {
     },
     {
       id: 5,
-      title: "Grow",
-      description: "Scale and iterate",
+      title: "Launch & Story",
+      description: "Create marketing prompts with Hypebeast",
+      xpRequired: 750,
+      unlocked: true,
+      completed: false,
+      current: false,
+    },
+    {
+      id: 6,
+      title: "Review & Improve",
+      description: "Level up your skills with Sensei",
       xpRequired: 1000,
       unlocked: true,
       completed: false,

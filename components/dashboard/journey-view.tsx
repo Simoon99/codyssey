@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getAllOrbs } from "@/lib/journey-mapper";
 import { ProjectCard } from "./project-card";
+import { type HelperType } from "@/lib/types/helpers";
 
 interface Level {
   id: number;
@@ -47,7 +48,13 @@ interface JourneyViewProps {
     description: string;
     goal?: string;
     location?: string;
+    avatarUrl?: string;
     links?: any;
+    problemStatement?: string;
+    targetAudience?: string;
+    valueProposition?: string;
+    techStack?: string;
+    currentStage?: string;
   };
   tasks?: Array<{
     id: string;
@@ -57,18 +64,50 @@ interface JourneyViewProps {
     required: boolean;
     status: "todo" | "in_progress" | "done";
   }>;
-  activeOrbId?: string | null;
+  activeOrbIds?: Record<string, string | null>;
+  onProjectUpdate?: (project: any) => void;
+  journeyProgressData?: Record<HelperType, { progress: any; tasks: any[] }>;
 }
 
-export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, user, project, tasks = [], activeOrbId }: JourneyViewProps) {
+export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, user, project, tasks = [], activeOrbIds, onProjectUpdate, journeyProgressData }: JourneyViewProps) {
   const [selectedOrbId, setSelectedOrbId] = React.useState<string | null>(null);
 
   // Load all orbs from journey config
   const allOrbs = getAllOrbs();
 
+  const getHelperTasks = React.useCallback(
+    (helper: HelperType | string) => journeyProgressData?.[helper as HelperType]?.tasks ?? [],
+    [journeyProgressData],
+  );
+
+  const matchesTaskId = React.useCallback((task: any, targetId: string) => {
+    if (!task || !targetId) return false;
+    const normalized = targetId.trim().toLowerCase();
+    return (
+      (task.task_id && String(task.task_id).toLowerCase() === normalized) ||
+      (task.id && String(task.id).toLowerCase() === normalized) ||
+      (task.slug && String(task.slug).toLowerCase() === normalized)
+    );
+  }, []);
+
+  // Log active orb IDs for debugging
+  React.useEffect(() => {
+    console.log("[JourneyView] activeOrbIds:", activeOrbIds);
+    console.log("[JourneyView] allOrbs:", allOrbs.map(o => ({ id: o.id, helper: o.helper })));
+  }, [activeOrbIds, allOrbs]);
+
   // Helper function to check if an orb's tasks are all completed
   const isOrbCompleted = (orb: any): boolean => {
     if (!orb.tasks || orb.tasks.length === 0) return false;
+    const helperTasks = getHelperTasks(orb.helper);
+
+    if (helperTasks.length > 0) {
+      return orb.tasks.every((taskId: string) => {
+        const task = helperTasks.find((t: any) => matchesTaskId(t, taskId));
+        return task?.is_completed;
+      });
+    }
+
     return orb.tasks.every((taskId: string) => {
       const task = tasks.find(t => t.id === taskId);
       return task?.status === 'done';
@@ -120,7 +159,7 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
   return (
     <div className="flex h-full overflow-hidden bg-gradient-to-b from-amber-50 to-pink-50">
       {/* Main Journey Content - Responsive Layout */}
-      <div className="relative flex w-full flex-col items-center justify-start gap-4 overflow-y-auto py-6 md:flex-row md:items-start md:justify-between md:gap-16 md:px-8 md:py-12">
+      <div className="relative flex w-full flex-col items-center justify-start gap-4 overflow-y-auto dashboard-scrollbar py-6 md:flex-row md:items-start md:justify-between md:gap-16 md:py-12">
         {/* Header Badge */}
         <div className="absolute left-1/2 top-2 z-20 -translate-x-1/2 md:top-6">
           <div className="flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-lg md:px-4 md:py-2">
@@ -153,14 +192,14 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                 >
                   {(() => {
                     const orbCompleted = isOrbCompleted(orb);
-                    const isOrbActive = activeOrbId === orb.id;
+                    const isOrbActive = activeOrbIds?.[orb.helper] === orb.id;
                     const shouldShowHelperColor = isFirstOrb || isOrbActive || orbCompleted;
                     
                     return (
                       <div
                         className={`flex h-16 w-16 cursor-pointer items-center justify-center rounded-full shadow-xl transition-all hover:scale-110 ${
                           shouldShowHelperColor
-                            ? `bg-gradient-to-br ${orb.helperGradient} scale-105 ring-2 ring-white/50`
+                            ? `bg-gradient-to-br ${orb.helperGradient} scale-105 ring-2 ring-white/50 ${isOrbActive ? "shadow-2xl ring-4" : ""}`
                             : orb.bgColor
                         }`}
                         onClick={(e) => {
@@ -183,14 +222,14 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                 >
                   {(() => {
                     const orbCompleted = isOrbCompleted(orb);
-                    const isOrbActive = activeOrbId === orb.id;
+                    const isOrbActive = activeOrbIds?.[orb.helper] === orb.id;
                     const shouldShowHelperColor = isFirstOrb || isOrbActive || orbCompleted;
                     
                     return (
                       <div
                         className={`flex h-12 w-12 cursor-pointer items-center justify-center rounded-full shadow-lg transition-all active:scale-95 hover:scale-110 ${
                           shouldShowHelperColor
-                            ? `bg-gradient-to-br ${orb.helperGradient} scale-105 ring-2 ring-white/50`
+                            ? `bg-gradient-to-br ${orb.helperGradient} scale-105 ring-2 ring-white/50 ${isOrbActive ? "shadow-xl ring-4" : ""}`
                             : orb.bgColor
                         }`}
                         onClick={(e) => {
@@ -238,12 +277,34 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
 
                     {/* Task Count Badge */}
                     <div className="mb-3 flex flex-wrap gap-2 md:mb-4">
-                      <div className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white">
-                        {orb.requiredTasks.length} required
-                      </div>
-                      <div className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white">
-                        {orb.tasks.length - orb.requiredTasks.length} optional
-                      </div>
+                      {(() => {
+                        const helperTasks = getHelperTasks(orb.helper);
+                        const totalTasks = orb.tasks.length;
+
+                        let completedTasks = 0;
+                        if (helperTasks.length > 0) {
+                          completedTasks = orb.tasks.filter(taskId => {
+                            const progressTask = helperTasks.find((t: any) => matchesTaskId(t, taskId));
+                            return progressTask?.is_completed;
+                          }).length;
+                        } else {
+                          const tasksForThisOrb = tasks.filter(t => orb.tasks.includes(t.id));
+                          completedTasks = tasksForThisOrb.filter(t => t.status === 'done').length;
+                        }
+
+                        const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+                        
+                        return (
+                          <>
+                            <div className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white">
+                              {completedTasks}/{totalTasks} tasks
+                            </div>
+                            <div className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white">
+                              {completionPercentage}% complete
+                            </div>
+                          </>
+                        );
+                      })()}
                     </div>
 
                     {/* START Button */}
@@ -251,6 +312,11 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                       onClick={(e) => {
                         e.stopPropagation();
                         if (onHelperSelect) {
+                          // Immediate feedback - button scales and fades
+                          e.currentTarget.style.transform = "scale(0.95)";
+                          e.currentTarget.style.opacity = "0.7";
+                          
+                          // Trigger helper selection immediately for smooth UX
                           onHelperSelect(orb.helper, {
                             orbId: orb.id,
                             stepIndex: orb.stepIndex,
@@ -262,7 +328,7 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                           });
                         }
                       }}
-                      className="w-full rounded-full bg-white py-2 text-center text-sm font-bold text-zinc-800 shadow-md transition-all hover:scale-105 hover:shadow-lg md:py-3"
+                      className="w-full rounded-full bg-white py-2 text-center text-sm font-bold text-zinc-800 shadow-md transition-all duration-150 hover:scale-105 hover:shadow-lg active:scale-95 md:py-3"
                     >
                       Let's go 🚀
                     </button>
@@ -274,7 +340,7 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
         </div>
 
         {/* Project Info Card - Responsive */}
-        <div className="mt-2 flex w-full flex-col gap-4 md:ml-auto md:w-96 md:flex-shrink-0 md:gap-6 md:pr-8">
+        <div className="mt-2 flex w-full flex-col gap-4 md:ml-auto md:w-96 md:flex-shrink-0 md:gap-6">
           {/* User/Project Card with Edit Panel */}
           {project && user && (
             <ProjectCard
@@ -284,6 +350,12 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                 description: project.description,
                 goal: project.goal,
                 location: project.location,
+                avatarUrl: project.avatarUrl,
+                problemStatement: project.problemStatement,
+                targetAudience: project.targetAudience,
+                valueProposition: project.valueProposition,
+                techStack: project.techStack,
+                currentStage: project.currentStage,
               }}
               user={{
                 displayName: user.displayName,
@@ -295,8 +367,7 @@ export function JourneyView({ levels, currentXP, onStartLevel, onHelperSelect, u
                 },
               }}
               onUpdate={(updatedProject) => {
-                console.log("Project updated:", updatedProject);
-                // You can add project update logic here if needed
+                onProjectUpdate?.(updatedProject);
               }}
             />
           )}

@@ -65,7 +65,7 @@ export function Sidebar({
             onClick={() => onHelperSelect(helper.id)}
             title={helper.name}
             className={cn(
-              "flex h-11 w-11 items-center justify-center rounded-xl text-xl transition-all duration-200 active:scale-95 flex-shrink-0",
+              "flex h-11 w-11 items-center justify-center rounded-xl text-xl transition-all duration-200 active:scale-95 flex-shrink-0 shadow-md",
               currentHelper === helper.id
                 ? `bg-gradient-to-br ${helperGradients[helper.id]} text-white shadow-lg scale-100`
                 : "hover:scale-105 active:scale-95"

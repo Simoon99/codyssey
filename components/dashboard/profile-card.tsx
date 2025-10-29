@@ -33,7 +33,7 @@ interface ProfileCardProps {
 
 export function ProfileCard({ user, project }: ProfileCardProps) {
   return (
-    <div className="flex h-full w-80 flex-col gap-4 overflow-y-auto bg-zinc-50 p-4">
+    <div className="flex h-full w-80 flex-col gap-4 overflow-y-auto dashboard-scrollbar bg-zinc-50 p-4">
       {/* User Profile */}
       <Card>
         <CardHeader className="flex flex-row items-start justify-between p-4">
