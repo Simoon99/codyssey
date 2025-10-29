@@ -802,7 +802,7 @@ async function searchWeb(
             source: "Brave Search",
             total_results: results.length,
             // Include formatted results for UI display
-            formatted_results: results.map(r => `${r.title}\n${r.snippet}\nSource: ${r.domain}\nURL: ${r.url}`).join('\n\n'),
+            formatted_results: results.map((r: any) => `${r.title}\n${r.snippet}\nSource: ${r.domain}\nURL: ${r.url}`).join('\n\n'),
           },
         };
       }
