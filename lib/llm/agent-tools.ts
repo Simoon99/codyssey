@@ -586,53 +586,53 @@ export async function executeToolCall(
   try {
     switch (toolName) {
       case "save_artifact":
-        return await saveArtifact(args, context);
+        return await saveArtifact(args as any, context);
       
       case "analyze_project_data":
-        return await analyzeProjectData(args, context);
+        return await analyzeProjectData(args as any, context);
       
       case "create_task":
-        return await createTask(args, context);
+        return await createTask(args as any, context);
       
       case "update_task_status":
-        return await updateTaskStatus(args, context);
+        return await updateTaskStatus(args as any, context);
       
       case "schedule_reminder":
-        return await scheduleReminder(args, context);
+        return await scheduleReminder(args as any, context);
       
       case "generate_template":
-        return await generateTemplate(args, context);
+        return await generateTemplate(args as any, context);
       
       case "search_resources":
-        return await searchResources(args, context);
+        return await searchResources(args as any, context);
       
       case "web_search":
-        return await searchWeb(args, context);
+        return await searchWeb(args as any, context);
       
       // Vibecoding tools
       case "generate_ai_prompt":
-        return await generateAiPrompt(args, context);
+        return await generateAiPrompt(args as any, context);
       
       case "analyze_prompt_quality":
-        return await analyzePromptQualityTool(args, context);
+        return await analyzePromptQualityTool(args as any, context);
       
       case "suggest_vibecoding_approach":
-        return await suggestVibecodingApproach(args, context);
+        return await suggestVibecodingApproach(args as any, context);
       
       case "validate_ai_output":
-        return await validateAiOutput(args, context);
+        return await validateAiOutput(args as any, context);
       
       case "recommend_tool_stack":
-        return await recommendToolStack(args, context);
+        return await recommendToolStack(args as any, context);
       
       case "save_vibecoding_pattern":
-        return await saveVibecodingPattern(args, context);
+        return await saveVibecodingPattern(args as any, context);
       
       case "estimate_vibecoding_time":
-        return await estimateVibecodingTime(args, context);
+        return await estimateVibecodingTime(args as any, context);
       
       case "get_vibecoding_workflow":
-        return await getVibecodingWorkflow(args, context);
+        return await getVibecodingWorkflow(args as any, context);
       
       default:
         return { success: false, error: `Unknown tool: ${toolName}` };
