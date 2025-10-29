@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
     const userId = user?.id || (isDev ? "00000000-0000-0000-0000-000000000001" : null);
 
     if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      console.warn("[GET /api/chat/sessions] No user ID and dev mode is off");
+      return NextResponse.json({ sessions: [] });
     }
 
     console.log("[GET /api/chat/sessions] Fetching sessions for user:", userId, "project:", projectId, "helper:", helper);
@@ -71,6 +72,7 @@ export async function POST(request: NextRequest) {
     console.log("[Sessions POST] User ID:", userId, "Dev mode:", isDev);
 
     if (!userId) {
+      console.warn("[Sessions POST] No user ID and dev mode is off");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

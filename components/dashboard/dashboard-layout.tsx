@@ -362,7 +362,13 @@ export function DashboardLayout({ user, project, levels, tasks }: DashboardLayou
       });
     };
     
-    prefetchAllHelperData();
+    // Safely call prefetch - don't crash the dashboard if it fails
+    try {
+      prefetchAllHelperData();
+    } catch (error) {
+      console.error("[Dashboard] Error during prefetch:", error);
+      // Continue loading dashboard even if prefetch fails
+    }
   }, [projectId]);
 
   // Load state from database on mount - Load EVERYTHING once
